@@ -104,5 +104,18 @@
   "this_action_cannot_be_undone_menu_item": "This action will permanently delete the menu item and cannot be undone.",
   "failed_to_delete_menu_item": "Failed to delete menu item: {{message}}",
   "menu_item_deleted_successfully": "Menu item deleted successfully!",
-  "Loading menu...": "Loading menu..."
+  "Loading menu...": "Loading menu...",
+  "about": "About Us",
+  "contact": "Contact Us",
+  "working_hours": "Working Hours",
+  "monday_friday": "Monday - Friday",
+  "saturday_sunday": "Saturday - Sunday",
+  "holidays": "Holidays",
+  "closed": "Closed",
+  "about_us_paragraph_1": "Welcome to our restaurant, where passion for food meets culinary artistry. We are dedicated to providing an unforgettable dining experience for our valued guests.",
+  "about_us_paragraph_2": "Established in 2020, our restaurant has quickly become a favorite destination for food enthusiasts seeking innovative dishes and fresh, locally sourced ingredients.",
+  "about_us_paragraph_3": "Our team of talented chefs crafts each dish with precision and care, ensuring every bite is a celebration of flavor. Join us on a culinary journey like no other.",
+  "email_us": "Email Us",
+  "call_us": "Call Us",
+  "find_us": "Find Us"
 }

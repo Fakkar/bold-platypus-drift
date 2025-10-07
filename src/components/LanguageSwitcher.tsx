@@ -24,12 +24,9 @@ const LanguageSwitcher: React.FC = () => {
 
   return (
     <div className="flex items-center space-x-2">
-      <label htmlFor="language-select" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-        {t("select_language")}
-      </label>
       <Select onValueChange={changeLanguage} defaultValue={i18n.language}>
-        <SelectTrigger id="language-select" className="w-[120px]">
-          <SelectValue placeholder="Language" />
+        <SelectTrigger id="language-select" className="w-[100px] border-none focus:ring-0 focus:ring-offset-0 text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-foreground">
+          <SelectValue />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="fa">فارسی</SelectItem>

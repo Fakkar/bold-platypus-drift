@@ -29,7 +29,16 @@ const Header: React.FC = () => {
 
         <nav className="hidden md:flex items-center space-x-6">
           <Link to="/" className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-foreground transition-colors">
+            {t("home")}
+          </Link>
+          <Link to="/#menu-items" className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-foreground transition-colors">
             {t("menu")}
+          </Link>
+          <Link to="/about" className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-foreground transition-colors">
+            {t("about")}
+          </Link>
+          <Link to="/contact" className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-foreground transition-colors">
+            {t("contact")}
           </Link>
           {user && ( // Only show admin dashboard link if user is logged in
             <Link to="/admin" className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-foreground transition-colors">
@@ -60,7 +69,16 @@ const Header: React.FC = () => {
             <SheetContent side="right">
               <nav className="flex flex-col space-y-4 mt-6">
                 <Link to="/" className="text-lg font-medium text-gray-900 dark:text-gray-100 hover:text-primary transition-colors">
+                  {t("home")}
+                </Link>
+                <Link to="/#menu-items" className="text-lg font-medium text-gray-900 dark:text-gray-100 hover:text-primary transition-colors">
                   {t("menu")}
+                </Link>
+                <Link to="/about" className="text-lg font-medium text-gray-900 dark:text-gray-100 hover:text-primary transition-colors">
+                  {t("about")}
+                </Link>
+                <Link to="/contact" className="text-lg font-medium text-gray-900 dark:text-gray-100 hover:text-primary transition-colors">
+                  {t("contact")}
                 </Link>
                 {user && (
                   <Link to="/admin" className="text-lg font-medium text-gray-900 dark:text-gray-100 hover:text-primary transition-colors">

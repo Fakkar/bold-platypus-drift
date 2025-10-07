@@ -7,6 +7,7 @@ import Footer from "@/components/layout/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import WorkingHours from "@/components/WorkingHours"; // Import WorkingHours
 
 interface Category {
   id: string;
@@ -101,6 +102,10 @@ const MenuPage: React.FC = () => {
             </TabsContent>
           ))}
         </Tabs>
+
+        <div className="mt-16">
+          <WorkingHours />
+        </div>
       </main>
 
       <Footer />
