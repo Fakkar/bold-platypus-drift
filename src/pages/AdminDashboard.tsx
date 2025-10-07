@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -9,18 +9,29 @@ import { toast } from "sonner"; // For notifications
 
 const AdminDashboard: React.FC = () => {
   const { t } = useTranslation();
-  const { settings, updateSettings } = useRestaurantSettings();
+  const { settings, updateSettings, loading } = useRestaurantSettings();
   const [restaurantName, setRestaurantName] = useState(settings.name);
-  const [restaurantLogoUrl, setRestaurantLogoUrl] = useState(settings.logoUrl);
+  const [restaurantLogoUrl, setRestaurantLogoUrl] = useState(settings.logo_url); // Use logo_url
 
-  const handleSaveSettings = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (!loading) {
+      setRestaurantName(settings.name);
+      setRestaurantLogoUrl(settings.logo_url);
+    }
+  }, [settings, loading]);
+
+  const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
-    updateSettings({ name: restaurantName, logoUrl: restaurantLogoUrl });
-    toast.success(t("settings_saved_successfully"));
-    // In a real application, you would send this data to a backend.
-    // For persistent storage, you would need to add a database like Supabase.
-    // <dyad-add-integration provider="supabase"></dyad-add-integration>
+    await updateSettings({ name: restaurantName, logo_url: restaurantLogoUrl }); // Use logo_url
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+        <p>{t("Loading settings...")}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-4">

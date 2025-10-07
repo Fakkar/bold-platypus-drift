@@ -28,5 +28,6 @@
   "enter_logo_url": "Enter logo URL",
   "save_settings": "Save Settings",
   "settings_saved_successfully": "Settings saved successfully!",
-  "back_to_menu": "Back to Menu"
+  "back_to_menu": "Back to Menu",
+  "Loading settings...": "Loading settings..."
 }

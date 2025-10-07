@@ -28,5 +28,6 @@
   "enter_logo_url": "أدخل رابط الشعار",
   "save_settings": "حفظ الإعدادات",
   "settings_saved_successfully": "تم حفظ الإعدادات بنجاح!",
-  "back_to_menu": "العودة إلى القائمة"
+  "back_to_menu": "العودة إلى القائمة",
+  "Loading settings...": "جاري تحميل الإعدادات..."
 }

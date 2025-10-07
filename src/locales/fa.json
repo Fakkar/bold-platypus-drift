@@ -28,5 +28,6 @@
   "enter_logo_url": "آدرس URL لوگو را وارد کنید",
   "save_settings": "ذخیره تنظیمات",
   "settings_saved_successfully": "تنظیمات با موفقیت ذخیره شد!",
-  "back_to_menu": "بازگشت به منو"
+  "back_to_menu": "بازگشت به منو",
+  "Loading settings...": "در حال بارگذاری تنظیمات..."
 }

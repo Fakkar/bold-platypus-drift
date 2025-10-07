@@ -3,15 +3,21 @@ import { useTranslation } from "react-i18next";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Link } from "react-router-dom"; // Import Link
 import { Settings } from "lucide-react"; // Import an icon
+import { useRestaurantSettings } from "@/context/RestaurantSettingsContext"; // Import context
 
 const Footer: React.FC = () => {
   const { t } = useTranslation();
+  const { settings, loading } = useRestaurantSettings(); // Use context
+
+  if (loading) {
+    return null; // Or a loading spinner
+  }
 
   return (
     <footer className="bg-gray-800 dark:bg-gray-900 text-gray-300 dark:text-gray-400 py-8 mt-12 relative">
       <div className="container mx-auto px-4 text-center">
         <p className="mb-4">
-          &copy; {new Date().getFullYear()} {t("restaurant_name")}. {t("all_rights_reserved")}.
+          &copy; {new Date().getFullYear()} {settings.name}. {t("all_rights_reserved")}.
         </p>
         <div className="flex justify-center space-x-4 mb-4">
           <a href="#" className="hover:text-white transition-colors">{t("privacy_policy")}</a>

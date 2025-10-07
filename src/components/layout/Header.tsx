@@ -9,13 +9,17 @@ import { useRestaurantSettings } from "@/context/RestaurantSettingsContext"; // 
 
 const Header: React.FC = () => {
   const { t } = useTranslation();
-  const { settings } = useRestaurantSettings(); // Use context
+  const { settings, loading } = useRestaurantSettings(); // Use context
+
+  if (loading) {
+    return null; // Or a loading spinner
+  }
 
   return (
     <header className="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
-          <img src={settings.logoUrl} alt={settings.name} className="h-8 w-8" />
+          <img src={settings.logo_url} alt={settings.name} className="h-8 w-8 object-contain" />
           <span className="text-xl font-bold text-gray-900 dark:text-gray-100">
             {settings.name}
           </span>
@@ -29,7 +33,6 @@ const Header: React.FC = () => {
             {t("admin_dashboard")}
           </Link>
           <LanguageSwitcher />
-          {/* Removed "Order Now" button */}
         </nav>
 
         <div className="md:hidden flex items-center space-x-2">
@@ -48,7 +51,6 @@ const Header: React.FC = () => {
                 <Link to="/admin" className="text-lg font-medium text-gray-900 dark:text-gray-100 hover:text-primary transition-colors">
                   {t("admin_dashboard")}
                 </Link>
-                {/* Removed "Order Now" button */}
               </nav>
             </SheetContent>
           </Sheet>
