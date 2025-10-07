@@ -40,7 +40,7 @@ const LanguageSwitcher: React.FC = () => {
     <Select onValueChange={changeLanguage} defaultValue={i18n.language}>
       <SelectTrigger 
         id="language-select" 
-        className="w-[100px] bg-transparent text-white border border-white/30 hover:border-white/50 focus:ring-0 focus:ring-offset-0 rounded-md px-3 py-2 flex items-center justify-center space-x-1"
+        className="w-[100px] bg-white/20 backdrop-blur-sm text-white border-none focus:ring-0 focus:ring-offset-0 rounded-full px-3 py-2 flex items-center justify-center space-x-1"
       >
         <span role="img" aria-label="flag" className="text-lg">{getFlag(i18n.language)}</span>
         <Globe className="h-4 w-4 text-white" />

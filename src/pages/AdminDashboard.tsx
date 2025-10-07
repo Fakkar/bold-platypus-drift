@@ -19,17 +19,30 @@ const AdminDashboard: React.FC = () => {
 
   const [restaurantName, setRestaurantName] = useState(settings.name);
   const [restaurantLogoUrl, setRestaurantLogoUrl] = useState(settings.logo_url);
+  const [restaurantSlogan, setRestaurantSlogan] = useState(settings.slogan);
+  const [restaurantPhoneNumber, setRestaurantPhoneNumber] = useState(settings.phone_number);
+  const [restaurantWorkingHoursText, setRestaurantWorkingHoursText] = useState(settings.working_hours_text);
+
 
   useEffect(() => {
     if (!settingsLoading) {
       setRestaurantName(settings.name);
       setRestaurantLogoUrl(settings.logo_url);
+      setRestaurantSlogan(settings.slogan);
+      setRestaurantPhoneNumber(settings.phone_number);
+      setRestaurantWorkingHoursText(settings.working_hours_text);
     }
   }, [settings, settingsLoading]);
 
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
-    await updateSettings({ name: restaurantName, logo_url: restaurantLogoUrl });
+    await updateSettings({ 
+      name: restaurantName, 
+      logo_url: restaurantLogoUrl,
+      slogan: restaurantSlogan,
+      phone_number: restaurantPhoneNumber,
+      working_hours_text: restaurantWorkingHoursText,
+    });
   };
 
   if (settingsLoading || sessionLoading) {
@@ -83,6 +96,15 @@ const AdminDashboard: React.FC = () => {
               />
             </div>
             <div>
+              <Label htmlFor="restaurant-slogan">{t("restaurant_slogan")}</Label>
+              <Input
+                id="restaurant-slogan"
+                value={restaurantSlogan}
+                onChange={(e) => setRestaurantSlogan(e.target.value)}
+                placeholder={t("enter_restaurant_slogan")}
+              />
+            </div>
+            <div>
               <Label htmlFor="logo-url">{t("restaurant_logo_url")}</Label>
               <Input
                 id="logo-url"
@@ -93,6 +115,24 @@ const AdminDashboard: React.FC = () => {
               {restaurantLogoUrl && (
                 <img src={restaurantLogoUrl} alt="Logo Preview" className="mt-2 h-16 w-16 object-contain" />
               )}
+            </div>
+            <div>
+              <Label htmlFor="phone-number">{t("phone_number")}</Label>
+              <Input
+                id="phone-number"
+                value={restaurantPhoneNumber}
+                onChange={(e) => setRestaurantPhoneNumber(e.target.value)}
+                placeholder={t("enter_phone_number")}
+              />
+            </div>
+            <div>
+              <Label htmlFor="working-hours-text">{t("working_hours_display")}</Label>
+              <Input
+                id="working-hours-text"
+                value={restaurantWorkingHoursText}
+                onChange={(e) => setRestaurantWorkingHoursText(e.target.value)}
+                placeholder={t("enter_working_hours_text")}
+              />
             </div>
             <Button type="submit" className="w-full">{t("save_settings")}</Button>
           </form>

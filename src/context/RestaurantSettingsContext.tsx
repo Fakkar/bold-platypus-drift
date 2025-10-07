@@ -6,6 +6,9 @@ interface RestaurantSettings {
   id?: string; // Supabase ID for the settings row
   name: string;
   logo_url: string; // Changed to logo_url to match Supabase column name
+  slogan: string; // New field for restaurant slogan
+  phone_number: string; // New field for phone number
+  working_hours_text: string; // New field for working hours text
 }
 
 interface RestaurantSettingsContextType {
@@ -20,6 +23,9 @@ export const RestaurantSettingsProvider: React.FC<{ children: ReactNode }> = ({ 
   const [settings, setSettings] = useState<RestaurantSettings>({
     name: "My Restaurant", // Default name
     logo_url: "/public/placeholder.svg", // Default logo
+    slogan: "Taste the difference, experience the unforgettable", // Default slogan
+    phone_number: "021-1234-5678", // Default phone number
+    working_hours_text: "9:00 AM - 11:00 PM", // Default working hours
   });
   const [loading, setLoading] = useState(true);
 
@@ -39,6 +45,9 @@ export const RestaurantSettingsProvider: React.FC<{ children: ReactNode }> = ({ 
           id: data.id,
           name: data.name,
           logo_url: data.logo_url,
+          slogan: data.slogan || "Taste the difference, experience the unforgettable",
+          phone_number: data.phone_number || "021-1234-5678",
+          working_hours_text: data.working_hours_text || "9:00 AM - 11:00 PM",
         });
       }
       setLoading(false);
@@ -65,6 +74,9 @@ export const RestaurantSettingsProvider: React.FC<{ children: ReactNode }> = ({ 
         id: data.id,
         name: data.name,
         logo_url: data.logo_url,
+        slogan: data.slogan,
+        phone_number: data.phone_number,
+        working_hours_text: data.working_hours_text,
       });
       toast.success('Settings saved successfully!');
     }

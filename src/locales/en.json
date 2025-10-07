@@ -8,6 +8,7 @@
   "This is the public menu page. Food items will be displayed here.": "This is the public menu page. Food items will be displayed here.",
   "This is the admin dashboard. Here you can manage food items.": "This is the admin dashboard. Here you can manage food items.",
   "restaurant_name": "My Restaurant",
+  "restaurant_slogan": "Taste the difference, experience the unforgettable",
   "order_now": "Order Now",
   "hero_title": "Delicious Food, Delivered to Your Door",
   "hero_description": "Order the best food in town with a few simple clicks and enjoy the exquisite taste.",
@@ -24,6 +25,7 @@
   "terms_of_service": "Terms of Service",
   "restaurant_settings": "Restaurant Settings",
   "enter_restaurant_name": "Enter restaurant name",
+  "enter_restaurant_slogan": "Enter restaurant slogan",
   "restaurant_logo_url": "Restaurant Logo URL",
   "enter_logo_url": "Enter logo URL",
   "save_settings": "Save Settings",
@@ -118,6 +120,8 @@
   "email_us": "Email Us",
   "call_us": "Call Us",
   "find_us": "Find Us",
-  "phone_number": "021-1234-5678",
-  "working_hours_display": "9:00 AM - 11:00 PM"
+  "phone_number": "Phone Number",
+  "enter_phone_number": "Enter phone number",
+  "working_hours_display": "Working Hours Text",
+  "enter_working_hours_text": "Enter working hours text"
 }

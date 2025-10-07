@@ -8,6 +8,7 @@
   "This is the public menu page. Food items will be displayed here.": "这是公共菜单页面。食物项目将在此处显示。",
   "This is the admin dashboard. Here you Tcan manage food items.": "这是管理员仪表板。您可以在这里管理食物项目。",
   "restaurant_name": "我的餐厅",
+  "restaurant_slogan": "品尝不同，体验难忘",
   "order_now": "立即订购",
   "hero_title": "美味佳肴，送货上门",
   "hero_description": "只需点击几下即可订购城里最好的食物，享受精致的美味。",
@@ -24,6 +25,7 @@
   "terms_of_service": "服务条款",
   "restaurant_settings": "餐厅设置",
   "enter_restaurant_name": "输入餐厅名称",
+  "enter_restaurant_slogan": "输入餐厅标语",
   "restaurant_logo_url": "餐厅标志网址",
   "enter_logo_url": "输入标志网址",
   "save_settings": "保存设置",
@@ -118,6 +120,8 @@
   "email_us": "给我们发电子邮件",
   "call_us": "致电我们",
   "find_us": "找到我们",
-  "phone_number": "021-1234-5678",
-  "working_hours_display": "上午 9:00 - 晚上 11:00"
+  "phone_number": "电话号码",
+  "enter_phone_number": "输入电话号码",
+  "working_hours_display": "工作时间文本",
+  "enter_working_hours_text": "输入工作时间文本"
 }

@@ -28,7 +28,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 20%;
 
-    --primary: 24 100% 50%; /* Vibrant orange/red from reference */
+    --primary: 40 90% 55%; /* Golden orange for light mode */
     --primary-foreground: 0 0% 100%; /* White text on primary */
 
     --secondary: 210 40% 96.1%;
@@ -45,7 +45,7 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 24 100% 50%; /* Ring color matches primary */
+    --ring: 40 90% 55%; /* Ring color matches primary */
 
     --radius: 0.5rem;
 
@@ -69,7 +69,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 24 100% 60%; /* Slightly lighter orange for dark mode primary */
+    --primary: 40 90% 65%; /* Lighter golden orange for dark mode primary */
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -86,7 +86,7 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 24 100% 60%; /* Ring color matches primary in dark mode */
+    --ring: 40 90% 65%; /* Ring color matches primary in dark mode */
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
