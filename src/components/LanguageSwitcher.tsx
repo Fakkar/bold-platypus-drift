@@ -32,10 +32,18 @@ const LanguageSwitcher: React.FC = () => {
           <SelectValue placeholder="Language" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="fa">فارسی</SelectItem>
-          <SelectItem value="en">English</SelectItem>
-          <SelectItem value="ar">العربية</SelectItem>
-          <SelectItem value="zh">中文</SelectItem>
+          <SelectItem value="fa">
+            <span role="img" aria-label="Farsi flag" className="mr-2">🇮🇷</span> فارسی
+          </SelectItem>
+          <SelectItem value="en">
+            <span role="img" aria-label="English flag" className="mr-2">🇬🇧</span> English
+          </SelectItem>
+          <SelectItem value="ar">
+            <span role="img" aria-label="Arabic flag" className="mr-2">🇸🇦</span> العربية
+          </SelectItem>
+          <SelectItem value="zh">
+            <span role="img" aria-label="Chinese flag" className="mr-2">🇨🇳</span> 中文
+          </SelectItem>
         </SelectContent>
       </Select>
     </div>
