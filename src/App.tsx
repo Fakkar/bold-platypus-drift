@@ -40,7 +40,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <I18nextProvider i18n={i18n}>
-        <BrowserRouter> {/* BrowserRouter moved here to wrap everything */}
+        <BrowserRouter>
           <SessionContextProvider>
             <RestaurantSettingsProvider>
               <Routes>
@@ -57,9 +57,10 @@ const App = () => (
                 <Route path="/home" element={<Index />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
-            </BrowserRouter>
+            </RestaurantSettingsProvider>
           </SessionContextProvider>
-        </I18nextProvider>
+        </BrowserRouter>
+      </I18nextProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
