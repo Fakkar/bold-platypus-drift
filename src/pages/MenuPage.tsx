@@ -7,7 +7,7 @@ import Footer from "@/components/layout/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import WorkingHours from "@/components/WorkingHours"; // Import WorkingHours
+// import WorkingHours from "@/components/WorkingHours"; // WorkingHours component removed as per request
 
 interface Category {
   id: string;
@@ -43,7 +43,8 @@ const MenuPage: React.FC = () => {
         console.error('Error fetching categories:', categoriesError);
         toast.error(t('failed_to_load_categories', { message: categoriesError.message }));
       } else {
-        setCategories([{ id: "all", name: t("all_items"), order: -1 }, ...(categoriesData || [])]);
+        // Removed "all items" category as per request
+        setCategories(categoriesData || []);
       }
 
       // Fetch menu items
@@ -72,6 +73,10 @@ const MenuPage: React.FC = () => {
     );
   }
 
+  // Determine the default tab value. If there are categories, use the first one's ID.
+  // Otherwise, default to an empty string or handle the no-category case.
+  const defaultTabValue = categories.length > 0 ? categories[0].id : "";
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -82,30 +87,32 @@ const MenuPage: React.FC = () => {
           {t("our_menu")}
         </h2>
 
-        <Tabs defaultValue="all" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 gap-2 mb-8">
+        {categories.length === 0 ? (
+          <p className="text-center text-gray-600 dark:text-gray-400">{t("no_categories_found")}</p>
+        ) : (
+          <Tabs defaultValue={defaultTabValue} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 gap-2 mb-8">
+              {categories.map((category) => (
+                <TabsTrigger key={category.id} value={category.id}>
+                  {category.name}
+                </TabsTrigger>
+              ))}
+            </TabsList>
             {categories.map((category) => (
-              <TabsTrigger key={category.id} value={category.id}>
-                {category.name}
-              </TabsTrigger>
+              <TabsContent key={category.id} value={category.id}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                  {menuItems
+                    .filter((item) => item.category_id === category.id)
+                    .map((item) => (
+                      <MenuItemCard key={item.id} item={item} />
+                    ))}
+                </div>
+              </TabsContent>
             ))}
-          </TabsList>
-          {categories.map((category) => (
-            <TabsContent key={category.id} value={category.id}>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                {menuItems
-                  .filter((item) => category.id === "all" || item.category_id === category.id)
-                  .map((item) => (
-                    <MenuItemCard key={item.id} item={item} />
-                  ))}
-              </div>
-            </TabsContent>
-          ))}
-        </Tabs>
+          </Tabs>
+        )}
 
-        <div className="mt-16">
-          <WorkingHours />
-        </div>
+        {/* WorkingHours component removed as per request */}
       </main>
 
       <Footer />
