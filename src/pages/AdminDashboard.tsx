@@ -4,28 +4,32 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useRestaurantSettings } from "@/context/RestaurantSettingsContext"; // Import context
-import { toast } from "sonner"; // For notifications
+import { useRestaurantSettings } from "@/context/RestaurantSettingsContext";
+import { useSession } from "@/context/SessionContext"; // Import useSession
+import { toast } from "sonner";
+import { LogOut } from "lucide-react";
 
 const AdminDashboard: React.FC = () => {
   const { t } = useTranslation();
-  const { settings, updateSettings, loading } = useRestaurantSettings();
+  const { settings, updateSettings, loading: settingsLoading } = useRestaurantSettings();
+  const { user, signOut, loading: sessionLoading } = useSession(); // Get user and signOut from session context
+
   const [restaurantName, setRestaurantName] = useState(settings.name);
-  const [restaurantLogoUrl, setRestaurantLogoUrl] = useState(settings.logo_url); // Use logo_url
+  const [restaurantLogoUrl, setRestaurantLogoUrl] = useState(settings.logo_url);
 
   useEffect(() => {
-    if (!loading) {
+    if (!settingsLoading) {
       setRestaurantName(settings.name);
       setRestaurantLogoUrl(settings.logo_url);
     }
-  }, [settings, loading]);
+  }, [settings, settingsLoading]);
 
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
-    await updateSettings({ name: restaurantName, logo_url: restaurantLogoUrl }); // Use logo_url
+    await updateSettings({ name: restaurantName, logo_url: restaurantLogoUrl });
   };
 
-  if (loading) {
+  if (settingsLoading || sessionLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
         <p>{t("Loading settings...")}</p>
@@ -33,8 +37,27 @@ const AdminDashboard: React.FC = () => {
     );
   }
 
+  // This page is already protected by ProtectedRoute in App.tsx,
+  // but an explicit check here can be useful for clarity or if routing changes.
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+        <p>{t("unauthorized_access")}</p>
+        <Link to="/login">
+          <Button className="ml-4">{t("go_to_login")}</Button>
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-4">
+      <div className="absolute top-4 right-4">
+        <Button variant="ghost" onClick={signOut} className="flex items-center space-x-2">
+          <LogOut className="h-5 w-5" />
+          <span>{t("logout")}</span>
+        </Button>
+      </div>
       <h1 className="text-4xl font-bold mb-6">{t("admin_dashboard")}</h1>
       <p className="text-lg text-gray-700 dark:text-gray-300 mb-8">
         {t("This is the admin dashboard. Here you can manage food items.")}

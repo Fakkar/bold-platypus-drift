@@ -3,15 +3,17 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
-import { MenuIcon } from "lucide-react";
+import { MenuIcon, LogOut } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useRestaurantSettings } from "@/context/RestaurantSettingsContext"; // Import context
+import { useRestaurantSettings } from "@/context/RestaurantSettingsContext";
+import { useSession } from "@/context/SessionContext"; // Import useSession
 
 const Header: React.FC = () => {
   const { t } = useTranslation();
-  const { settings, loading } = useRestaurantSettings(); // Use context
+  const { settings, loading: settingsLoading } = useRestaurantSettings();
+  const { user, signOut, loading: sessionLoading } = useSession(); // Get user and signOut from session context
 
-  if (loading) {
+  if (settingsLoading || sessionLoading) {
     return null; // Or a loading spinner
   }
 
@@ -27,16 +29,28 @@ const Header: React.FC = () => {
 
         <nav className="hidden md:flex items-center space-x-6">
           <Link to="/" className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-foreground transition-colors">
-            {t("menu")} {/* Link to menu is now the home link */}
+            {t("menu")}
           </Link>
-          <Link to="/admin" className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-foreground transition-colors">
-            {t("admin_dashboard")}
-          </Link>
+          {user && ( // Only show admin dashboard link if user is logged in
+            <Link to="/admin" className="text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-foreground transition-colors">
+              {t("admin_dashboard")}
+            </Link>
+          )}
           <LanguageSwitcher />
+          {user && ( // Show logout button if user is logged in
+            <Button variant="ghost" size="icon" onClick={signOut} className="text-gray-700 dark:text-gray-300 hover:text-destructive dark:hover:text-destructive-foreground">
+              <LogOut className="h-5 w-5" />
+            </Button>
+          )}
         </nav>
 
         <div className="md:hidden flex items-center space-x-2">
           <LanguageSwitcher />
+          {user && (
+            <Button variant="ghost" size="icon" onClick={signOut} className="text-gray-700 dark:text-gray-300 hover:text-destructive dark:hover:text-destructive-foreground">
+              <LogOut className="h-5 w-5" />
+            </Button>
+          )}
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon">
@@ -48,9 +62,11 @@ const Header: React.FC = () => {
                 <Link to="/" className="text-lg font-medium text-gray-900 dark:text-gray-100 hover:text-primary transition-colors">
                   {t("menu")}
                 </Link>
-                <Link to="/admin" className="text-lg font-medium text-gray-900 dark:text-gray-100 hover:text-primary transition-colors">
-                  {t("admin_dashboard")}
-                </Link>
+                {user && (
+                  <Link to="/admin" className="text-lg font-medium text-gray-900 dark:text-gray-100 hover:text-primary transition-colors">
+                    {t("admin_dashboard")}
+                  </Link>
+                )}
               </nav>
             </SheetContent>
           </Sheet>

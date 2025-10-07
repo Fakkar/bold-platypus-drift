@@ -1,15 +1,17 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { MadeWithDyad } from "@/components/made-with-dyad";
-import { Link } from "react-router-dom"; // Import Link
-import { Settings } from "lucide-react"; // Import an icon
-import { useRestaurantSettings } from "@/context/RestaurantSettingsContext"; // Import context
+import { Link } from "react-router-dom";
+import { Settings } from "lucide-react";
+import { useRestaurantSettings } from "@/context/RestaurantSettingsContext";
+import { useSession } from "@/context/SessionContext"; // Import useSession
 
 const Footer: React.FC = () => {
   const { t } = useTranslation();
-  const { settings, loading } = useRestaurantSettings(); // Use context
+  const { settings, loading: settingsLoading } = useRestaurantSettings();
+  const { user, loading: sessionLoading } = useSession(); // Get user from session context
 
-  if (loading) {
+  if (settingsLoading || sessionLoading) {
     return null; // Or a loading spinner
   }
 
@@ -25,11 +27,13 @@ const Footer: React.FC = () => {
         </div>
         <MadeWithDyad />
       </div>
-      <div className="absolute bottom-4 left-4">
-        <Link to="/admin" className="text-gray-400 hover:text-white transition-colors p-2 rounded-full hover:bg-gray-700">
-          <Settings className="h-6 w-6" />
-        </Link>
-      </div>
+      {user && ( // Only show admin settings link if user is logged in
+        <div className="absolute bottom-4 left-4">
+          <Link to="/admin" className="text-gray-400 hover:text-white transition-colors p-2 rounded-full hover:bg-gray-700">
+            <Settings className="h-6 w-6" />
+          </Link>
+        </div>
+      )}
     </footer>
   );
 };
