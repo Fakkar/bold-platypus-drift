@@ -42,6 +42,7 @@ const Login: React.FC = () => {
           theme="light" // Can be dynamic based on app theme
           providers={[]} // No third-party providers for now
           redirectTo={window.location.origin + '/admin'} // Redirect after auth
+          view="sign_in" // Only show sign-in form
           localization={{
             variables: {
               sign_in: {
@@ -55,16 +56,7 @@ const Login: React.FC = () => {
                 forgotten_password_link_text: t('forgot_password_link_text'),
                 confirmation_text: t('check_email_for_magic_link'),
               },
-              sign_up: {
-                email_label: t('email_label'),
-                password_label: t('password_label'),
-                email_input_placeholder: t('email_input_placeholder'),
-                password_input_placeholder: t('password_input_placeholder'),
-                button_label: t('sign_up_button'),
-                social_auth_typography: t('social_auth_typography'),
-                link_text: t('sign_up_link_text'),
-                confirmation_text: t('check_email_for_magic_link'),
-              },
+              // Removed sign_up localization to disable it
               forgotten_password: {
                 email_label: t('email_label'),
                 password_label: t('password_label'),

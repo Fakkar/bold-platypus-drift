@@ -12,12 +12,14 @@ import AdminDashboard from "./pages/AdminDashboard";
 import { RestaurantSettingsProvider } from "./context/RestaurantSettingsContext";
 import Login from "./pages/Login"; // Import Login page
 import { SessionContextProvider, useSession } from "./context/SessionContext"; // Import SessionContext
+import { toast } from "sonner"; // Import toast for notifications
 
 const queryClient = new QueryClient();
 
 // ProtectedRoute component to guard routes
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading } = useSession();
+  const ADMIN_EMAIL = "rahasahamrah@gmail.com"; // Define the admin email
 
   if (loading) {
     return (
@@ -28,7 +30,14 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   }
 
   if (!user) {
+    // If not logged in, redirect to login page
     return <Navigate to="/login" replace />;
+  }
+
+  if (user.email !== ADMIN_EMAIL) {
+    // If logged in but not the admin email, show unauthorized message and redirect to home
+    toast.error(i18n.t("unauthorized_access"));
+    return <Navigate to="/" replace />;
   }
 
   return <>{children}</>;
