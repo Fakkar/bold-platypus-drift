@@ -125,5 +125,9 @@
   "working_hours_display": "متن ساعات کاری",
   "enter_working_hours_text": "متن ساعات کاری را وارد کنید",
   "uploading": "در حال آپلود...",
-  "failed_to_upload_logo": "آپلود لوگو ناموفق بود."
+  "failed_to_upload_logo": "آپلود لوگو ناموفق بود.",
+  "image_processed_successfully": "تصویر با موفقیت پردازش شد!",
+  "failed_to_process_image": "پردازش تصویر ناموفق بود",
+  "unknown_error": "خطای ناشناخته",
+  "close": "بستن"
 }

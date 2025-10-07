@@ -125,5 +125,9 @@
   "working_hours_display": "ساعات العمل",
   "enter_working_hours_text": "أدخل نص ساعات العمل",
   "uploading": "جاري الرفع...",
-  "failed_to_upload_logo": "فشل رفع الشعار."
+  "failed_to_upload_logo": "فشل رفع الشعار.",
+  "image_processed_successfully": "تمت معالجة الصورة بنجاح!",
+  "failed_to_process_image": "فشل معالجة الصورة",
+  "unknown_error": "خطأ غير معروف",
+  "close": "إغلاق"
 }

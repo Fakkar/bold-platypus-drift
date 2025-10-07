@@ -125,5 +125,9 @@
   "working_hours_display": "工作时间文本",
   "enter_working_hours_text": "输入工作时间文本",
   "uploading": "正在上传...",
-  "failed_to_upload_logo": "上传标志失败。"
+  "failed_to_upload_logo": "上传标志失败。",
+  "image_processed_successfully": "图片处理成功！",
+  "failed_to_process_image": "图片处理失败",
+  "unknown_error": "未知错误",
+  "close": "关闭"
 }

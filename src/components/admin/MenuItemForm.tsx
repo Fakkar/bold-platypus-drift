@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useSupabaseStorage } from '@/hooks/useSupabaseStorage';
+import { useImageProcessor } from '@/hooks/useImageProcessor'; // Import the new hook
 
 interface MenuItemFormProps {
   menuItem?: {
@@ -31,6 +32,7 @@ interface Category {
 const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel }) => {
   const { t } = useTranslation();
   const { uploadFile, deleteFile, loading: uploadLoading } = useSupabaseStorage();
+  const { compressAndResizeImage, loading: imageProcessing } = useImageProcessor(); // Initialize image processor hook
 
   const [name, setName] = useState(menuItem?.name || '');
   const [description, setDescription] = useState(menuItem?.description || '');
@@ -81,12 +83,18 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
     let finalImageUrl = imageUrl;
 
     if (imageFile) {
+      const processedFile = await compressAndResizeImage(imageFile);
+      if (!processedFile) {
+        setLoading(false);
+        return; // Stop if image processing failed
+      }
+
       // If there's an old image and a new one is uploaded, delete the old one
       if (menuItem?.image_url && menuItem.image_url !== '/public/placeholder.svg') {
         const oldFilePath = menuItem.image_url.split('/public/')[1]; // Extract path from URL
         await deleteFile(oldFilePath, 'menu-images');
       }
-      const uploadedUrl = await uploadFile(imageFile, 'menu-images');
+      const uploadedUrl = await uploadFile(processedFile, 'menu-images');
       if (uploadedUrl) {
         finalImageUrl = uploadedUrl;
       } else {
@@ -192,22 +200,23 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
           type="file"
           accept="image/*"
           onChange={handleImageChange}
+          disabled={uploadLoading || imageProcessing}
         />
         {imageUrl && (
           <div className="mt-2">
             <img src={imageUrl} alt="Item Preview" className="h-24 w-24 object-cover rounded-md" />
-            <Button variant="ghost" size="sm" onClick={() => { setImageUrl(''); setImageFile(null); }} className="mt-1 text-destructive">
+            <Button variant="ghost" size="sm" onClick={() => { setImageUrl(''); setImageFile(null); }} className="mt-1 text-destructive" disabled={uploadLoading || imageProcessing}>
               {t('remove_image')}
             </Button>
           </div>
         )}
       </div>
       <DialogFooter>
-        <Button type="button" variant="outline" onClick={onCancel} disabled={loading || uploadLoading}>
+        <Button type="button" variant="outline" onClick={onCancel} disabled={loading || uploadLoading || imageProcessing}>
           {t('cancel')}
         </Button>
-        <Button type="submit" disabled={loading || uploadLoading}>
-          {loading || uploadLoading ? t('saving') : t('save')}
+        <Button type="submit" disabled={loading || uploadLoading || imageProcessing}>
+          {loading || uploadLoading || imageProcessing ? t('saving') : t('save')}
         </Button>
       </DialogFooter>
     </form>

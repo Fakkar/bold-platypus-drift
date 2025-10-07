@@ -11,17 +11,19 @@ import { LogOut } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CategoryList from "@/components/admin/CategoryList";
 import MenuItemList from "@/components/admin/MenuItemList";
-import { useSupabaseStorage } from "@/hooks/useSupabaseStorage"; // Import useSupabaseStorage
+import { useSupabaseStorage } from "@/hooks/useSupabaseStorage";
+import { useImageProcessor } from "@/hooks/useImageProcessor"; // Import the new hook
 
 const AdminDashboard: React.FC = () => {
   const { t } = useTranslation();
   const { settings, updateSettings, loading: settingsLoading } = useRestaurantSettings();
   const { user, signOut, loading: sessionLoading } = useSession();
-  const { uploadFile, deleteFile, loading: uploadLoading } = useSupabaseStorage(); // Initialize storage hook
+  const { uploadFile, deleteFile, loading: uploadLoading } = useSupabaseStorage();
+  const { compressAndResizeImage, loading: imageProcessing } = useImageProcessor(); // Initialize image processor hook
 
   const [restaurantName, setRestaurantName] = useState(settings.name);
   const [restaurantLogoUrl, setRestaurantLogoUrl] = useState(settings.logo_url);
-  const [logoFile, setLogoFile] = useState<File | null>(null); // State for uploaded logo file
+  const [logoFile, setLogoFile] = useState<File | null>(null);
   const [restaurantSlogan, setRestaurantSlogan] = useState(settings.slogan);
   const [restaurantPhoneNumber, setRestaurantPhoneNumber] = useState(settings.phone_number);
   const [restaurantWorkingHoursText, setRestaurantWorkingHoursText] = useState(settings.working_hours_text);
@@ -46,7 +48,7 @@ const AdminDashboard: React.FC = () => {
 
   const handleRemoveLogo = async () => {
     if (settings.logo_url && settings.logo_url !== '/public/placeholder.svg') {
-      const filePath = settings.logo_url.split('/public/')[1]; // Extract path from URL
+      const filePath = settings.logo_url.split('/public/')[1];
       await deleteFile(filePath, 'restaurant-logos');
     }
     setRestaurantLogoUrl('/public/placeholder.svg');
@@ -58,12 +60,18 @@ const AdminDashboard: React.FC = () => {
     let finalLogoUrl = restaurantLogoUrl;
 
     if (logoFile) {
+      const processedFile = await compressAndResizeImage(logoFile);
+      if (!processedFile) {
+        toast.error(t('failed_to_upload_logo'));
+        return; // Stop if image processing failed
+      }
+
       // If there's an old logo and a new one is uploaded, delete the old one
       if (settings.logo_url && settings.logo_url !== '/public/placeholder.svg') {
-        const oldFilePath = settings.logo_url.split('/public/')[1]; // Extract path from URL
+        const oldFilePath = settings.logo_url.split('/public/')[1];
         await deleteFile(oldFilePath, 'restaurant-logos');
       }
-      const uploadedUrl = await uploadFile(logoFile, 'restaurant-logos');
+      const uploadedUrl = await uploadFile(processedFile, 'restaurant-logos');
       if (uploadedUrl) {
         finalLogoUrl = uploadedUrl;
       } else {
@@ -154,12 +162,12 @@ const AdminDashboard: React.FC = () => {
                 type="file"
                 accept="image/*"
                 onChange={handleLogoChange}
-                disabled={uploadLoading}
+                disabled={uploadLoading || imageProcessing}
               />
               {restaurantLogoUrl && (
                 <div className="mt-2 flex items-center space-x-4">
                   <img src={restaurantLogoUrl} alt="Logo Preview" className="h-16 w-16 object-contain rounded-full border-2 border-primary" />
-                  <Button variant="ghost" size="sm" onClick={handleRemoveLogo} className="text-destructive" disabled={uploadLoading}>
+                  <Button variant="ghost" size="sm" onClick={handleRemoveLogo} className="text-destructive" disabled={uploadLoading || imageProcessing}>
                     {t('remove_image')}
                   </Button>
                 </div>
@@ -183,8 +191,8 @@ const AdminDashboard: React.FC = () => {
                 placeholder={t("enter_working_hours_text")}
               />
             </div>
-            <Button type="submit" className="w-full" disabled={uploadLoading}>
-              {uploadLoading ? t('uploading') : t("save_settings")}
+            <Button type="submit" className="w-full" disabled={uploadLoading || imageProcessing}>
+              {uploadLoading || imageProcessing ? t('uploading') : t("save_settings")}
             </Button>
           </form>
         </TabsContent>
