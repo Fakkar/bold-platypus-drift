@@ -28,7 +28,7 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
           {item.description}
         </p>
         <div className="flex items-center justify-center"> {/* Center the price */}
-          <span className="text-2xl font-bold text-primary dark:text-primary-foreground">
+          <span className="text-2xl font-bold text-primary dark:text-primary-foreground" dir="rtl"> {/* Explicitly set direction to RTL */}
             {formatPriceInToman(item.price)} {/* Format price in Toman and Persian */}
           </span>
           {/* Removed "Add to Cart" button */}
