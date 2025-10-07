@@ -58,25 +58,45 @@ export const RestaurantSettingsProvider: React.FC<{ children: ReactNode }> = ({ 
 
   const updateSettings = async (newSettings: Partial<RestaurantSettings>) => {
     setLoading(true);
-    const { id, ...settingsToUpdate } = { ...settings, ...newSettings };
+    const updatedData = { ...settings, ...newSettings, updated_at: new Date().toISOString() };
 
-    const { data, error } = await supabase
-      .from('restaurant_settings')
-      .upsert({ id, ...settingsToUpdate, updated_at: new Date().toISOString() }, { onConflict: 'id' })
-      .select()
-      .single();
+    let resultData = null;
+    let error = null;
+
+    if (settings.id) {
+      // If settings already exist, update them
+      const { data, error: updateError } = await supabase
+        .from('restaurant_settings')
+        .update(updatedData)
+        .eq('id', settings.id)
+        .select()
+        .single();
+      resultData = data;
+      error = updateError;
+    } else {
+      // If no settings exist, insert a new row
+      // Remove 'id' from updatedData for insert, as it's auto-generated
+      const { id, ...insertData } = updatedData;
+      const { data, error: insertError } = await supabase
+        .from('restaurant_settings')
+        .insert(insertData)
+        .select()
+        .single();
+      resultData = data;
+      error = insertError;
+    }
 
     if (error) {
-      console.error('Error updating restaurant settings:', error);
+      console.error('Error saving restaurant settings:', error);
       toast.error('Failed to save settings.');
-    } else if (data) {
+    } else if (resultData) {
       setSettings({
-        id: data.id,
-        name: data.name,
-        logo_url: data.logo_url,
-        slogan: data.slogan,
-        phone_number: data.phone_number,
-        working_hours_text: data.working_hours_text,
+        id: resultData.id,
+        name: resultData.name,
+        logo_url: resultData.logo_url,
+        slogan: resultData.slogan,
+        phone_number: resultData.phone_number,
+        working_hours_text: resultData.working_hours_text,
       });
       toast.success('Settings saved successfully!');
     }
