@@ -40,12 +40,12 @@ const App = () => (
       <Toaster />
       <Sonner />
       <I18nextProvider i18n={i18n}>
-        <SessionContextProvider> {/* Wrap the app with SessionContextProvider */}
-          <RestaurantSettingsProvider>
-            <BrowserRouter>
+        <BrowserRouter> {/* BrowserRouter moved here to wrap everything */}
+          <SessionContextProvider>
+            <RestaurantSettingsProvider>
               <Routes>
                 <Route path="/" element={<MenuPage />} />
-                <Route path="/login" element={<Login />} /> {/* Login route */}
+                <Route path="/login" element={<Login />} />
                 <Route 
                   path="/admin" 
                   element={
@@ -58,9 +58,8 @@ const App = () => (
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
-          </RestaurantSettingsProvider>
-        </SessionContextProvider>
-      </I18nextProvider>
+          </SessionContextProvider>
+        </I18nextProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
