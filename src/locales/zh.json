@@ -6,7 +6,7 @@
   "admin_dashboard": "管理员仪表板",
   "menu": "菜单",
   "This is the public menu page. Food items will be displayed here.": "这是公共菜单页面。食物项目将在此处显示。",
-  "This is the admin dashboard. Here you可以管理食物项目.": "这是管理员仪表板。您可以在此处管理食物项目。",
+  "This is the admin dashboard. Here you can manage food items.": "这是管理员仪表板。您可以在此处管理食物项目。",
   "restaurant_name": "我的餐厅",
   "order_now": "立即订购",
   "hero_title": "美味佳肴，送货上门",
@@ -21,5 +21,12 @@
   "add_to_cart": "添加到购物车",
   "all_rights_reserved": "保留所有权利",
   "privacy_policy": "隐私政策",
-  "terms_of_service": "服务条款"
+  "terms_of_service": "服务条款",
+  "restaurant_settings": "餐厅设置",
+  "enter_restaurant_name": "输入餐厅名称",
+  "restaurant_logo_url": "餐厅标志网址",
+  "enter_logo_url": "输入标志网址",
+  "save_settings": "保存设置",
+  "settings_saved_successfully": "设置保存成功！",
+  "back_to_menu": "返回菜单"
 }

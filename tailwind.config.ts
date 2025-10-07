@@ -18,6 +18,9 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        vazirmatn: ['Vazirmatn', 'sans-serif'], // Add Vazirmatn to font families
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

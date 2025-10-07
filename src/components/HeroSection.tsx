@@ -19,11 +19,7 @@ const HeroSection: React.FC = () => {
         <p className="text-xl mb-8">
           {t("hero_description")}
         </p>
-        <Link to="/menu#menu-items">
-          <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-            {t("view_menu")}
-          </Button>
-        </Link>
+        {/* Removed "View Menu" button as menu is now the home page */}
       </div>
     </section>
   );

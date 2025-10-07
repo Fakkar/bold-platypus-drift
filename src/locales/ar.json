@@ -21,5 +21,12 @@
   "add_to_cart": "أضف إلى السلة",
   "all_rights_reserved": "جميع الحقوق محفوظة",
   "privacy_policy": "سياسة الخصوصية",
-  "terms_of_service": "شروط الخدمة"
+  "terms_of_service": "شروط الخدمة",
+  "restaurant_settings": "إعدادات المطعم",
+  "enter_restaurant_name": "أدخل اسم المطعم",
+  "restaurant_logo_url": "رابط شعار المطعم",
+  "enter_logo_url": "أدخل رابط الشعار",
+  "save_settings": "حفظ الإعدادات",
+  "settings_saved_successfully": "تم حفظ الإعدادات بنجاح!",
+  "back_to_menu": "العودة إلى القائمة"
 }

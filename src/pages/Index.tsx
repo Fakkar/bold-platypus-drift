@@ -1,9 +1,9 @@
-import { useTranslation } from "react-i18next"; // Import useTranslation
-import { Link } from "react-router-dom"; // Import Link for navigation
-import { Button } from "@/components/ui/button"; // Import Button component
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
-  const { t } = useTranslation(); // Initialize useTranslation
+  const { t } = useTranslation();
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-4">
@@ -13,7 +13,7 @@ const Index = () => {
           {t("start_building")}
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-          <Link to="/menu">
+          <Link to="/"> {/* Link to the new home (MenuPage) */}
             <Button size="lg" className="w-full sm:w-auto">
               {t("menu")}
             </Button>

@@ -30,7 +30,7 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
           <span className="text-2xl font-bold text-primary dark:text-primary-foreground">
             ${item.price.toFixed(2)}
           </span>
-          <Button>{t("add_to_cart")}</Button>
+          {/* Removed "Add to Cart" button */}
         </div>
       </CardContent>
     </Card>

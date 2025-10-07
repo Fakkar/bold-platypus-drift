@@ -21,5 +21,12 @@
   "add_to_cart": "افزودن به سبد خرید",
   "all_rights_reserved": "تمامی حقوق محفوظ است",
   "privacy_policy": "سیاست حفظ حریم خصوصی",
-  "terms_of_service": "شرایط خدمات"
+  "terms_of_service": "شرایط خدمات",
+  "restaurant_settings": "تنظیمات رستوران",
+  "enter_restaurant_name": "نام رستوران را وارد کنید",
+  "restaurant_logo_url": "آدرس لوگوی رستوران",
+  "enter_logo_url": "آدرس URL لوگو را وارد کنید",
+  "save_settings": "ذخیره تنظیمات",
+  "settings_saved_successfully": "تنظیمات با موفقیت ذخیره شد!",
+  "back_to_menu": "بازگشت به منو"
 }
