@@ -1,0 +1,10 @@
+{
+  "welcome": "مرحباً بك في تطبيق قائمة المطعم الخاص بك!",
+  "start_building": "ابدأ ببناء مشروعك الرائع هنا!",
+  "select_language": "اختر اللغة:",
+  "home": "الرئيسية",
+  "admin_dashboard": "لوحة تحكم المسؤول",
+  "menu": "القائمة",
+  "This is the public menu page. Food items will be displayed here.": "هذه صفحة القائمة العامة. سيتم عرض أصناف الطعام هنا.",
+  "This is the admin dashboard. Here you can manage food items.": "هذه لوحة تحكم المسؤول. هنا يمكنك إدارة أصناف الطعام."
+}

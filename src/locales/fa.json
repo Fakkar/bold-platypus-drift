@@ -1,0 +1,10 @@
+{
+  "welcome": "به برنامه منوی رستوران خوش آمدید!",
+  "start_building": "اینجا شروع به ساخت پروژه شگفت‌انگیز خود کنید!",
+  "select_language": "انتخاب زبان:",
+  "home": "خانه",
+  "admin_dashboard": "داشبورد ادمین",
+  "menu": "منو",
+  "This is the public menu page. Food items will be displayed here.": "این صفحه منوی عمومی است. آیتم‌های غذا در اینجا نمایش داده خواهند شد.",
+  "This is the admin dashboard. Here you can manage food items.": "این داشبورد ادمین است. در اینجا می‌توانید آیتم‌های غذا را مدیریت کنید."
+}
