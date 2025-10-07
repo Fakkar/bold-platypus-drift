@@ -1,17 +1,44 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 import { MenuIcon, LogOut, Phone, Clock } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet"; // Import SheetClose
 import { useRestaurantSettings } from "@/context/RestaurantSettingsContext";
 import { useSession } from "@/context/SessionContext";
+import { supabase } from '@/integrations/supabase/client'; // Import supabase
+import { toast } from 'sonner'; // Import toast
+
+interface Category {
+  id: string;
+  name: string;
+  order?: number;
+}
 
 const Header: React.FC = () => {
   const { t } = useTranslation();
   const { settings, loading: settingsLoading } = useRestaurantSettings();
   const { user, signOut, loading: sessionLoading } = useSession();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isSheetOpen, setIsSheetOpen] = useState(false); // State to manage sheet open/close
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('id, name')
+        .order('order', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching categories for header:', error);
+        toast.error(t('failed_to_load_categories', { message: error.message }));
+      } else {
+        setCategories(data || []);
+      }
+    };
+    fetchCategories();
+  }, [t]);
 
   if (settingsLoading || sessionLoading) {
     return null;
@@ -48,7 +75,7 @@ const Header: React.FC = () => {
 
         {/* Mobile Menu (Hamburger Icon) */}
         <div className="md:hidden flex items-center space-x-2 rtl:space-x-reverse">
-          <Sheet>
+          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="bg-white/20 backdrop-blur-sm text-white border-none hover:bg-white/30">
                 <MenuIcon className="h-6 w-6" />
@@ -65,28 +92,42 @@ const Header: React.FC = () => {
                   <span>{settings.working_hours_text}</span>
                 </div>
                 <LanguageSwitcher />
-                <Link to="/" className="text-lg font-medium hover:text-primary transition-colors">
-                  {t("home")}
-                </Link>
-                <Link to="/#menu-items" className="text-lg font-medium hover:text-primary transition-colors">
-                  {t("menu")}
-                </Link>
-                <Link to="/about" className="text-lg font-medium hover:text-primary transition-colors">
-                  {t("about")}
-                </Link>
-                <Link to="/contact" className="text-lg font-medium hover:text-primary transition-colors">
-                  {t("contact")}
-                </Link>
+                
+                {/* Dynamic Category Links */}
+                {categories.map((category) => (
+                  <SheetClose asChild key={category.id}>
+                    <Link 
+                      to={`/#category-${category.id}`} 
+                      className="text-lg font-medium hover:text-primary transition-colors"
+                      onClick={() => setIsSheetOpen(false)} // Close sheet on click
+                    >
+                      {category.name}
+                    </Link>
+                  </SheetClose>
+                ))}
+
                 {user && (
-                  <Link to="/admin" className="text-lg font-medium hover:text-primary transition-colors">
-                    {t("admin_dashboard")}
-                  </Link>
+                  <SheetClose asChild>
+                    <Link 
+                      to="/admin" 
+                      className="text-lg font-medium hover:text-primary transition-colors"
+                      onClick={() => setIsSheetOpen(false)} // Close sheet on click
+                    >
+                      {t("admin_dashboard")}
+                    </Link>
+                  </SheetClose>
                 )}
                 {user && (
-                  <Button variant="ghost" onClick={signOut} className="flex items-center space-x-2 text-lg text-destructive hover:text-destructive-foreground">
-                    <LogOut className="h-5 w-5" />
-                    <span>{t("logout")}</span>
-                  </Button>
+                  <SheetClose asChild>
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => { signOut(); setIsSheetOpen(false); }} // Close sheet on sign out
+                      className="flex items-center space-x-2 text-lg text-destructive hover:text-destructive-foreground"
+                    >
+                      <LogOut className="h-5 w-5" />
+                      <span>{t("logout")}</span>
+                    </Button>
+                  </SheetClose>
                 )}
               </nav>
             </SheetContent>

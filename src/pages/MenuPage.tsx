@@ -7,7 +7,7 @@ import Footer from "@/components/layout/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-// import WorkingHours from "@/components/WorkingHours"; // WorkingHours component removed as per request
+import { useLocation } from "react-router-dom"; // Import useLocation
 
 interface Category {
   id: string;
@@ -26,9 +26,11 @@ interface MenuItem {
 
 const MenuPage: React.FC = () => {
   const { t } = useTranslation();
+  const location = useLocation(); // Initialize useLocation
   const [categories, setCategories] = useState<Category[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<string | undefined>(undefined); // State for active tab
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,8 +45,13 @@ const MenuPage: React.FC = () => {
         console.error('Error fetching categories:', categoriesError);
         toast.error(t('failed_to_load_categories', { message: categoriesError.message }));
       } else {
-        // Removed "all items" category as per request
         setCategories(categoriesData || []);
+        // Set initial active tab based on URL hash or first category
+        if (categoriesData && categoriesData.length > 0) {
+          const hashCategoryId = location.hash.replace('#category-', '');
+          const foundCategory = categoriesData.find(cat => cat.id === hashCategoryId);
+          setActiveTab(foundCategory ? foundCategory.id : categoriesData[0].id);
+        }
       }
 
       // Fetch menu items
@@ -63,7 +70,7 @@ const MenuPage: React.FC = () => {
     };
 
     fetchData();
-  }, [t]);
+  }, [t, location.hash]); // Re-run effect if hash changes
 
   if (loading) {
     return (
@@ -72,10 +79,6 @@ const MenuPage: React.FC = () => {
       </div>
     );
   }
-
-  // Determine the default tab value. If there are categories, use the first one's ID.
-  // Otherwise, default to an empty string or handle the no-category case.
-  const defaultTabValue = categories.length > 0 ? categories[0].id : "";
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -90,7 +93,7 @@ const MenuPage: React.FC = () => {
         {categories.length === 0 ? (
           <p className="text-center text-gray-600 dark:text-gray-400">{t("no_categories_found")}</p>
         ) : (
-          <Tabs defaultValue={defaultTabValue} className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 gap-2 mb-8">
               {categories.map((category) => (
                 <TabsTrigger key={category.id} value={category.id}>
@@ -111,8 +114,6 @@ const MenuPage: React.FC = () => {
             ))}
           </Tabs>
         )}
-
-        {/* WorkingHours component removed as per request */}
       </main>
 
       <Footer />

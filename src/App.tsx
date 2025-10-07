@@ -10,11 +10,9 @@ import i18n from "./i18n";
 import MenuPage from "./pages/MenuPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import { RestaurantSettingsProvider } from "./context/RestaurantSettingsContext";
-import Login from "./pages/Login"; // Import Login page
-import { SessionContextProvider, useSession } from "./context/SessionContext"; // Import SessionContext
-import { toast } from "sonner"; // Import toast for notifications
-import About from "./pages/About"; // Import About page
-import Contact from "./pages/Contact"; // Import Contact page
+import Login from "./pages/Login";
+import { SessionContextProvider, useSession } from "./context/SessionContext";
+import { toast } from "sonner";
 
 const queryClient = new QueryClient();
 
@@ -57,8 +55,6 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<MenuPage />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/about" element={<About />} /> {/* New About route */}
-                <Route path="/contact" element={<Contact />} /> {/* New Contact route */}
                 <Route 
                   path="/admin" 
                   element={
@@ -67,7 +63,7 @@ const App = () => (
                     </ProtectedRoute>
                   } 
                 />
-                <Route path="/home" element={<Index />} /> {/* Keep Index for now, though / is MenuPage */}
+                <Route path="/home" element={<Index />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </RestaurantSettingsProvider>
