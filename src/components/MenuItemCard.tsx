@@ -10,7 +10,7 @@ interface MenuItemCardProps {
     name: string;
     description: string;
     price: number;
-    imageUrl: string;
+    image_url?: string; // Changed from imageUrl to image_url to match Supabase data
   };
 }
 
@@ -19,7 +19,7 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
 
   return (
     <Card className="w-full max-w-sm overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <img src={item.imageUrl} alt={item.name} className="w-full h-48 object-cover" />
+      <img src={item.image_url || '/public/placeholder.svg'} alt={item.name} className="w-full h-48 object-cover" />
       <CardHeader className="text-right"> {/* Align header text to the right */}
         <CardTitle className="text-xl font-semibold">{item.name}</CardTitle>
       </CardHeader>
