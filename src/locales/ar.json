@@ -26,7 +26,7 @@
   "restaurant_settings": "إعدادات المطعم",
   "enter_restaurant_name": "أدخل اسم المطعم",
   "enter_restaurant_slogan": "أدخل شعار المطعم",
-  "restaurant_logo_url": "رابط شعار المطعم",
+  "restaurant_logo_url": "شعار المطعم",
   "enter_logo_url": "أدخل رابط الشعار",
   "save_settings": "حفظ الإعدادات",
   "settings_saved_successfully": "تم حفظ الإعدادات بنجاح!",
@@ -123,5 +123,7 @@
   "phone_number": "رقم الهاتف",
   "enter_phone_number": "أدخل رقم الهاتف",
   "working_hours_display": "ساعات العمل",
-  "enter_working_hours_text": "أدخل نص ساعات العمل"
+  "enter_working_hours_text": "أدخل نص ساعات العمل",
+  "uploading": "جاري الرفع...",
+  "failed_to_upload_logo": "فشل رفع الشعار."
 }

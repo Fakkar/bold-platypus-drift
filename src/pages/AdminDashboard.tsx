@@ -11,14 +11,17 @@ import { LogOut } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CategoryList from "@/components/admin/CategoryList";
 import MenuItemList from "@/components/admin/MenuItemList";
+import { useSupabaseStorage } from "@/hooks/useSupabaseStorage"; // Import useSupabaseStorage
 
 const AdminDashboard: React.FC = () => {
   const { t } = useTranslation();
   const { settings, updateSettings, loading: settingsLoading } = useRestaurantSettings();
   const { user, signOut, loading: sessionLoading } = useSession();
+  const { uploadFile, deleteFile, loading: uploadLoading } = useSupabaseStorage(); // Initialize storage hook
 
   const [restaurantName, setRestaurantName] = useState(settings.name);
   const [restaurantLogoUrl, setRestaurantLogoUrl] = useState(settings.logo_url);
+  const [logoFile, setLogoFile] = useState<File | null>(null); // State for uploaded logo file
   const [restaurantSlogan, setRestaurantSlogan] = useState(settings.slogan);
   const [restaurantPhoneNumber, setRestaurantPhoneNumber] = useState(settings.phone_number);
   const [restaurantWorkingHoursText, setRestaurantWorkingHoursText] = useState(settings.working_hours_text);
@@ -34,11 +37,51 @@ const AdminDashboard: React.FC = () => {
     }
   }, [settings, settingsLoading]);
 
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setLogoFile(e.target.files[0]);
+      setRestaurantLogoUrl(URL.createObjectURL(e.target.files[0])); // For preview
+    }
+  };
+
+  const handleRemoveLogo = async () => {
+    if (settings.logo_url && settings.logo_url !== '/public/placeholder.svg') {
+      const filePath = settings.logo_url.split('/public/')[1]; // Extract path from URL
+      await deleteFile(filePath, 'restaurant-logos');
+    }
+    setRestaurantLogoUrl('/public/placeholder.svg');
+    setLogoFile(null);
+  };
+
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
+    let finalLogoUrl = restaurantLogoUrl;
+
+    if (logoFile) {
+      // If there's an old logo and a new one is uploaded, delete the old one
+      if (settings.logo_url && settings.logo_url !== '/public/placeholder.svg') {
+        const oldFilePath = settings.logo_url.split('/public/')[1]; // Extract path from URL
+        await deleteFile(oldFilePath, 'restaurant-logos');
+      }
+      const uploadedUrl = await uploadFile(logoFile, 'restaurant-logos');
+      if (uploadedUrl) {
+        finalLogoUrl = uploadedUrl;
+      } else {
+        toast.error(t('failed_to_upload_logo'));
+        return; // Stop if image upload failed
+      }
+    } else if (!restaurantLogoUrl && settings.logo_url && settings.logo_url !== '/public/placeholder.svg') {
+      // If logo was removed and it was not a placeholder, delete from storage
+      const oldFilePath = settings.logo_url.split('/public/')[1];
+      await deleteFile(oldFilePath, 'restaurant-logos');
+      finalLogoUrl = '/public/placeholder.svg';
+    } else if (!restaurantLogoUrl) {
+      finalLogoUrl = '/public/placeholder.svg';
+    }
+
     await updateSettings({ 
       name: restaurantName, 
-      logo_url: restaurantLogoUrl,
+      logo_url: finalLogoUrl,
       slogan: restaurantSlogan,
       phone_number: restaurantPhoneNumber,
       working_hours_text: restaurantWorkingHoursText,
@@ -105,15 +148,21 @@ const AdminDashboard: React.FC = () => {
               />
             </div>
             <div>
-              <Label htmlFor="logo-url">{t("restaurant_logo_url")}</Label>
+              <Label htmlFor="logo-upload">{t("restaurant_logo_url")}</Label>
               <Input
-                id="logo-url"
-                value={restaurantLogoUrl}
-                onChange={(e) => setRestaurantLogoUrl(e.target.value)}
-                placeholder={t("enter_logo_url")}
+                id="logo-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleLogoChange}
+                disabled={uploadLoading}
               />
               {restaurantLogoUrl && (
-                <img src={restaurantLogoUrl} alt="Logo Preview" className="mt-2 h-16 w-16 object-contain" />
+                <div className="mt-2 flex items-center space-x-4">
+                  <img src={restaurantLogoUrl} alt="Logo Preview" className="h-16 w-16 object-contain rounded-full border-2 border-primary" />
+                  <Button variant="ghost" size="sm" onClick={handleRemoveLogo} className="text-destructive" disabled={uploadLoading}>
+                    {t('remove_image')}
+                  </Button>
+                </div>
               )}
             </div>
             <div>
@@ -134,7 +183,9 @@ const AdminDashboard: React.FC = () => {
                 placeholder={t("enter_working_hours_text")}
               />
             </div>
-            <Button type="submit" className="w-full">{t("save_settings")}</Button>
+            <Button type="submit" className="w-full" disabled={uploadLoading}>
+              {uploadLoading ? t('uploading') : t("save_settings")}
+            </Button>
           </form>
         </TabsContent>
         <TabsContent value="categories" className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mt-4">

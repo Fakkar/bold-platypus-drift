@@ -26,7 +26,7 @@
   "restaurant_settings": "餐厅设置",
   "enter_restaurant_name": "输入餐厅名称",
   "enter_restaurant_slogan": "输入餐厅标语",
-  "restaurant_logo_url": "餐厅标志网址",
+  "restaurant_logo_url": "餐厅标志",
   "enter_logo_url": "输入标志网址",
   "save_settings": "保存设置",
   "settings_saved_successfully": "设置保存成功！",
@@ -123,5 +123,7 @@
   "phone_number": "电话号码",
   "enter_phone_number": "输入电话号码",
   "working_hours_display": "工作时间文本",
-  "enter_working_hours_text": "输入工作时间文本"
+  "enter_working_hours_text": "输入工作时间文本",
+  "uploading": "正在上传...",
+  "failed_to_upload_logo": "上传标志失败。"
 }

@@ -26,7 +26,7 @@
   "restaurant_settings": "تنظیمات رستوران",
   "enter_restaurant_name": "نام رستوران را وارد کنید",
   "enter_restaurant_slogan": "شعار رستوران را وارد کنید",
-  "restaurant_logo_url": "آدرس لوگوی رستوران",
+  "restaurant_logo_url": "لوگوی رستوران",
   "enter_logo_url": "آدرس URL لوگو را وارد کنید",
   "save_settings": "ذخیره تنظیمات",
   "settings_saved_successfully": "تنظیمات با موفقیت ذخیره شد!",
@@ -123,5 +123,7 @@
   "phone_number": "شماره تلفن",
   "enter_phone_number": "شماره تلفن را وارد کنید",
   "working_hours_display": "متن ساعات کاری",
-  "enter_working_hours_text": "متن ساعات کاری را وارد کنید"
+  "enter_working_hours_text": "متن ساعات کاری را وارد کنید",
+  "uploading": "در حال آپلود...",
+  "failed_to_upload_logo": "آپلود لوگو ناموفق بود."
 }

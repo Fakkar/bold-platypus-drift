@@ -26,7 +26,7 @@
   "restaurant_settings": "Restaurant Settings",
   "enter_restaurant_name": "Enter restaurant name",
   "enter_restaurant_slogan": "Enter restaurant slogan",
-  "restaurant_logo_url": "Restaurant Logo URL",
+  "restaurant_logo_url": "Restaurant Logo",
   "enter_logo_url": "Enter logo URL",
   "save_settings": "Save Settings",
   "settings_saved_successfully": "Settings saved successfully!",
@@ -123,5 +123,7 @@
   "phone_number": "Phone Number",
   "enter_phone_number": "Enter phone number",
   "working_hours_display": "Working Hours Text",
-  "enter_working_hours_text": "Enter working hours text"
+  "enter_working_hours_text": "Enter working hours text",
+  "uploading": "Uploading...",
+  "failed_to_upload_logo": "Failed to upload logo."
 }
