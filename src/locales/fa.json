@@ -6,5 +6,20 @@
   "admin_dashboard": "داشبورد ادمین",
   "menu": "منو",
   "This is the public menu page. Food items will be displayed here.": "این صفحه منوی عمومی است. آیتم‌های غذا در اینجا نمایش داده خواهند شد.",
-  "This is the admin dashboard. Here you can manage food items.": "این داشبورد ادمین است. در اینجا می‌توانید آیتم‌های غذا را مدیریت کنید."
+  "This is the admin dashboard. Here you can manage food items.": "این داشبورد ادمین است. در اینجا می‌توانید آیتم‌های غذا را مدیریت کنید.",
+  "restaurant_name": "رستوران من",
+  "order_now": "همین حالا سفارش دهید",
+  "hero_title": "غذاهای لذیذ، درب منزل شما",
+  "hero_description": "بهترین غذاهای شهر را با چند کلیک ساده سفارش دهید و از طعم بی‌نظیر لذت ببرید.",
+  "view_menu": "مشاهده منو",
+  "our_menu": "منوی ما",
+  "all_items": "همه آیتم‌ها",
+  "appetizers": "پیش‌غذاها",
+  "main_courses": "غذاهای اصلی",
+  "desserts": "دسرها",
+  "drinks": "نوشیدنی‌ها",
+  "add_to_cart": "افزودن به سبد خرید",
+  "all_rights_reserved": "تمامی حقوق محفوظ است",
+  "privacy_policy": "سیاست حفظ حریم خصوصی",
+  "terms_of_service": "شرایط خدمات"
 }

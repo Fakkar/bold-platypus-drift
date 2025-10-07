@@ -6,5 +6,20 @@
   "admin_dashboard": "لوحة تحكم المسؤول",
   "menu": "القائمة",
   "This is the public menu page. Food items will be displayed here.": "هذه صفحة القائمة العامة. سيتم عرض أصناف الطعام هنا.",
-  "This is the admin dashboard. Here you can manage food items.": "هذه لوحة تحكم المسؤول. هنا يمكنك إدارة أصناف الطعام."
+  "This is the admin dashboard. Here you can manage food items.": "هذه لوحة تحكم المسؤول. هنا يمكنك إدارة أصناف الطعام.",
+  "restaurant_name": "مطعمي",
+  "order_now": "اطلب الآن",
+  "hero_title": "طعام لذيذ، يصل إلى باب منزلك",
+  "hero_description": "اطلب أفضل الأطعمة في المدينة ببضع نقرات بسيطة واستمتع بالمذاق الرائع.",
+  "view_menu": "عرض القائمة",
+  "our_menu": "قائمتنا",
+  "all_items": "جميع الأصناف",
+  "appetizers": "المقبلات",
+  "main_courses": "الأطباق الرئيسية",
+  "desserts": "الحلويات",
+  "drinks": "المشروبات",
+  "add_to_cart": "أضف إلى السلة",
+  "all_rights_reserved": "جميع الحقوق محفوظة",
+  "privacy_policy": "سياسة الخصوصية",
+  "terms_of_service": "شروط الخدمة"
 }

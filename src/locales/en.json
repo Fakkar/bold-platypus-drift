@@ -6,5 +6,20 @@
   "admin_dashboard": "Admin Dashboard",
   "menu": "Menu",
   "This is the public menu page. Food items will be displayed here.": "This is the public menu page. Food items will be displayed here.",
-  "This is the admin dashboard. Here you can manage food items.": "This is the admin dashboard. Here you can manage food items."
+  "This is the admin dashboard. Here you can manage food items.": "This is the admin dashboard. Here you can manage food items.",
+  "restaurant_name": "My Restaurant",
+  "order_now": "Order Now",
+  "hero_title": "Delicious Food, Delivered to Your Door",
+  "hero_description": "Order the best food in town with a few simple clicks and enjoy the exquisite taste.",
+  "view_menu": "View Menu",
+  "our_menu": "Our Menu",
+  "all_items": "All Items",
+  "appetizers": "Appetizers",
+  "main_courses": "Main Courses",
+  "desserts": "Desserts",
+  "drinks": "Drinks",
+  "add_to_cart": "Add to Cart",
+  "all_rights_reserved": "All rights reserved",
+  "privacy_policy": "Privacy Policy",
+  "terms_of_service": "Terms of Service"
 }
