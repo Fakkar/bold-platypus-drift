@@ -5,5 +5,5 @@ export const toPersianNumber = (num: number | string): string => {
 
 export const formatPriceInToman = (price: number): string => {
   const formattedPrice = price.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-  return `تومان ${toPersianNumber(formattedPrice)}`; // Changed order here
+  return `${toPersianNumber(formattedPrice)} تومان`; // Corrected order: number first, then "تومان"
 };
