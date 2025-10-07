@@ -7,35 +7,59 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Globe } from "lucide-react"; // Import Globe icon
 
 const LanguageSwitcher: React.FC = () => {
-  const { i18n, t } = useTranslation();
+  const { i18n } = useTranslation();
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
-    // Set text direction based on language
     document.documentElement.dir = (lng === "fa" || lng === "ar") ? "rtl" : "ltr";
   };
 
   React.useEffect(() => {
-    // Set initial text direction based on current language
     document.documentElement.dir = (i18n.language === "fa" || i18n.language === "ar") ? "rtl" : "ltr";
   }, [i18n.language]);
 
+  const getFlag = (lng: string) => {
+    switch (lng) {
+      case "fa":
+        return "🇮🇷";
+      case "en":
+        return "🇬🇧";
+      case "ar":
+        return "🇸🇦";
+      case "zh":
+        return "🇨🇳";
+      default:
+        return "";
+    }
+  };
+
   return (
-    <div className="flex items-center space-x-2">
-      <Select onValueChange={changeLanguage} defaultValue={i18n.language}>
-        <SelectTrigger id="language-select" className="w-[100px] border-none focus:ring-0 focus:ring-offset-0 text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary-foreground">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="fa">فارسی</SelectItem>
-          <SelectItem value="en">English</SelectItem>
-          <SelectItem value="ar">العربية</SelectItem>
-          <SelectItem value="zh">中文</SelectItem>
-        </SelectContent>
-      </Select>
-    </div>
+    <Select onValueChange={changeLanguage} defaultValue={i18n.language}>
+      <SelectTrigger 
+        id="language-select" 
+        className="w-[100px] bg-transparent text-white border border-white/30 hover:border-white/50 focus:ring-0 focus:ring-offset-0 rounded-md px-3 py-2 flex items-center justify-center space-x-1"
+      >
+        <span role="img" aria-label="flag" className="text-lg">{getFlag(i18n.language)}</span>
+        <Globe className="h-4 w-4 text-white" />
+      </SelectTrigger>
+      <SelectContent className="bg-gray-800 text-white border-gray-700">
+        <SelectItem value="fa" className="flex items-center">
+          <span role="img" aria-label="Farsi flag" className="mr-2">🇮🇷</span> فارسی
+        </SelectItem>
+        <SelectItem value="en" className="flex items-center">
+          <span role="img" aria-label="English flag" className="mr-2">🇬🇧</span> English
+        </SelectItem>
+        <SelectItem value="ar" className="flex items-center">
+          <span role="img" aria-label="Arabic flag" className="mr-2">🇸🇦</span> العربية
+        </SelectItem>
+        <SelectItem value="zh" className="flex items-center">
+          <span role="img" aria-label="Chinese flag" className="mr-2">🇨🇳</span> 中文
+        </SelectItem>
+      </SelectContent>
+    </Select>
   );
 };
 

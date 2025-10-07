@@ -51,7 +51,7 @@
   "login_error": "Login failed: {{message}}",
   "login_success": "Logged in successfully!",
   "logged_out_successfully": "Logged out successfully.",
-  "logout_error": "Logout failed: {{message}}",
+  "logout_error": "Logout failed: {{message}",
   "session_error": "Session error: {{message}}",
   "logout": "Logout",
   "unauthorized_access": "Unauthorized access. Please log in.",
@@ -117,5 +117,7 @@
   "about_us_paragraph_3": "Our team of talented chefs crafts each dish with precision and care, ensuring every bite is a celebration of flavor. Join us on a culinary journey like no other.",
   "email_us": "Email Us",
   "call_us": "Call Us",
-  "find_us": "Find Us"
+  "find_us": "Find Us",
+  "phone_number": "021-1234-5678",
+  "working_hours_display": "9:00 AM - 11:00 PM"
 }
