@@ -121,5 +121,6 @@
   "image_processed_successfully": "Image processed successfully!",
   "failed_to_process_image": "Failed to process image",
   "unknown_error": "Unknown error",
-  "close": "Close"
+  "close": "Close",
+  "category_image_icon": "Category Image Icon"
 }

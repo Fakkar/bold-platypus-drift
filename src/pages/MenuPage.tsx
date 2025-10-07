@@ -13,6 +13,7 @@ interface Category {
   id: string;
   name: string;
   order?: number;
+  icon_url?: string; // New field for image icon URL
 }
 
 interface MenuItem {
@@ -38,7 +39,7 @@ const MenuPage: React.FC = () => {
       // Fetch categories
       const { data: categoriesData, error: categoriesError } = await supabase
         .from('categories')
-        .select('*')
+        .select('*, icon_url') // Fetch icon_url
         .order('order', { ascending: true });
 
       if (categoriesError) {
@@ -96,8 +97,11 @@ const MenuPage: React.FC = () => {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 gap-2 mb-8">
               {categories.map((category) => (
-                <TabsTrigger key={category.id} value={category.id}>
-                  {category.name}
+                <TabsTrigger key={category.id} value={category.id} className="flex items-center justify-center space-x-2 rtl:space-x-reverse">
+                  {category.icon_url && (
+                    <img src={category.icon_url} alt={category.name} className="h-6 w-6 object-contain rounded-full" />
+                  )}
+                  <span>{category.name}</span>
                 </TabsTrigger>
               ))}
             </TabsList>

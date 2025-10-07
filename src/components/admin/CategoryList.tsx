@@ -8,16 +8,19 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import CategoryForm from './CategoryForm';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { useSupabaseStorage } from '@/hooks/useSupabaseStorage'; // Import useSupabaseStorage
 
 interface Category {
   id: string;
   name: string;
   icon?: string;
   order?: number;
+  icon_url?: string; // New field for image icon URL
 }
 
 const CategoryList: React.FC = () => {
   const { t } = useTranslation();
+  const { deleteFile } = useSupabaseStorage(); // Initialize useSupabaseStorage
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -48,11 +51,17 @@ const CategoryList: React.FC = () => {
     setIsFormOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (category: Category) => {
+    // Delete image from storage if it exists and is not a placeholder
+    if (category.icon_url) {
+      const filePath = category.icon_url.split('/category-icons/')[1]; // Extract path from URL
+      await deleteFile(filePath, 'category-icons');
+    }
+
     const { error } = await supabase
       .from('categories')
       .delete()
-      .eq('id', id);
+      .eq('id', category.id);
 
     if (error) {
       console.error('Error deleting category:', error);
@@ -109,7 +118,13 @@ const CategoryList: React.FC = () => {
               {categories.map((category) => (
                 <TableRow key={category.id}>
                   <TableCell className="font-medium">{category.name}</TableCell>
-                  <TableCell>{category.icon}</TableCell>
+                  <TableCell>
+                    {category.icon_url ? (
+                      <img src={category.icon_url} alt={category.name} className="h-8 w-8 object-contain rounded-full" />
+                    ) : (
+                      category.icon || '-'
+                    )}
+                  </TableCell>
                   <TableCell>{category.order}</TableCell>
                   <TableCell className="text-right">
                     <Button variant="ghost" size="icon" onClick={() => handleEdit(category)}>
@@ -130,7 +145,7 @@ const CategoryList: React.FC = () => {
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleDelete(category.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                          <AlertDialogAction onClick={() => handleDelete(category)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                             {t('delete')}
                           </AlertDialogAction>
                         </AlertDialogFooter>

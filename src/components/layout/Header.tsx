@@ -14,6 +14,7 @@ interface Category {
   id: string;
   name: string;
   order?: number;
+  icon_url?: string; // New field for image icon URL
 }
 
 const Header: React.FC = () => {
@@ -27,7 +28,7 @@ const Header: React.FC = () => {
     const fetchCategories = async () => {
       const { data, error } = await supabase
         .from('categories')
-        .select('id, name')
+        .select('id, name, icon_url') // Fetch icon_url
         .order('order', { ascending: true });
 
       if (error) {
@@ -98,10 +99,13 @@ const Header: React.FC = () => {
                   <SheetClose asChild key={category.id}>
                     <Link 
                       to={`/#category-${category.id}`} 
-                      className="text-lg font-medium hover:text-primary transition-colors"
+                      className="flex items-center space-x-2 rtl:space-x-reverse text-lg font-medium hover:text-primary transition-colors"
                       onClick={() => setIsSheetOpen(false)} // Close sheet on click
                     >
-                      {category.name}
+                      {category.icon_url && (
+                        <img src={category.icon_url} alt={category.name} className="h-6 w-6 object-contain rounded-full" />
+                      )}
+                      <span>{category.name}</span>
                     </Link>
                   </SheetClose>
                 ))}

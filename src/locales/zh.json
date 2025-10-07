@@ -121,5 +121,6 @@
   "image_processed_successfully": "图片处理成功！",
   "failed_to_process_image": "图片处理失败",
   "unknown_error": "未知错误",
-  "close": "关闭"
+  "close": "关闭",
+  "category_image_icon": "类别图片图标"
 }
