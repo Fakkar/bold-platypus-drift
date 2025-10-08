@@ -6,7 +6,7 @@ import MenuItemCard from "@/components/MenuItemCard";
 import Footer from "@/components/layout/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from '@/integrations/supabase/client';
-import { toast } => 'sonner';
+import { toast } from 'sonner';
 import { useLocation } from "react-router-dom";
 
 interface Category {
