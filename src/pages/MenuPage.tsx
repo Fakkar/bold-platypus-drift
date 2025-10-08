@@ -83,12 +83,12 @@ const MenuPage: React.FC = () => {
       <Header />
       <HeroSection />
 
-      <main className="flex-grow container mx-auto px-4 pt-0 pb-12">
+      <main className="flex-grow container mx-auto px-4 pt-0 pb-12" dir="rtl">
         {categories.length === 0 ? (
           <p className="text-center text-gray-300">{t("no_categories_found")}</p>
         ) : (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="flex flex-wrap justify-center gap-4 p-6 bg-indigo-900/70 rounded-lg shadow-lg -mt-8 relative z-20">
+            <TabsList className="flex flex-wrap justify-center gap-4 p-6 bg-indigo-900/70 rounded-lg shadow-lg -mt-8 relative z-20 h-auto">
               {categories.map((category) => (
                 <TabsTrigger 
                   key={category.id} 
@@ -104,7 +104,7 @@ const MenuPage: React.FC = () => {
             </TabsList>
             {categories.map((category) => (
               <TabsContent key={category.id} value={category.id} className="mt-8">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                   {menuItems
                     .filter((item) => item.category_id === category.id)
                     .map((item) => (
