@@ -30,6 +30,7 @@
 
     --primary: 40 90% 55%; /* Golden orange for light mode */
     --primary-foreground: 0 0% 100%; /* White text on primary */
+    --primary-rgb-shadow: 255, 165, 0; /* RGB for primary color shadow in light mode */
 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -71,6 +72,7 @@
 
     --primary: 40 90% 65%; /* Lighter golden orange for dark mode primary */
     --primary-foreground: 222.2 47.4% 11.2%;
+    --primary-rgb-shadow: 255, 180, 50; /* RGB for primary color shadow in dark mode */
 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -116,4 +118,17 @@
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
+}
+
+@keyframes pulse-shadow {
+  0%, 100% {
+    box-shadow: 0 0 0px 0px rgba(var(--primary-rgb-shadow), 0); /* No visible shadow */
+  }
+  50% {
+    box-shadow: 0 0 15px 5px rgba(var(--primary-rgb-shadow), 0.7); /* Pulsing shadow */
+  }
+}
+
+.animate-pulse-shadow {
+  animation: pulse-shadow 2s infinite ease-in-out;
 }

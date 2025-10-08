@@ -93,12 +93,12 @@ const MenuPage: React.FC = () => {
                 <TabsTrigger 
                   key={category.id} 
                   value={category.id} 
-                  className="flex items-center justify-center space-x-2 rtl:space-x-reverse text-white bg-white/10 hover:bg-white/20 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full px-6 py-3 transition-colors duration-200 flex-shrink-0"
+                  className="flex items-center justify-center space-x-2 rtl:space-x-reverse text-xl font-bold text-white bg-white/10 hover:bg-white/20 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:animate-pulse-shadow rounded-full px-8 py-4 transition-colors duration-200 flex-shrink-0"
                 >
+                  <span>{category.name}</span> {/* Name first */}
                   {category.icon_url && (
-                    <img src={category.icon_url} alt={category.name} className="h-6 w-6 object-contain rounded-full" />
+                    <img src={category.icon_url} alt={category.name} className="h-7 w-7 object-contain rounded-full mr-2 rtl:ml-2 rtl:mr-0" /> {/* Icon after name, adjusted size and margin */}
                   )}
-                  <span>{category.name}</span>
                 </TabsTrigger>
               ))}
             </TabsList>
