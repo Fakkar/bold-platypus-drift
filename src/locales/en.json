@@ -127,5 +127,12 @@
   "hero_description_new": "Enjoy our delicious food. All dishes are prepared with the best ingredients and a passion for cooking.",
   "years_experience": "Years",
   "customers_served": "Customers",
-  "rating": "Rating"
+  "rating": "Rating",
+  "hero_section_settings": "Hero Section Settings",
+  "hero_title_admin_label": "Hero Section Title",
+  "enter_hero_title": "Enter title for hero section",
+  "hero_description_admin_label": "Hero Section Description",
+  "enter_hero_description": "Enter description for hero section",
+  "hero_background_image_admin_label": "Hero Background Image",
+  "failed_to_upload_hero_background": "Failed to upload hero background image."
 }

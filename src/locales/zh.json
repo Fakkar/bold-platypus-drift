@@ -127,5 +127,12 @@
   "hero_description_new": "享受我们的美味佳肴。所有菜肴均采用最好的食材和烹饪热情制作。",
   "years_experience": "年",
   "customers_served": "客户",
-  "rating": "评分"
+  "rating": "评分",
+  "hero_section_settings": "英雄部分设置",
+  "hero_title_admin_label": "英雄部分标题",
+  "enter_hero_title": "输入英雄部分标题",
+  "hero_description_admin_label": "英雄部分描述",
+  "enter_hero_description": "输入英雄部分描述",
+  "hero_background_image_admin_label": "英雄背景图片",
+  "failed_to_upload_hero_background": "上传英雄背景图片失败。"
 }

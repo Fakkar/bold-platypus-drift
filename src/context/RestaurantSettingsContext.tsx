@@ -9,6 +9,9 @@ interface RestaurantSettings {
   slogan: string; // New field for restaurant slogan
   phone_number: string; // New field for phone number
   working_hours_text: string; // New field for working hours text
+  hero_title: string; // New field for hero section title
+  hero_description: string; // New field for hero section description
+  hero_background_image_url: string; // New field for hero section background image
 }
 
 interface RestaurantSettingsContextType {
@@ -26,6 +29,9 @@ export const RestaurantSettingsProvider: React.FC<{ children: ReactNode }> = ({ 
     slogan: "Taste the difference, experience the unforgettable", // Default slogan
     phone_number: "021-1234-5678", // Default phone number
     working_hours_text: "9:00 AM - 11:00 PM", // Default working hours
+    hero_title: "Online Menu", // Default hero title
+    hero_description: "Enjoy our delicious food. All dishes are prepared with the best ingredients and a passion for cooking.", // Default hero description
+    hero_background_image_url: "/public/hero-bg.jpg", // Default hero background image
   });
   const [loading, setLoading] = useState(true);
 
@@ -48,6 +54,9 @@ export const RestaurantSettingsProvider: React.FC<{ children: ReactNode }> = ({ 
           slogan: data.slogan || "Taste the difference, experience the unforgettable",
           phone_number: data.phone_number || "021-1234-5678",
           working_hours_text: data.working_hours_text || "9:00 AM - 11:00 PM",
+          hero_title: data.hero_title || "Online Menu",
+          hero_description: data.hero_description || "Enjoy our delicious food. All dishes are prepared with the best ingredients and a passion for cooking.",
+          hero_background_image_url: data.hero_background_image_url || "/public/hero-bg.jpg",
         });
       }
       setLoading(false);
@@ -97,6 +106,9 @@ export const RestaurantSettingsProvider: React.FC<{ children: ReactNode }> = ({ 
         slogan: resultData.slogan,
         phone_number: resultData.phone_number,
         working_hours_text: resultData.working_hours_text,
+        hero_title: resultData.hero_title,
+        hero_description: resultData.hero_description,
+        hero_background_image_url: resultData.hero_background_image_url,
       });
       toast.success('Settings saved successfully!');
     }

@@ -127,5 +127,12 @@
   "hero_description_new": "از غذاهای خوشمزه ما لذت ببرید. تمام غذاها با بهترین مواد اولیه و عشق به آشپزی تهیه می‌شوند.",
   "years_experience": "سال",
   "customers_served": "مشتری",
-  "rating": "امتیاز"
+  "rating": "امتیاز",
+  "hero_section_settings": "تنظیمات بخش قهرمان",
+  "hero_title_admin_label": "عنوان بخش قهرمان",
+  "enter_hero_title": "عنوان بخش قهرمان را وارد کنید",
+  "hero_description_admin_label": "توضیحات بخش قهرمان",
+  "enter_hero_description": "توضیحات بخش قهرمان را وارد کنید",
+  "hero_background_image_admin_label": "تصویر پس‌زمینه بخش قهرمان",
+  "failed_to_upload_hero_background": "آپلود تصویر پس‌زمینه بخش قهرمان ناموفق بود."
 }
