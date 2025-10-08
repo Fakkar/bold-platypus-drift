@@ -89,10 +89,15 @@ export default {
             height: "0",
           },
         },
+        "pulse-shadow": {
+          "0%, 100%": { boxShadow: "0 0 15px hsl(var(--primary))" },
+          "50%": { boxShadow: "0 0 25px hsl(var(--primary))" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "pulse-shadow": "pulse-shadow 2s ease-in-out infinite",
       },
     },
   },

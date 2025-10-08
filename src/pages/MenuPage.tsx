@@ -88,12 +88,12 @@ const MenuPage: React.FC = () => {
           <p className="text-center text-gray-300">{t("no_categories_found")}</p>
         ) : (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="flex overflow-x-auto whitespace-nowrap space-x-4 p-4 bg-indigo-900/70 rounded-lg shadow-lg -mt-8 relative z-20">
+            <TabsList className="flex flex-wrap justify-center gap-4 p-6 bg-indigo-900/70 rounded-lg shadow-lg -mt-8 relative z-20">
               {categories.map((category) => (
                 <TabsTrigger 
                   key={category.id} 
                   value={category.id} 
-                  className="flex items-center justify-center space-x-2 rtl:space-x-reverse text-white bg-white/10 hover:bg-white/20 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full px-6 py-3 transition-colors duration-200 flex-shrink-0"
+                  className="flex items-center justify-center space-x-2 rtl:space-x-reverse text-white bg-white/10 hover:bg-white/20 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:animate-pulse-shadow rounded-full px-8 py-4 text-lg transition-colors duration-200 flex-shrink-0"
                 >
                   {category.icon_url && (
                     <img src={category.icon_url} alt={category.name} className="h-6 w-6 object-contain rounded-full" />
