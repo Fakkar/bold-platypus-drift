@@ -7,13 +7,13 @@ import Footer from "@/components/layout/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { useLocation } from "react-router-dom"; // Import useLocation
+import { useLocation } from "react-router-dom";
 
 interface Category {
   id: string;
   name: string;
   order?: number;
-  icon_url?: string; // New field for image icon URL
+  icon_url?: string;
 }
 
 interface MenuItem {
@@ -27,19 +27,18 @@ interface MenuItem {
 
 const MenuPage: React.FC = () => {
   const { t } = useTranslation();
-  const location = useLocation(); // Initialize useLocation
+  const location = useLocation();
   const [categories, setCategories] = useState<Category[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<string | undefined>(undefined); // State for active tab
+  const [activeTab, setActiveTab] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      // Fetch categories
       const { data: categoriesData, error: categoriesError } = await supabase
         .from('categories')
-        .select('*, icon_url') // Fetch icon_url
+        .select('*, icon_url')
         .order('order', { ascending: true });
 
       if (categoriesError) {
@@ -47,7 +46,6 @@ const MenuPage: React.FC = () => {
         toast.error(t('failed_to_load_categories', { message: categoriesError.message }));
       } else {
         setCategories(categoriesData || []);
-        // Set initial active tab based on URL hash or first category
         if (categoriesData && categoriesData.length > 0) {
           const hashCategoryId = location.hash.replace('#category-', '');
           const foundCategory = categoriesData.find(cat => cat.id === hashCategoryId);
@@ -55,7 +53,6 @@ const MenuPage: React.FC = () => {
         }
       }
 
-      // Fetch menu items
       const { data: menuItemsData, error: menuItemsError } = await supabase
         .from('menu_items')
         .select('*')
@@ -71,7 +68,7 @@ const MenuPage: React.FC = () => {
     };
 
     fetchData();
-  }, [t, location.hash]); // Re-run effect if hash changes
+  }, [t, location.hash]);
 
   if (loading) {
     return (
@@ -82,18 +79,16 @@ const MenuPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-800 to-indigo-900"> {/* Apply gradient background to the entire page */}
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-800 to-indigo-900">
       <Header />
       <HeroSection />
 
-      <main className="flex-grow container mx-auto px-4 pt-0 pb-12"> {/* Remove top padding */}
-        {/* Removed h2 for "our_menu" */}
-
+      <main className="flex-grow container mx-auto px-4 pt-0 pb-12">
         {categories.length === 0 ? (
-          <p className="text-center text-gray-300">{t("no_categories_found")}</p> {/* Adjusted text color for dark background */}
+          <p className="text-center text-gray-300">{t("no_categories_found")}</p>
         ) : (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="flex overflow-x-auto whitespace-nowrap space-x-4 p-4 bg-indigo-900/70 rounded-lg shadow-lg -mt-8 relative z-20"> {/* New TabsList styling */}
+            <TabsList className="flex overflow-x-auto whitespace-nowrap space-x-4 p-4 bg-indigo-900/70 rounded-lg shadow-lg -mt-8 relative z-20">
               {categories.map((category) => (
                 <TabsTrigger 
                   key={category.id} 
@@ -108,7 +103,7 @@ const MenuPage: React.FC = () => {
               ))}
             </TabsList>
             {categories.map((category) => (
-              <TabsContent key={category.id} value={category.id} className="mt-8"> {/* Add margin top to content */}
+              <TabsContent key={category.id} value={category.id} className="mt-8">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                   {menuItems
                     .filter((item) => item.category_id === category.id)
