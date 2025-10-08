@@ -82,22 +82,24 @@ const MenuPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-800 to-indigo-900"> {/* Apply gradient background to the entire page */}
       <Header />
       <HeroSection />
 
-      <main className="flex-grow container mx-auto px-4 py-12">
-        <h2 id="menu-items" className="text-4xl font-bold text-center mb-10 text-gray-900 dark:text-gray-100">
-          {t("our_menu")}
-        </h2>
+      <main className="flex-grow container mx-auto px-4 pt-0 pb-12"> {/* Remove top padding */}
+        {/* Removed h2 for "our_menu" */}
 
         {categories.length === 0 ? (
-          <p className="text-center text-gray-600 dark:text-gray-400">{t("no_categories_found")}</p>
+          <p className="text-center text-gray-300">{t("no_categories_found")}</p> {/* Adjusted text color for dark background */}
         ) : (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 gap-2 mb-8">
+            <TabsList className="flex overflow-x-auto whitespace-nowrap space-x-4 p-4 bg-indigo-900/70 rounded-lg shadow-lg -mt-8 relative z-20"> {/* New TabsList styling */}
               {categories.map((category) => (
-                <TabsTrigger key={category.id} value={category.id} className="flex items-center justify-center space-x-2 rtl:space-x-reverse">
+                <TabsTrigger 
+                  key={category.id} 
+                  value={category.id} 
+                  className="flex items-center justify-center space-x-2 rtl:space-x-reverse text-white bg-white/10 hover:bg-white/20 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full px-6 py-3 transition-colors duration-200 flex-shrink-0"
+                >
                   {category.icon_url && (
                     <img src={category.icon_url} alt={category.name} className="h-6 w-6 object-contain rounded-full" />
                   )}
@@ -106,7 +108,7 @@ const MenuPage: React.FC = () => {
               ))}
             </TabsList>
             {categories.map((category) => (
-              <TabsContent key={category.id} value={category.id}>
+              <TabsContent key={category.id} value={category.id} className="mt-8"> {/* Add margin top to content */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                   {menuItems
                     .filter((item) => item.category_id === category.id)

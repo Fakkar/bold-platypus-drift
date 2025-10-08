@@ -27,7 +27,7 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
 
   return (
     <>
-      <Card className="w-full max-w-sm overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+      <Card className="w-full max-w-sm overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-purple-800/50 text-white"> {/* Added custom background and text color */}
         <div 
           className="w-full aspect-square overflow-hidden cursor-pointer" 
           onClick={() => handleImageClick(item.image_url || '/public/placeholder.svg')}
@@ -42,11 +42,11 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
           <CardTitle className="text-xl font-semibold">{item.name}</CardTitle>
         </CardHeader>
         <CardContent className="text-right">
-          <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">
+          <p className="text-gray-300 text-sm mb-4 line-clamp-2"> {/* Adjusted text color */}
             {item.description}
           </p>
           <div className="flex items-center justify-center">
-            <span className="text-2xl font-bold text-primary dark:text-primary-foreground" dir="rtl">
+            <span className="text-2xl font-bold text-primary" dir="rtl"> {/* Primary color for price */}
               {formatPriceInToman(item.price)}
             </span>
           </div>
