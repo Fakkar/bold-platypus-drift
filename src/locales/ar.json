@@ -122,5 +122,10 @@
   "failed_to_process_image": "فشل معالجة الصورة",
   "unknown_error": "خطأ غير معروف",
   "close": "إغلاق",
-  "category_image_icon": "أيقونة صورة الفئة"
+  "category_image_icon": "أيقونة صورة الفئة",
+  "hero_title_new": "منوی آنلاین",
+  "hero_description_new": "از غذاهای خوشمزه ما لذت ببرید. تمام غذاها با بهترین مواد اولیه و عشق به آشپزی تهیه می‌شوند.",
+  "years_experience": "سال",
+  "customers_served": "مشتری",
+  "rating": "امتیاز"
 }

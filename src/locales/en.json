@@ -122,5 +122,10 @@
   "failed_to_process_image": "Failed to process image",
   "unknown_error": "Unknown error",
   "close": "Close",
-  "category_image_icon": "Category Image Icon"
+  "category_image_icon": "Category Image Icon",
+  "hero_title_new": "Online Menu",
+  "hero_description_new": "Enjoy our delicious food. All dishes are prepared with the best ingredients and a passion for cooking.",
+  "years_experience": "Years",
+  "customers_served": "Customers",
+  "rating": "Rating"
 }

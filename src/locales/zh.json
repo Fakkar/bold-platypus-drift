@@ -122,5 +122,10 @@
   "failed_to_process_image": "图片处理失败",
   "unknown_error": "未知错误",
   "close": "关闭",
-  "category_image_icon": "类别图片图标"
+  "category_image_icon": "类别图片图标",
+  "hero_title_new": "在线菜单",
+  "hero_description_new": "享受我们的美味佳肴。所有菜肴均采用最好的食材和烹饪热情制作。",
+  "years_experience": "年",
+  "customers_served": "客户",
+  "rating": "评分"
 }
