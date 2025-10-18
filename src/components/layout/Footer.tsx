@@ -21,22 +21,22 @@ const Footer: React.FC = () => {
           <div className="space-y-4 flex flex-col items-center md:items-end">
             <h3 className="text-2xl font-bold text-primary mb-4">{t("contact_us")}</h3>
             <div className="flex items-center justify-end space-x-2 rtl:space-x-reverse">
-              <p>{settings.address}</p>
               <div className="p-2 bg-primary/20 rounded-full">
                 <MapPin className="h-5 w-5 text-primary" />
               </div>
+              <p>{settings.address}</p>
             </div>
             <div className="flex items-center justify-end space-x-2 rtl:space-x-reverse">
-              <p>{settings.phone_number}</p>
               <div className="p-2 bg-primary/20 rounded-full">
                 <Phone className="h-5 w-5 text-primary" />
               </div>
+              <p>{settings.phone_number}</p>
             </div>
             <div className="flex items-center justify-end space-x-2 rtl:space-x-reverse">
-              <p>{settings.working_hours_text}</p>
               <div className="p-2 bg-primary/20 rounded-full">
                 <Clock className="h-5 w-5 text-primary" />
               </div>
+              <p>{settings.working_hours_text}</p>
             </div>
           </div>
 
