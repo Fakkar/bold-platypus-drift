@@ -62,23 +62,26 @@ const CustomerClubModal: React.FC<CustomerClubModalProps> = ({ isOpen, onSuccess
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
-            <div className="flex items-center gap-2" dir="ltr">
+            <div 
+              className="flex h-10 w-full items-center rounded-md border border-input bg-transparent px-3 text-sm focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2" 
+              dir="ltr"
+            >
+              <span className="font-mono text-muted-foreground">
+                {toPersianNumber('09')}
+              </span>
               <Input
                 id="phone-suffix"
                 value={phoneSuffix}
                 onChange={(e) => {
-                  const value = e.target.value.replace(/[^0-9]/g, ''); // Allow only numbers
+                  const value = e.target.value.replace(/[^0-9]/g, '');
                   if (value.length <= 9) {
                     setPhoneSuffix(value);
                   }
                 }}
-                placeholder="۱۲۳۴۵۶۷۸۹"
-                className="text-left tracking-wider"
+                placeholder="---------"
+                className="h-auto flex-grow border-0 bg-transparent p-0 pl-2 text-left tracking-widest focus-visible:ring-0 focus-visible:ring-offset-0"
                 required
               />
-              <span className="bg-muted px-3 py-2 rounded-md font-mono">
-                {toPersianNumber('09')}
-              </span>
             </div>
           </div>
           <DialogFooter>
