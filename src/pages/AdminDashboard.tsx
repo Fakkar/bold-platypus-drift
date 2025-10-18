@@ -16,6 +16,7 @@ import QRCodeGenerator from "@/components/admin/QRCodeGenerator";
 import CustomerClubList from "@/components/admin/CustomerClubList";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { useDynamicTranslation } from "@/context/DynamicTranslationContext";
 
 type AdminView = 'settings' | 'categories' | 'menu-items' | 'customer-club';
 
