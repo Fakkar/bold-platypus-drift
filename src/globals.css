@@ -60,33 +60,25 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%; /* Dark background */
-    --foreground: 210 40% 98%; /* Light text */
-
-    --card: 222.2 84% 4.9%;
+    --background: 224 71% 4%;
+    --foreground: 210 40% 98%;
+    --card: 224 71% 8%;
     --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
+    --popover: 224 71% 4%;
     --popover-foreground: 210 40% 98%;
-
-    --primary: 40 90% 65%; /* Lighter golden orange for dark mode primary */
-    --primary-foreground: 222.2 47.4% 11.2%;
-
+    --primary: 210 100% 56%;
+    --primary-foreground: 210 40% 98%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
-
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
-
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 40 90% 65%; /* Ring color matches primary in dark mode */
+    --ring: 210 100% 56%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -104,7 +96,12 @@
   }
 
   body {
-    @apply bg-background text-foreground font-vazirmatn; /* Apply Vazirmatn font */
+    @apply bg-background text-foreground font-vazirmatn;
+  }
+
+  .dark body {
+    background-image: radial-gradient(circle at 1px 1px, hsl(var(--border) / 0.2) 1px, transparent 0);
+    background-size: 2rem 2rem;
   }
 }
 
