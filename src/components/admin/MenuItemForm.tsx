@@ -9,7 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useSupabaseStorage } from '@/hooks/useSupabaseStorage';
-import { useImageProcessor } from '@/hooks/useImageProcessor'; // Import the new hook
+import { useImageProcessor } from '@/hooks/useImageProcessor';
+import { Checkbox } from '@/components/ui/checkbox'; // Import Checkbox
 
 interface MenuItemFormProps {
   menuItem?: {
@@ -19,6 +20,7 @@ interface MenuItemFormProps {
     price: number;
     category_id?: string;
     image_url?: string;
+    is_featured?: boolean; // Add is_featured
   };
   onSave: () => void;
   onCancel: () => void;
@@ -32,7 +34,7 @@ interface Category {
 const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel }) => {
   const { t } = useTranslation();
   const { uploadFile, deleteFile, loading: uploadLoading } = useSupabaseStorage();
-  const { compressAndResizeImage, loading: imageProcessing } = useImageProcessor(); // Initialize image processor hook
+  const { compressAndResizeImage, loading: imageProcessing } = useImageProcessor();
 
   const [name, setName] = useState(menuItem?.name || '');
   const [description, setDescription] = useState(menuItem?.description || '');
@@ -40,6 +42,7 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
   const [categoryId, setCategoryId] = useState(menuItem?.category_id || '');
   const [imageUrl, setImageUrl] = useState(menuItem?.image_url || '');
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isFeatured, setIsFeatured] = useState(menuItem?.is_featured || false); // State for featured
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -50,6 +53,7 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
       setPrice(menuItem.price.toString());
       setCategoryId(menuItem.category_id || '');
       setImageUrl(menuItem.image_url || '');
+      setIsFeatured(menuItem.is_featured || false); // Set featured state
     }
   }, [menuItem]);
 
@@ -86,12 +90,11 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
       const processedFile = await compressAndResizeImage(imageFile);
       if (!processedFile) {
         setLoading(false);
-        return; // Stop if image processing failed
+        return;
       }
 
-      // If there's an old image and a new one is uploaded, delete the old one
       if (menuItem?.image_url && menuItem.image_url !== '/public/placeholder.svg') {
-        const oldFilePath = menuItem.image_url.split('/public/')[1]; // Extract path from URL
+        const oldFilePath = menuItem.image_url.split('/public/')[1];
         await deleteFile(oldFilePath, 'menu-images');
       }
       const uploadedUrl = await uploadFile(processedFile, 'menu-images');
@@ -99,10 +102,9 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
         finalImageUrl = uploadedUrl;
       } else {
         setLoading(false);
-        return; // Stop if image upload failed
+        return;
       }
     } else if (!imageUrl && menuItem?.image_url && menuItem.image_url !== '/public/placeholder.svg') {
-      // If image was removed and it was not a placeholder, delete from storage
       const oldFilePath = menuItem.image_url.split('/public/')[1];
       await deleteFile(oldFilePath, 'menu-images');
       finalImageUrl = '/public/placeholder.svg';
@@ -110,25 +112,23 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
       finalImageUrl = '/public/placeholder.svg';
     }
 
-
     const menuItemData = {
       name,
       description: description || null,
       price: parseFloat(price),
       category_id: categoryId || null,
       image_url: finalImageUrl,
+      is_featured: isFeatured, // Include is_featured
     };
 
     let error = null;
     if (menuItem) {
-      // Update existing menu item
       const { error: updateError } = await supabase
         .from('menu_items')
         .update(menuItemData)
         .eq('id', menuItem.id);
       error = updateError;
     } else {
-      // Add new menu item
       const { error: insertError } = await supabase
         .from('menu_items')
         .insert(menuItemData);
@@ -149,59 +149,28 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <Label htmlFor="menu-item-name">{t('item_name')}</Label>
-        <Input
-          id="menu-item-name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder={t('enter_item_name')}
-          required
-        />
+        <Input id="menu-item-name" value={name} onChange={(e) => setName(e.target.value)} placeholder={t('enter_item_name')} required />
       </div>
       <div>
         <Label htmlFor="menu-item-description">{t('item_description')}</Label>
-        <Textarea
-          id="menu-item-description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder={t('enter_item_description')}
-        />
+        <Textarea id="menu-item-description" value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t('enter_item_description')} />
       </div>
       <div>
         <Label htmlFor="menu-item-price">{t('item_price')}</Label>
-        <Input
-          id="menu-item-price"
-          type="number"
-          step="0.01"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          placeholder={t('enter_item_price')}
-          required
-        />
+        <Input id="menu-item-price" type="number" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} placeholder={t('enter_item_price')} required />
       </div>
       <div>
         <Label htmlFor="menu-item-category">{t('category')}</Label>
         <Select onValueChange={setCategoryId} value={categoryId}>
-          <SelectTrigger id="menu-item-category">
-            <SelectValue placeholder={t('select_category')} />
-          </SelectTrigger>
+          <SelectTrigger id="menu-item-category"><SelectValue placeholder={t('select_category')} /></SelectTrigger>
           <SelectContent>
-            {categories.map((cat) => (
-              <SelectItem key={cat.id} value={cat.id}>
-                {cat.name}
-              </SelectItem>
-            ))}
+            {categories.map((cat) => (<SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>))}
           </SelectContent>
         </Select>
       </div>
       <div>
         <Label htmlFor="menu-item-image">{t('item_image')}</Label>
-        <Input
-          id="menu-item-image"
-          type="file"
-          accept="image/*"
-          onChange={handleImageChange}
-          disabled={uploadLoading || imageProcessing}
-        />
+        <Input id="menu-item-image" type="file" accept="image/*" onChange={handleImageChange} disabled={uploadLoading || imageProcessing} />
         {imageUrl && (
           <div className="mt-2">
             <img src={imageUrl} alt="Item Preview" className="h-24 w-24 object-cover rounded-md" />
@@ -211,13 +180,13 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
           </div>
         )}
       </div>
+      <div className="flex items-center space-x-2 rtl:space-x-reverse">
+        <Checkbox id="is-featured" checked={isFeatured} onCheckedChange={(checked) => setIsFeatured(Boolean(checked))} />
+        <Label htmlFor="is-featured" className="cursor-pointer">{t('featured_item')}</Label>
+      </div>
       <DialogFooter>
-        <Button type="button" variant="outline" onClick={onCancel} disabled={loading || uploadLoading || imageProcessing}>
-          {t('cancel')}
-        </Button>
-        <Button type="submit" disabled={loading || uploadLoading || imageProcessing}>
-          {loading || uploadLoading || imageProcessing ? t('saving') : t('save')}
-        </Button>
+        <Button type="button" variant="outline" onClick={onCancel} disabled={loading || uploadLoading || imageProcessing}>{t('cancel')}</Button>
+        <Button type="submit" disabled={loading || uploadLoading || imageProcessing}>{loading || uploadLoading || imageProcessing ? t('saving') : t('save')}</Button>
       </DialogFooter>
     </form>
   );

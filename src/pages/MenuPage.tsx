@@ -8,6 +8,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useLocation } from "react-router-dom";
+import { Input } from "@/components/ui/input"; // Import Input
+import FeaturedItems from "@/components/FeaturedItems"; // Import FeaturedItems
+import { Search } from "lucide-react";
 
 interface Category {
   id: string;
@@ -23,6 +26,8 @@ interface MenuItem {
   price: number;
   category_id?: string;
   image_url?: string;
+  is_featured: boolean;
+  is_available: boolean;
 }
 
 const MenuPage: React.FC = () => {
@@ -32,6 +37,7 @@ const MenuPage: React.FC = () => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<string | undefined>(undefined);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,6 +76,14 @@ const MenuPage: React.FC = () => {
     fetchData();
   }, [t, location.hash]);
 
+  const featuredItems = menuItems.filter(item => item.is_featured);
+  const regularItems = menuItems.filter(item => !item.is_featured);
+
+  const filteredItems = regularItems.filter(item =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
@@ -82,8 +96,20 @@ const MenuPage: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-800 to-indigo-900">
       <Header />
       <HeroSection />
+      <FeaturedItems items={featuredItems} />
 
       <main className="flex-grow container mx-auto px-4 pt-0 pb-12" dir="rtl">
+        <div className="w-full max-w-md mx-auto my-8 px-4 relative">
+          <Input
+            type="text"
+            placeholder={t('search_menu_placeholder')}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="bg-white/20 text-white placeholder:text-gray-300 border-none rounded-full pl-10"
+          />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-300" />
+        </div>
+
         {categories.length === 0 ? (
           <p className="text-center text-gray-300">{t("no_categories_found")}</p>
         ) : (
@@ -111,9 +137,9 @@ const MenuPage: React.FC = () => {
               <TabsContent key={category.id} value={category.id} className="mt-8">
                 <div 
                   className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8"
-                  style={{ direction: 'rtl' }} // Force RTL direction here
+                  style={{ direction: 'rtl' }}
                 >
-                  {menuItems
+                  {filteredItems
                     .filter((item) => item.category_id === category.id)
                     .map((item) => (
                       <MenuItemCard key={item.id} item={item} />

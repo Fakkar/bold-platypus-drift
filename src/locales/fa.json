@@ -147,5 +147,16 @@
   "facebook_url": "لینک فیسبوک",
   "enter_facebook_url": "لینک فیسبوک را وارد کنید",
   "copyright_text": "متن کپی‌رایت",
-  "enter_copyright_text": "متن کپی‌رایت را وارد کنید"
+  "enter_copyright_text": "متن کپی‌رایت را وارد کنید",
+  "featured_item": "آیتم ویژه",
+  "availability": "موجودی",
+  "failed_to_update_status": "به‌روزرسانی وضعیت ناموفق بود",
+  "status_updated_successfully": "وضعیت با موفقیت به‌روزرسانی شد",
+  "out_of_stock": "اتمام موجودی",
+  "generate_qr_code": "ساخت QR Code",
+  "qr_code_for_menu": "QR Code برای منو",
+  "url_copied_to_clipboard": "آدرس در کلیپ‌بورد کپی شد",
+  "qr_code_instruction": "این کد را اسکن کنید تا منو را روی گوشی خود ببینید.",
+  "chefs_special": "پیشنهاد ویژه سرآشپز",
+  "search_menu_placeholder": "جستجو در منو..."
 }

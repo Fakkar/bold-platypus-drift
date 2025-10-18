@@ -14,6 +14,7 @@ import CategoryList from "@/components/admin/CategoryList";
 import MenuItemList from "@/components/admin/MenuItemList";
 import { useSupabaseStorage } from "@/hooks/useSupabaseStorage";
 import { useImageProcessor } from "@/hooks/useImageProcessor";
+import QRCodeGenerator from "@/components/admin/QRCodeGenerator"; // Import QRCodeGenerator
 
 const AdminDashboard: React.FC = () => {
   const { t } = useTranslation();
@@ -70,29 +71,11 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  const handleRemoveLogo = async () => {
-    if (settings.logo_url && settings.logo_url !== '/public/placeholder.svg') {
-      const filePath = settings.logo_url.split('/restaurant-logos/')[1];
-      await deleteFile(filePath, 'restaurant-logos');
-    }
-    setRestaurantLogoUrl('/public/placeholder.svg');
-    setLogoFile(null);
-  };
-
   const handleHeroBackgroundChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setHeroBackgroundImageFile(e.target.files[0]);
       setHeroBackgroundImageUrl(URL.createObjectURL(e.target.files[0]));
     }
-  };
-
-  const handleRemoveHeroBackground = async () => {
-    if (settings.hero_background_image_url && settings.hero_background_image_url !== '/public/hero-bg.jpg') {
-      const filePath = settings.hero_background_image_url.split('/hero-backgrounds/')[1];
-      await deleteFile(filePath, 'hero-backgrounds');
-    }
-    setHeroBackgroundImageUrl('/public/hero-bg.jpg');
-    setHeroBackgroundImageFile(null);
   };
 
   const handleSaveSettings = async (e: React.FormEvent) => {
@@ -239,7 +222,12 @@ const AdminDashboard: React.FC = () => {
               <Input id="copyright-text" value={copyrightText} onChange={(e) => setCopyrightText(e.target.value)} />
             </div>
 
-            <Button type="submit" className="w-full" disabled={uploadLoading || imageProcessing}>
+            <div className="border-t pt-6">
+              <h3 className="text-xl font-semibold mb-4">{t('qr_code_for_menu')}</h3>
+              <QRCodeGenerator />
+            </div>
+
+            <Button type="submit" className="w-full mt-4" disabled={uploadLoading || imageProcessing}>
               {uploadLoading || imageProcessing ? t('uploading') : t("save_settings")}
             </Button>
           </form>

@@ -108,10 +108,6 @@
   "menu_item_deleted_successfully": "菜单项删除成功！",
   "Loading menu...": "正在加载菜单...",
   "working_hours": "工作时间",
-  "monday_friday": "周一至周五",
-  "saturday_sunday": "周六至周日",
-  "holidays": "节假日",
-  "closed": "休息",
   "phone_number": "电话号码",
   "enter_phone_number": "输入电话号码",
   "working_hours_display": "工作时间文本",
@@ -134,5 +130,16 @@
   "hero_description_admin_label": "英雄部分描述",
   "enter_hero_description": "输入英雄部分描述",
   "hero_background_image_admin_label": "英雄背景图片",
-  "failed_to_upload_hero_background": "上传英雄背景图片失败。"
+  "failed_to_upload_hero_background": "上传英雄背景图片失败。",
+  "featured_item": "特色项目",
+  "availability": "可用性",
+  "failed_to_update_status": "状态更新失败",
+  "status_updated_successfully": "状态更新成功",
+  "out_of_stock": "售罄",
+  "generate_qr_code": "生成二维码",
+  "qr_code_for_menu": "菜单二维码",
+  "url_copied_to_clipboard": "网址已复制到剪贴板",
+  "qr_code_instruction": "扫描此代码以在手机上查看菜单。",
+  "chefs_special": "厨师推荐",
+  "search_menu_placeholder": "搜索菜单..."
 }

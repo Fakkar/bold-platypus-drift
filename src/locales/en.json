@@ -147,5 +147,16 @@
   "facebook_url": "Facebook URL",
   "enter_facebook_url": "Enter the Facebook URL",
   "copyright_text": "Copyright Text",
-  "enter_copyright_text": "Enter the copyright text"
+  "enter_copyright_text": "Enter the copyright text",
+  "featured_item": "Featured Item",
+  "availability": "Availability",
+  "failed_to_update_status": "Failed to update status",
+  "status_updated_successfully": "Status updated successfully",
+  "out_of_stock": "Out of Stock",
+  "generate_qr_code": "Generate QR Code",
+  "qr_code_for_menu": "QR Code for Menu",
+  "url_copied_to_clipboard": "URL copied to clipboard",
+  "qr_code_instruction": "Scan this code to see the menu on your phone.",
+  "chefs_special": "Chef's Special",
+  "search_menu_placeholder": "Search the menu..."
 }

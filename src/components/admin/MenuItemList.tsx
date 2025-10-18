@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import MenuItemForm from './MenuItemForm';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useSupabaseStorage } from '@/hooks/useSupabaseStorage';
+import { Switch } from '@/components/ui/switch'; // Import Switch
 
 interface MenuItem {
   id: string;
@@ -17,7 +18,9 @@ interface MenuItem {
   price: number;
   category_id?: string;
   image_url?: string;
-  categories?: { name: string }; // To display category name
+  categories?: { name: string };
+  is_available: boolean; // Add is_available
+  is_featured?: boolean;
 }
 
 const MenuItemList: React.FC = () => {
@@ -32,7 +35,7 @@ const MenuItemList: React.FC = () => {
     setLoading(true);
     const { data, error } = await supabase
       .from('menu_items')
-      .select('*, categories(name)') // Fetch category name
+      .select('*, categories(name)')
       .order('name', { ascending: true });
 
     if (error) {
@@ -48,22 +51,33 @@ const MenuItemList: React.FC = () => {
     fetchMenuItems();
   }, []);
 
+  const handleAvailabilityToggle = async (item: MenuItem) => {
+    const newStatus = !item.is_available;
+    const { error } = await supabase
+      .from('menu_items')
+      .update({ is_available: newStatus })
+      .eq('id', item.id);
+
+    if (error) {
+      toast.error(t('failed_to_update_status', { message: error.message }));
+    } else {
+      toast.success(t('status_updated_successfully'));
+      setMenuItems(menuItems.map(mi => mi.id === item.id ? { ...mi, is_available: newStatus } : mi));
+    }
+  };
+
   const handleEdit = (item: MenuItem) => {
     setSelectedMenuItem(item);
     setIsFormOpen(true);
   };
 
   const handleDelete = async (item: MenuItem) => {
-    // Delete image from storage if it's not the placeholder
     if (item.image_url && item.image_url !== '/public/placeholder.svg') {
-      const filePath = item.image_url.split('/public/')[1]; // Extract path from URL
+      const filePath = item.image_url.split('/public/')[1];
       await deleteFile(filePath, 'menu-images');
     }
 
-    const { error } = await supabase
-      .from('menu_items')
-      .delete()
-      .eq('id', item.id);
+    const { error } = await supabase.from('menu_items').delete().eq('id', item.id);
 
     if (error) {
       console.error('Error deleting menu item:', error);
@@ -114,6 +128,7 @@ const MenuItemList: React.FC = () => {
                 <TableHead>{t('name')}</TableHead>
                 <TableHead>{t('category')}</TableHead>
                 <TableHead>{t('price')}</TableHead>
+                <TableHead>{t('availability')}</TableHead>
                 <TableHead className="text-right">{t('actions')}</TableHead>
               </TableRow>
             </TableHeader>
@@ -126,28 +141,25 @@ const MenuItemList: React.FC = () => {
                   <TableCell className="font-medium">{item.name}</TableCell>
                   <TableCell>{item.categories?.name || t('uncategorized')}</TableCell>
                   <TableCell>${item.price.toFixed(2)}</TableCell>
+                  <TableCell>
+                    <Switch checked={item.is_available} onCheckedChange={() => handleAvailabilityToggle(item)} aria-label={t('availability')} />
+                  </TableCell>
                   <TableCell className="text-right">
                     <Button variant="ghost" size="icon" onClick={() => handleEdit(item)}>
                       <Edit className="h-4 w-4" />
                     </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className="text-destructive">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <Button variant="ghost" size="icon" className="text-destructive"><Trash2 className="h-4 w-4" /></Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle>{t('are_you_absolutely_sure')}</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            {t('this_action_cannot_be_undone_menu_item')}
-                          </AlertDialogDescription>
+                          <AlertDialogDescription>{t('this_action_cannot_be_undone_menu_item')}</AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleDelete(item)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                            {t('delete')}
-                          </AlertDialogAction>
+                          <AlertDialogAction onClick={() => handleDelete(item)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">{t('delete')}</AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
