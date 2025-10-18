@@ -5,7 +5,7 @@ import { useRestaurantSettings } from "@/context/RestaurantSettingsContext";
 import { MapPin, Phone, Clock, Twitter, Instagram, Facebook } from "lucide-react";
 
 const Footer: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { settings, loading } = useRestaurantSettings();
 
   if (loading) {
@@ -25,7 +25,7 @@ const Footer: React.FC = () => {
               <div className="p-2 bg-primary/20 rounded-full">
                 <MapPin className="h-4 w-4 text-primary" />
               </div>
-              <p className="text-sm">{settings.address}</p>
+              <p className="text-sm">{settings.address[i18n.language] || settings.address.fa}</p>
             </div>
 
             <div className="grid grid-cols-[auto_1fr] items-center gap-x-3 w-full text-right">
@@ -39,14 +39,14 @@ const Footer: React.FC = () => {
               <div className="p-2 bg-primary/20 rounded-full">
                 <Clock className="h-4 w-4 text-primary" />
               </div>
-              <p className="text-sm">{settings.working_hours_text}</p>
+              <p className="text-sm">{settings.working_hours_text[i18n.language] || settings.working_hours_text.fa}</p>
             </div>
           </div>
 
           {/* About Us Section */}
           <div className="space-y-3 text-center">
             <h3 className="text-xl font-bold text-primary mb-2">{t("about_us")}</h3>
-            <p className="text-gray-400 leading-relaxed text-sm">{settings.about_us_text}</p>
+            <p className="text-gray-400 leading-relaxed text-sm">{settings.about_us_text[i18n.language] || settings.about_us_text.fa}</p>
           </div>
 
           {/* Follow Us Section */}
@@ -68,7 +68,7 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="border-t border-gray-700 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-500 text-sm">{settings.copyright_text}</p>
+          <p className="text-gray-500 text-sm">{settings.copyright_text[i18n.language] || settings.copyright_text.fa}</p>
           <div className="mt-4 md:mt-0">
             <MadeWithDyad />
           </div>

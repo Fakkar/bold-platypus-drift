@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useRestaurantSettings } from "@/context/RestaurantSettingsContext";
 import { useSession } from "@/context/SessionContext";
-import { LogOut, Settings, LayoutGrid, ClipboardList, Users, Home, QrCode } from "lucide-react";
+import { LogOut, Settings, LayoutGrid, ClipboardList, Users, Home } from "lucide-react";
 import CategoryList from "@/components/admin/CategoryList";
 import MenuItemList from "@/components/admin/MenuItemList";
 import { useSupabaseStorage } from "@/hooks/useSupabaseStorage";
@@ -16,8 +16,10 @@ import QRCodeGenerator from "@/components/admin/QRCodeGenerator";
 import CustomerClubList from "@/components/admin/CustomerClubList";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type AdminView = 'settings' | 'categories' | 'menu-items' | 'customer-club';
+const supportedLanguages = ['fa', 'en', 'ar', 'zh'];
 
 const AdminDashboard: React.FC = () => {
   const { t } = useTranslation();
@@ -75,7 +77,7 @@ interface SidebarNavProps {
 }
 
 const SidebarNav: React.FC<SidebarNavProps> = ({ activeView, setActiveView, signOut }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { settings } = useRestaurantSettings();
 
   const navItems = [
@@ -89,7 +91,7 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ activeView, setActiveView, sign
     <aside className="w-64 bg-background border-l border-border flex flex-col p-4">
       <div className="flex items-center gap-3 mb-8">
         <img src={settings.logo_url} alt="Logo" className="h-10 w-10 rounded-full object-cover" />
-        <span className="text-lg font-semibold text-foreground">{settings.name}</span>
+        <span className="text-lg font-semibold text-foreground">{settings.name[i18n.language] || settings.name.fa}</span>
       </div>
       <nav className="flex flex-col gap-2 flex-1">
         {navItems.map((item) => (
@@ -136,9 +138,14 @@ const SettingsPanel: React.FC<{ settings: any }> = ({ settings: initialSettings 
     setSettings(initialSettings);
   }, [initialSettings]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { id, value } = e.target;
-    setSettings((prev: any) => ({ ...prev, [id]: value }));
+  const handleTextChange = (lang: string, field: string, value: string) => {
+    setSettings((prev: any) => ({
+      ...prev,
+      [field]: {
+        ...prev[field],
+        [lang]: value,
+      },
+    }));
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'logo' | 'hero') => {
@@ -183,19 +190,41 @@ const SettingsPanel: React.FC<{ settings: any }> = ({ settings: initialSettings 
 
   const isLoading = uploadLoading || imageProcessing;
 
+  const renderMultilingualInput = (field: string, label: string) => (
+    <Tabs defaultValue="fa" className="w-full">
+      <Label>{label}</Label>
+      <TabsList className="grid w-full grid-cols-4 mt-1">
+        {supportedLanguages.map(lang => <TabsTrigger key={lang} value={lang}>{lang.toUpperCase()}</TabsTrigger>)}
+      </TabsList>
+      {supportedLanguages.map(lang => (
+        <TabsContent key={lang} value={lang}>
+          <Input value={settings[field]?.[lang] || ''} onChange={(e) => handleTextChange(lang, field, e.target.value)} />
+        </TabsContent>
+      ))}
+    </Tabs>
+  );
+
+  const renderMultilingualTextarea = (field: string, label: string) => (
+    <Tabs defaultValue="fa" className="w-full">
+      <Label>{label}</Label>
+      <TabsList className="grid w-full grid-cols-4 mt-1">
+        {supportedLanguages.map(lang => <TabsTrigger key={lang} value={lang}>{lang.toUpperCase()}</TabsTrigger>)}
+      </TabsList>
+      {supportedLanguages.map(lang => (
+        <TabsContent key={lang} value={lang}>
+          <Textarea value={settings[field]?.[lang] || ''} onChange={(e) => handleTextChange(lang, field, e.target.value)} />
+        </TabsContent>
+      ))}
+    </Tabs>
+  );
+
   return (
     <form onSubmit={handleSave} className="space-y-8">
       <Card>
         <CardHeader><CardTitle>{t("general_settings")}</CardTitle></CardHeader>
         <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="name">{t("restaurant_name")}</Label>
-            <Input id="name" value={settings.name} onChange={handleChange} />
-          </div>
-          <div>
-            <Label htmlFor="slogan">{t("restaurant_slogan")}</Label>
-            <Input id="slogan" value={settings.slogan} onChange={handleChange} />
-          </div>
+          {renderMultilingualInput('name', t('restaurant_name'))}
+          {renderMultilingualInput('slogan', t('restaurant_slogan'))}
           <div>
             <Label htmlFor="logo_url">{t("restaurant_logo_url")}</Label>
             <Input id="logo_url" type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'logo')} disabled={isLoading} />
@@ -207,14 +236,8 @@ const SettingsPanel: React.FC<{ settings: any }> = ({ settings: initialSettings 
       <Card>
         <CardHeader><CardTitle>{t("hero_section_settings")}</CardTitle></CardHeader>
         <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="hero_title">{t("hero_title_admin_label")}</Label>
-            <Input id="hero_title" value={settings.hero_title} onChange={handleChange} />
-          </div>
-          <div>
-            <Label htmlFor="hero_description">{t("hero_description_admin_label")}</Label>
-            <Textarea id="hero_description" value={settings.hero_description} onChange={handleChange} />
-          </div>
+          {renderMultilingualInput('hero_title', t('hero_title_admin_label'))}
+          {renderMultilingualTextarea('hero_description', t('hero_description_admin_label'))}
           <div>
             <Label htmlFor="hero_background_image_url">{t("hero_background_image_admin_label")}</Label>
             <Input id="hero_background_image_url" type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'hero')} disabled={isLoading} />
@@ -225,15 +248,15 @@ const SettingsPanel: React.FC<{ settings: any }> = ({ settings: initialSettings 
 
       <Card>
         <CardHeader><CardTitle>{t("footer_settings")}</CardTitle></CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div><Label htmlFor="address">{t("address")}</Label><Input id="address" value={settings.address} onChange={handleChange} /></div>
-          <div><Label htmlFor="phone_number">{t("phone_number")}</Label><Input id="phone_number" value={settings.phone_number} onChange={handleChange} /></div>
-          <div><Label htmlFor="working_hours_text">{t("working_hours_display")}</Label><Input id="working_hours_text" value={settings.working_hours_text} onChange={handleChange} /></div>
-          <div><Label htmlFor="copyright_text">{t("copyright_text")}</Label><Input id="copyright_text" value={settings.copyright_text} onChange={handleChange} /></div>
-          <div className="md:col-span-2"><Label htmlFor="about_us_text">{t("about_us_text")}</Label><Textarea id="about_us_text" value={settings.about_us_text} onChange={handleChange} /></div>
-          <div><Label htmlFor="twitter_url">{t("twitter_url")}</Label><Input id="twitter_url" value={settings.twitter_url} onChange={handleChange} /></div>
-          <div><Label htmlFor="instagram_url">{t("instagram_url")}</Label><Input id="instagram_url" value={settings.instagram_url} onChange={handleChange} /></div>
-          <div><Label htmlFor="facebook_url">{t("facebook_url")}</Label><Input id="facebook_url" value={settings.facebook_url} onChange={handleChange} /></div>
+        <CardContent className="space-y-4">
+          {renderMultilingualInput('address', t('address'))}
+          <div><Label htmlFor="phone_number">{t("phone_number")}</Label><Input id="phone_number" value={settings.phone_number} onChange={(e) => setSettings({...settings, phone_number: e.target.value})} /></div>
+          {renderMultilingualInput('working_hours_text', t('working_hours_display'))}
+          {renderMultilingualInput('copyright_text', t('copyright_text'))}
+          {renderMultilingualTextarea('about_us_text', t('about_us_text'))}
+          <div><Label htmlFor="twitter_url">{t("twitter_url")}</Label><Input id="twitter_url" value={settings.twitter_url} onChange={(e) => setSettings({...settings, twitter_url: e.target.value})} /></div>
+          <div><Label htmlFor="instagram_url">{t("instagram_url")}</Label><Input id="instagram_url" value={settings.instagram_url} onChange={(e) => setSettings({...settings, instagram_url: e.target.value})} /></div>
+          <div><Label htmlFor="facebook_url">{t("facebook_url")}</Label><Input id="facebook_url" value={settings.facebook_url} onChange={(e) => setSettings({...settings, facebook_url: e.target.value})} /></div>
         </CardContent>
       </Card>
 

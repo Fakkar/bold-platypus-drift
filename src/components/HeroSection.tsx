@@ -5,7 +5,7 @@ import StatisticCard from "./StatisticCard";
 import { useRestaurantSettings } from "@/context/RestaurantSettingsContext"; // Import useRestaurantSettings
 
 const HeroSection: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { settings, loading: settingsLoading } = useRestaurantSettings();
 
   if (settingsLoading) {
@@ -25,10 +25,10 @@ const HeroSection: React.FC = () => {
           </div>
         </div>
         <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-          {settings.hero_title}
+          {settings.hero_title[i18n.language] || settings.hero_title.fa}
         </h1>
         <p className="text-base md:text-xl mb-6 md:mb-8 max-w-2xl">
-          {settings.hero_description}
+          {settings.hero_description[i18n.language] || settings.hero_description.fa}
         </p>
         
         <div className="flex flex-row items-stretch justify-center gap-2 md:gap-4 mt-6 md:mt-8">

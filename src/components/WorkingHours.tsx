@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRestaurantSettings } from "@/context/RestaurantSettingsContext";
 
 const WorkingHours: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { settings, loading } = useRestaurantSettings();
 
   if (loading) {
@@ -17,7 +17,7 @@ const WorkingHours: React.FC = () => {
         <CardTitle className="text-2xl font-bold text-center">{t("working_hours")}</CardTitle>
       </CardHeader>
       <CardContent className="p-6 text-gray-800 dark:text-gray-200 text-center">
-        <p className="text-lg font-medium">{settings.working_hours_text}</p>
+        <p className="text-lg font-medium">{settings.working_hours_text[i18n.language] || settings.working_hours_text.fa}</p>
       </CardContent>
     </Card>
   );
