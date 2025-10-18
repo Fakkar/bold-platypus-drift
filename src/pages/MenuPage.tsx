@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import FeaturedItems from "@/components/FeaturedItems";
 import { Search } from "lucide-react";
 import CustomerClubModal from "@/components/CustomerClubModal"; // Import the modal
+import HafezDivination from "@/components/HafezDivination"; // Import Hafez component
 
 interface Category {
   id: string;
@@ -111,6 +112,7 @@ const MenuPage: React.FC = () => {
       <Header />
       <HeroSection />
       <FeaturedItems items={featuredItems} />
+      <HafezDivination />
 
       <main className="flex-grow container mx-auto px-4 pt-0 pb-12" dir="rtl">
         <div className="w-full max-w-md mx-auto my-8 px-4 relative">

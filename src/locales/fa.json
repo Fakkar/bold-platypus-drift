@@ -173,5 +173,6 @@
   "no_customers_found": "هیچ مشتری در باشگاه یافت نشد.",
   "failed_to_delete_customer": "حذف مشتری ناموفق بود.",
   "customer_deleted_successfully": "مشتری با موفقیت حذف شد.",
-  "this_action_cannot_be_undone_customer": "این عمل مشتری را برای همیشه از باشگاه حذف می‌کند."
+  "this_action_cannot_be_undone_customer": "این عمل مشتری را برای همیشه از باشگاه حذف می‌کند.",
+  "your_divination": "فال شما"
 }
