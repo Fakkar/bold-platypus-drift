@@ -12,7 +12,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { toPersianNumber } from '@/utils/format';
 
 interface CustomerClubModalProps {
   isOpen: boolean;
@@ -67,7 +66,7 @@ const CustomerClubModal: React.FC<CustomerClubModalProps> = ({ isOpen, onSuccess
               dir="ltr"
             >
               <span className="font-mono text-muted-foreground">
-                {toPersianNumber('09')}
+                09
               </span>
               <Input
                 id="phone-suffix"
