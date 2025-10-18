@@ -3,29 +3,32 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
 import { formatPriceInToman } from '@/utils/format';
 import ImageModal from './ImageModal';
-import { cn } from "@/lib/utils"; // Import cn utility
+import { cn } from "@/lib/utils";
 
 interface MenuItemCardProps {
   item: {
     id: string;
-    name: string;
-    description: string;
+    name: any;
+    description: any;
     price: number;
     image_url?: string;
-    is_available: boolean; // Add is_available
+    is_available: boolean;
   };
 }
 
 const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
 
   const handleImageClick = (url: string) => {
-    if (!item.is_available) return; // Don't open modal if out of stock
+    if (!item.is_available) return;
     setSelectedImage(url);
     setIsModalOpen(true);
   };
+
+  const currentName = item.name[i18n.language] || item.name.fa;
+  const currentDescription = item.description[i18n.language] || item.description.fa;
 
   return (
     <>
@@ -46,16 +49,16 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
         >
           <img 
             src={item.image_url || '/public/placeholder.svg'} 
-            alt={item.name} 
+            alt={currentName} 
             className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" 
           />
         </div>
         <CardHeader className="text-right">
-          <CardTitle className="text-xl font-semibold">{item.name}</CardTitle>
+          <CardTitle className="text-xl font-semibold">{currentName}</CardTitle>
         </CardHeader>
         <CardContent className="text-right">
           <p className="text-gray-300 text-sm mb-4 line-clamp-2">
-            {item.description}
+            {currentDescription}
           </p>
           <div className="flex items-center justify-center">
             <span className="text-2xl font-bold text-primary" dir="rtl">
@@ -70,7 +73,7 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           imageUrl={selectedImage}
-          altText={item.name}
+          altText={currentName}
         />
       )}
     </>

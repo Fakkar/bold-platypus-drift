@@ -9,22 +9,22 @@ import { toast } from 'sonner';
 import MenuItemForm from './MenuItemForm';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useSupabaseStorage } from '@/hooks/useSupabaseStorage';
-import { Switch } from '@/components/ui/switch'; // Import Switch
+import { Switch } from '@/components/ui/switch';
 
 interface MenuItem {
   id: string;
-  name: string;
-  description?: string;
+  name: any;
+  description?: any;
   price: number;
   category_id?: string;
   image_url?: string;
-  categories?: { name: string };
-  is_available: boolean; // Add is_available
+  categories?: { name: any };
+  is_available: boolean;
   is_featured?: boolean;
 }
 
 const MenuItemList: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { deleteFile } = useSupabaseStorage();
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,7 +39,6 @@ const MenuItemList: React.FC = () => {
       .order('name', { ascending: true });
 
     if (error) {
-      console.error('Error fetching menu items:', error);
       toast.error(t('failed_to_load_menu_items', { message: error.message }));
     } else {
       setMenuItems(data || []);
@@ -80,7 +79,6 @@ const MenuItemList: React.FC = () => {
     const { error } = await supabase.from('menu_items').delete().eq('id', item.id);
 
     if (error) {
-      console.error('Error deleting menu item:', error);
       toast.error(t('failed_to_delete_menu_item', { message: error.message }));
     } else {
       toast.success(t('menu_item_deleted_successfully'));
@@ -136,10 +134,10 @@ const MenuItemList: React.FC = () => {
               {menuItems.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell>
-                    <img src={item.image_url || '/public/placeholder.svg'} alt={item.name} className="h-10 w-10 object-cover rounded-md" />
+                    <img src={item.image_url || '/public/placeholder.svg'} alt={item.name.fa} className="h-10 w-10 object-cover rounded-md" />
                   </TableCell>
-                  <TableCell className="font-medium">{item.name}</TableCell>
-                  <TableCell>{item.categories?.name || t('uncategorized')}</TableCell>
+                  <TableCell className="font-medium">{item.name[i18n.language] || item.name.fa}</TableCell>
+                  <TableCell>{item.categories?.name[i18n.language] || item.categories?.name.fa || t('uncategorized')}</TableCell>
                   <TableCell>${item.price.toFixed(2)}</TableCell>
                   <TableCell>
                     <Switch checked={item.is_available} onCheckedChange={() => handleAvailabilityToggle(item)} aria-label={t('availability')} />

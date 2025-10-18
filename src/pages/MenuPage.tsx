@@ -11,20 +11,20 @@ import { useLocation } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import FeaturedItems from "@/components/FeaturedItems";
 import { Search } from "lucide-react";
-import CustomerClubModal from "@/components/CustomerClubModal"; // Import the modal
-import HafezDivination from "@/components/HafezDivination"; // Import Hafez component
+import CustomerClubModal from "@/components/CustomerClubModal";
+import HafezDivination from "@/components/HafezDivination";
 
 interface Category {
   id: string;
-  name: string;
+  name: any;
   order?: number;
   icon_url?: string;
 }
 
 interface MenuItem {
   id: string;
-  name: string;
-  description?: string;
+  name: any;
+  description?: any;
   price: number;
   category_id?: string;
   image_url?: string;
@@ -33,7 +33,7 @@ interface MenuItem {
 }
 
 const MenuPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const location = useLocation();
   const [categories, setCategories] = useState<Category[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
@@ -43,7 +43,6 @@ const MenuPage: React.FC = () => {
   const [isClubModalOpen, setIsClubModalOpen] = useState(false);
 
   useEffect(() => {
-    // Check if the user has already joined the club
     const hasJoined = localStorage.getItem('customerClubJoined');
     if (hasJoined !== 'true') {
       setIsClubModalOpen(true);
@@ -57,7 +56,6 @@ const MenuPage: React.FC = () => {
         .order('order', { ascending: true });
 
       if (categoriesError) {
-        console.error('Error fetching categories:', categoriesError);
         toast.error(t('failed_to_load_categories', { message: categoriesError.message }));
       } else {
         setCategories(categoriesData || []);
@@ -74,7 +72,6 @@ const MenuPage: React.FC = () => {
         .order('name', { ascending: true });
 
       if (menuItemsError) {
-        console.error('Error fetching menu items:', menuItemsError);
         toast.error(t('failed_to_load_menu_items', { message: menuItemsError.message }));
       } else {
         setMenuItems(menuItemsData || []);
@@ -93,10 +90,12 @@ const MenuPage: React.FC = () => {
   const featuredItems = menuItems.filter(item => item.is_featured);
   const regularItems = menuItems.filter(item => !item.is_featured);
 
-  const filteredItems = regularItems.filter(item =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filteredItems = regularItems.filter(item => {
+    const currentName = item.name[i18n.language] || item.name.fa || '';
+    const currentDescription = item.description[i18n.language] || item.description.fa || '';
+    return currentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+           currentDescription.toLowerCase().includes(searchTerm.toLowerCase());
+  });
 
   if (loading) {
     return (
@@ -140,9 +139,9 @@ const MenuPage: React.FC = () => {
                       className="flex items-center justify-center space-x-2 rtl:space-x-reverse text-white bg-white/10 hover:bg-white/20 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:animate-pulse-shadow rounded-full px-4 md:px-8 py-2 md:py-3 text-sm md:text-lg transition-colors duration-200 flex-shrink-0"
                     >
                       {category.icon_url && (
-                        <img src={category.icon_url} alt={category.name} className="h-6 w-6 object-contain rounded-full" />
+                        <img src={category.icon_url} alt={category.name[i18n.language] || category.name.fa} className="h-6 w-6 object-contain rounded-full" />
                       )}
-                      <span>{category.name}</span>
+                      <span>{category.name[i18n.language] || category.name.fa}</span>
                     </TabsTrigger>
                   ))}
                 </TabsList>

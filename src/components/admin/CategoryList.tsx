@@ -8,19 +8,19 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import CategoryForm from './CategoryForm';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { useSupabaseStorage } from '@/hooks/useSupabaseStorage'; // Import useSupabaseStorage
+import { useSupabaseStorage } from '@/hooks/useSupabaseStorage';
 
 interface Category {
   id: string;
-  name: string;
+  name: any; // Changed to any to handle JSON object
   icon?: string;
   order?: number;
-  icon_url?: string; // New field for image icon URL
+  icon_url?: string;
 }
 
 const CategoryList: React.FC = () => {
-  const { t } = useTranslation();
-  const { deleteFile } = useSupabaseStorage(); // Initialize useSupabaseStorage
+  const { t, i18n } = useTranslation();
+  const { deleteFile } = useSupabaseStorage();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -34,7 +34,6 @@ const CategoryList: React.FC = () => {
       .order('order', { ascending: true });
 
     if (error) {
-      console.error('Error fetching categories:', error);
       toast.error(t('failed_to_load_categories', { message: error.message }));
     } else {
       setCategories(data || []);
@@ -52,19 +51,14 @@ const CategoryList: React.FC = () => {
   };
 
   const handleDelete = async (category: Category) => {
-    // Delete image from storage if it exists and is not a placeholder
     if (category.icon_url) {
-      const filePath = category.icon_url.split('/category-icons/')[1]; // Extract path from URL
+      const filePath = category.icon_url.split('/category-icons/')[1];
       await deleteFile(filePath, 'category-icons');
     }
 
-    const { error } = await supabase
-      .from('categories')
-      .delete()
-      .eq('id', category.id);
+    const { error } = await supabase.from('categories').delete().eq('id', category.id);
 
     if (error) {
-      console.error('Error deleting category:', error);
       toast.error(t('failed_to_delete_category', { message: error.message }));
     } else {
       toast.success(t('category_deleted_successfully'));
@@ -117,10 +111,10 @@ const CategoryList: React.FC = () => {
             <TableBody>
               {categories.map((category) => (
                 <TableRow key={category.id}>
-                  <TableCell className="font-medium">{category.name}</TableCell>
+                  <TableCell className="font-medium">{category.name[i18n.language] || category.name.fa || 'No Name'}</TableCell>
                   <TableCell>
                     {category.icon_url ? (
-                      <img src={category.icon_url} alt={category.name} className="h-8 w-8 object-contain rounded-full" />
+                      <img src={category.icon_url} alt={category.name.fa} className="h-8 w-8 object-contain rounded-full" />
                     ) : (
                       category.icon || '-'
                     )}

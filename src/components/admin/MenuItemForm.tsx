@@ -10,17 +10,18 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useSupabaseStorage } from '@/hooks/useSupabaseStorage';
 import { useImageProcessor } from '@/hooks/useImageProcessor';
-import { Checkbox } from '@/components/ui/checkbox'; // Import Checkbox
+import { Checkbox } from '@/components/ui/checkbox';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface MenuItemFormProps {
   menuItem?: {
     id: string;
-    name: string;
-    description?: string;
+    name: any;
+    description?: any;
     price: number;
     category_id?: string;
     image_url?: string;
-    is_featured?: boolean; // Add is_featured
+    is_featured?: boolean;
   };
   onSave: () => void;
   onCancel: () => void;
@@ -28,44 +29,41 @@ interface MenuItemFormProps {
 
 interface Category {
   id: string;
-  name: string;
+  name: any;
 }
 
+const supportedLanguages = ['fa', 'en', 'ar', 'zh'];
+
 const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { uploadFile, deleteFile, loading: uploadLoading } = useSupabaseStorage();
   const { compressAndResizeImage, loading: imageProcessing } = useImageProcessor();
 
-  const [name, setName] = useState(menuItem?.name || '');
-  const [description, setDescription] = useState(menuItem?.description || '');
+  const [name, setName] = useState(menuItem?.name || {});
+  const [description, setDescription] = useState(menuItem?.description || {});
   const [price, setPrice] = useState(menuItem?.price?.toString() || '');
   const [categoryId, setCategoryId] = useState(menuItem?.category_id || '');
   const [imageUrl, setImageUrl] = useState(menuItem?.image_url || '');
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [isFeatured, setIsFeatured] = useState(menuItem?.is_featured || false); // State for featured
+  const [isFeatured, setIsFeatured] = useState(menuItem?.is_featured || false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (menuItem) {
-      setName(menuItem.name);
-      setDescription(menuItem.description || '');
+      setName(menuItem.name || {});
+      setDescription(menuItem.description || {});
       setPrice(menuItem.price.toString());
       setCategoryId(menuItem.category_id || '');
       setImageUrl(menuItem.image_url || '');
-      setIsFeatured(menuItem.is_featured || false); // Set featured state
+      setIsFeatured(menuItem.is_featured || false);
     }
   }, [menuItem]);
 
   useEffect(() => {
     const fetchCategories = async () => {
-      const { data, error } = await supabase
-        .from('categories')
-        .select('id, name')
-        .order('order', { ascending: true });
-
+      const { data, error } = await supabase.from('categories').select('id, name').order('order', { ascending: true });
       if (error) {
-        console.error('Error fetching categories:', error);
         toast.error(t('failed_to_load_categories', { message: error.message }));
       } else {
         setCategories(data || []);
@@ -74,10 +72,14 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
     fetchCategories();
   }, [t]);
 
+  const handleTextChange = (setter: React.Dispatch<React.SetStateAction<any>>, lang: string, value: string) => {
+    setter((prev: any) => ({ ...prev, [lang]: value }));
+  };
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setImageFile(e.target.files[0]);
-      setImageUrl(URL.createObjectURL(e.target.files[0])); // For preview
+      setImageUrl(URL.createObjectURL(e.target.files[0]));
     }
   };
 
@@ -88,55 +90,30 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
 
     if (imageFile) {
       const processedFile = await compressAndResizeImage(imageFile);
-      if (!processedFile) {
-        setLoading(false);
-        return;
+      if (processedFile) {
+        if (menuItem?.image_url && menuItem.image_url !== '/public/placeholder.svg') {
+          const oldFilePath = menuItem.image_url.split('/public/')[1];
+          await deleteFile(oldFilePath, 'menu-images');
+        }
+        const uploadedUrl = await uploadFile(processedFile, 'menu-images');
+        if (uploadedUrl) finalImageUrl = uploadedUrl;
       }
-
-      if (menuItem?.image_url && menuItem.image_url !== '/public/placeholder.svg') {
-        const oldFilePath = menuItem.image_url.split('/public/')[1];
-        await deleteFile(oldFilePath, 'menu-images');
-      }
-      const uploadedUrl = await uploadFile(processedFile, 'menu-images');
-      if (uploadedUrl) {
-        finalImageUrl = uploadedUrl;
-      } else {
-        setLoading(false);
-        return;
-      }
-    } else if (!imageUrl && menuItem?.image_url && menuItem.image_url !== '/public/placeholder.svg') {
-      const oldFilePath = menuItem.image_url.split('/public/')[1];
-      await deleteFile(oldFilePath, 'menu-images');
-      finalImageUrl = '/public/placeholder.svg';
-    } else if (!imageUrl) {
-      finalImageUrl = '/public/placeholder.svg';
     }
 
     const menuItemData = {
       name,
-      description: description || null,
+      description,
       price: parseFloat(price),
       category_id: categoryId || null,
       image_url: finalImageUrl,
-      is_featured: isFeatured, // Include is_featured
+      is_featured: isFeatured,
     };
 
-    let error = null;
-    if (menuItem) {
-      const { error: updateError } = await supabase
-        .from('menu_items')
-        .update(menuItemData)
-        .eq('id', menuItem.id);
-      error = updateError;
-    } else {
-      const { error: insertError } = await supabase
-        .from('menu_items')
-        .insert(menuItemData);
-      error = insertError;
-    }
+    const { error } = menuItem
+      ? await supabase.from('menu_items').update(menuItemData).eq('id', menuItem.id)
+      : await supabase.from('menu_items').insert(menuItemData);
 
     if (error) {
-      console.error('Error saving menu item:', error);
       toast.error(t('failed_to_save_menu_item', { message: error.message }));
     } else {
       toast.success(t('menu_item_saved_successfully'));
@@ -147,34 +124,51 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <Label htmlFor="menu-item-name">{t('item_name')}</Label>
-        <Input id="menu-item-name" value={name} onChange={(e) => setName(e.target.value)} placeholder={t('enter_item_name')} required />
+      <Tabs defaultValue="fa" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          {supportedLanguages.map(lang => (
+            <TabsTrigger key={lang} value={lang}>{lang.toUpperCase()}</TabsTrigger>
+          ))}
+        </TabsList>
+        {supportedLanguages.map(lang => (
+          <TabsContent key={lang} value={lang}>
+            <div className="space-y-4 mt-2">
+              <div>
+                <Label htmlFor={`menu-item-name-${lang}`}>{t('item_name')} ({lang.toUpperCase()})</Label>
+                <Input id={`menu-item-name-${lang}`} value={name[lang] || ''} onChange={(e) => handleTextChange(setName, lang, e.target.value)} placeholder={t('enter_item_name')} />
+              </div>
+              <div>
+                <Label htmlFor={`menu-item-description-${lang}`}>{t('item_description')} ({lang.toUpperCase()})</Label>
+                <Textarea id={`menu-item-description-${lang}`} value={description[lang] || ''} onChange={(e) => handleTextChange(setDescription, lang, e.target.value)} placeholder={t('enter_item_description')} />
+              </div>
+            </div>
+          </TabsContent>
+        ))}
+      </Tabs>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="menu-item-price">{t('item_price')}</Label>
+          <Input id="menu-item-price" type="number" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} placeholder={t('enter_item_price')} required />
+        </div>
+        <div>
+          <Label htmlFor="menu-item-category">{t('category')}</Label>
+          <Select onValueChange={setCategoryId} value={categoryId}>
+            <SelectTrigger id="menu-item-category"><SelectValue placeholder={t('select_category')} /></SelectTrigger>
+            <SelectContent>
+              {categories.map((cat) => (<SelectItem key={cat.id} value={cat.id}>{cat.name[i18n.language] || cat.name.fa}</SelectItem>))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
-      <div>
-        <Label htmlFor="menu-item-description">{t('item_description')}</Label>
-        <Textarea id="menu-item-description" value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t('enter_item_description')} />
-      </div>
-      <div>
-        <Label htmlFor="menu-item-price">{t('item_price')}</Label>
-        <Input id="menu-item-price" type="number" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} placeholder={t('enter_item_price')} required />
-      </div>
-      <div>
-        <Label htmlFor="menu-item-category">{t('category')}</Label>
-        <Select onValueChange={setCategoryId} value={categoryId}>
-          <SelectTrigger id="menu-item-category"><SelectValue placeholder={t('select_category')} /></SelectTrigger>
-          <SelectContent>
-            {categories.map((cat) => (<SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>))}
-          </SelectContent>
-        </Select>
-      </div>
+
       <div>
         <Label htmlFor="menu-item-image">{t('item_image')}</Label>
         <Input id="menu-item-image" type="file" accept="image/*" onChange={handleImageChange} disabled={uploadLoading || imageProcessing} />
         {imageUrl && (
           <div className="mt-2">
             <img src={imageUrl} alt="Item Preview" className="h-24 w-24 object-cover rounded-md" />
-            <Button variant="ghost" size="sm" onClick={() => { setImageUrl(''); setImageFile(null); }} className="mt-1 text-destructive" disabled={uploadLoading || imageProcessing}>
+            <Button variant="ghost" size="sm" onClick={() => { setImageUrl(''); setImageFile(null); }} className="mt-1 text-destructive">
               {t('remove_image')}
             </Button>
           </div>

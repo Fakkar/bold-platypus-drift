@@ -8,48 +8,44 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useSupabaseStorage } from '@/hooks/useSupabaseStorage';
 import { useImageProcessor } from '@/hooks/useImageProcessor';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface CategoryFormProps {
-  category?: { id: string; name: string; icon?: string; order?: number; icon_url?: string };
+  category?: { id: string; name: any; icon?: string; order?: number; icon_url?: string };
   onSave: () => void;
   onCancel: () => void;
 }
+
+const supportedLanguages = ['fa', 'en', 'ar', 'zh'];
 
 const CategoryForm: React.FC<CategoryFormProps> = ({ category, onSave, onCancel }) => {
   const { t } = useTranslation();
   const { uploadFile, deleteFile, loading: uploadLoading } = useSupabaseStorage();
   const { compressAndResizeImage, loading: imageProcessing } = useImageProcessor();
 
-  const [name, setName] = useState(category?.name || '');
-  const [icon, setIcon] = useState(category?.icon || ''); // Keeping for potential text-based icons
+  const [name, setName] = useState(category?.name || {});
   const [order, setOrder] = useState(category?.order?.toString() || '0');
-  const [iconUrl, setIconUrl] = useState(category?.icon_url || ''); // For image URL from DB
-  const [iconFile, setIconFile] = useState<File | null>(null); // For new image file upload
+  const [iconUrl, setIconUrl] = useState(category?.icon_url || '');
+  const [iconFile, setIconFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (category) {
-      setName(category.name);
-      setIcon(category.icon || '');
+      setName(category.name || {});
       setOrder(category.order?.toString() || '0');
       setIconUrl(category.icon_url || '');
     }
   }, [category]);
 
+  const handleNameChange = (lang: string, value: string) => {
+    setName((prev: any) => ({ ...prev, [lang]: value }));
+  };
+
   const handleIconFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setIconFile(e.target.files[0]);
-      setIconUrl(URL.createObjectURL(e.target.files[0])); // For preview
+      setIconUrl(URL.createObjectURL(e.target.files[0]));
     }
-  };
-
-  const handleRemoveIcon = async () => {
-    if (category?.icon_url && category.icon_url !== '/public/placeholder.svg') {
-      const filePath = category.icon_url.split('/category-icons/')[1]; // Extract path from URL
-      await deleteFile(filePath, 'category-icons');
-    }
-    setIconUrl('');
-    setIconFile(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,57 +55,27 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ category, onSave, onCancel 
 
     if (iconFile) {
       const processedFile = await compressAndResizeImage(iconFile);
-      if (!processedFile) {
-        setLoading(false);
-        return; // Stop if image processing failed
+      if (processedFile) {
+        if (category?.icon_url && category.icon_url !== '/public/placeholder.svg') {
+          const oldFilePath = category.icon_url.split('/category-icons/')[1];
+          await deleteFile(oldFilePath, 'category-icons');
+        }
+        const uploadedUrl = await uploadFile(processedFile, 'category-icons');
+        if (uploadedUrl) finalIconUrl = uploadedUrl;
       }
-
-      // If there's an old icon and a new one is uploaded, delete the old one
-      if (category?.icon_url && category.icon_url !== '/public/placeholder.svg') {
-        const oldFilePath = category.icon_url.split('/category-icons/')[1];
-        await deleteFile(oldFilePath, 'category-icons');
-      }
-      const uploadedUrl = await uploadFile(processedFile, 'category-icons');
-      if (uploadedUrl) {
-        finalIconUrl = uploadedUrl;
-      } else {
-        setLoading(false);
-        return; // Stop if image upload failed
-      }
-    } else if (!iconUrl && category?.icon_url && category.icon_url !== '/public/placeholder.svg') {
-      // If icon was removed and it was not a placeholder, delete from storage
-      const oldFilePath = category.icon_url.split('/category-icons/')[1];
-      await deleteFile(oldFilePath, 'category-icons');
-      finalIconUrl = ''; // Set to empty string if removed
-    } else if (!iconUrl) {
-      finalIconUrl = ''; // Ensure it's empty if no URL and no file
     }
 
     const categoryData = {
       name,
-      icon: icon || null, // Keep existing icon field for text-based icons if needed
       order: parseInt(order) || 0,
-      icon_url: finalIconUrl || null, // New field for image URL
+      icon_url: finalIconUrl || null,
     };
 
-    let error = null;
-    if (category) {
-      // Update existing category
-      const { error: updateError } = await supabase
-        .from('categories')
-        .update(categoryData)
-        .eq('id', category.id);
-      error = updateError;
-    } else {
-      // Add new category
-      const { error: insertError } = await supabase
-        .from('categories')
-        .insert(categoryData);
-      error = insertError;
-    }
+    const { error } = category
+      ? await supabase.from('categories').update(categoryData).eq('id', category.id)
+      : await supabase.from('categories').insert(categoryData);
 
     if (error) {
-      console.error('Error saving category:', error);
       toast.error(t('failed_to_save_category', { message: error.message }));
     } else {
       toast.success(t('category_saved_successfully'));
@@ -120,39 +86,38 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ category, onSave, onCancel 
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <Label htmlFor="category-name">{t('category_name')}</Label>
-        <Input
-          id="category-name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder={t('enter_category_name')}
-          required
-        />
-      </div>
+      <Tabs defaultValue="fa" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          {supportedLanguages.map(lang => (
+            <TabsTrigger key={lang} value={lang}>{lang.toUpperCase()}</TabsTrigger>
+          ))}
+        </TabsList>
+        {supportedLanguages.map(lang => (
+          <TabsContent key={lang} value={lang}>
+            <div className="space-y-2 mt-2">
+              <Label htmlFor={`category-name-${lang}`}>{t('category_name')} ({lang.toUpperCase()})</Label>
+              <Input
+                id={`category-name-${lang}`}
+                value={name[lang] || ''}
+                onChange={(e) => handleNameChange(lang, e.target.value)}
+                placeholder={`${t('enter_category_name')}...`}
+              />
+            </div>
+          </TabsContent>
+        ))}
+      </Tabs>
+
       <div>
         <Label htmlFor="category-order">{t('category_order')}</Label>
-        <Input
-          id="category-order"
-          type="number"
-          value={order}
-          onChange={(e) => setOrder(e.target.value)}
-          placeholder={t('enter_display_order')}
-        />
+        <Input id="category-order" type="number" value={order} onChange={(e) => setOrder(e.target.value)} />
       </div>
       <div>
         <Label htmlFor="category-icon-upload">{t('category_image_icon')}</Label>
-        <Input
-          id="category-icon-upload"
-          type="file"
-          accept="image/*"
-          onChange={handleIconFileChange}
-          disabled={uploadLoading || imageProcessing}
-        />
+        <Input id="category-icon-upload" type="file" accept="image/*" onChange={handleIconFileChange} disabled={uploadLoading || imageProcessing} />
         {iconUrl && (
           <div className="mt-2 flex items-center space-x-4">
             <img src={iconUrl} alt="Icon Preview" className="h-12 w-12 object-contain rounded-md border" />
-            <Button variant="ghost" size="sm" onClick={handleRemoveIcon} className="text-destructive" disabled={uploadLoading || imageProcessing}>
+            <Button variant="ghost" size="sm" onClick={() => { setIconUrl(''); setIconFile(null); }} className="text-destructive">
               {t('remove_image')}
             </Button>
           </div>
