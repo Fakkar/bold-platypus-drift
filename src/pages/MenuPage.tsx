@@ -109,7 +109,10 @@ const MenuPage: React.FC = () => {
             
             {categories.map((category) => (
               <TabsContent key={category.id} value={category.id} className="mt-8">
-                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
+                <div 
+                  className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8"
+                  style={{ direction: 'rtl' }} // Force RTL direction here
+                >
                   {menuItems
                     .filter((item) => item.category_id === category.id)
                     .map((item) => (
