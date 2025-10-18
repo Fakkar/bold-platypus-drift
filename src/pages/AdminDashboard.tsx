@@ -14,7 +14,8 @@ import CategoryList from "@/components/admin/CategoryList";
 import MenuItemList from "@/components/admin/MenuItemList";
 import { useSupabaseStorage } from "@/hooks/useSupabaseStorage";
 import { useImageProcessor } from "@/hooks/useImageProcessor";
-import QRCodeGenerator from "@/components/admin/QRCodeGenerator"; // Import QRCodeGenerator
+import QRCodeGenerator from "@/components/admin/QRCodeGenerator";
+import CustomerClubList from "@/components/admin/CustomerClubList"; // Import the new component
 
 const AdminDashboard: React.FC = () => {
   const { t } = useTranslation();
@@ -148,10 +149,11 @@ const AdminDashboard: React.FC = () => {
       <p className="text-lg text-gray-700 dark:text-gray-300 mb-8">{t("This is the admin dashboard. Here you can manage food items.")}</p>
 
       <Tabs defaultValue="settings" className="w-full max-w-4xl">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="settings">{t("restaurant_settings")}</TabsTrigger>
           <TabsTrigger value="categories">{t("manage_categories")}</TabsTrigger>
           <TabsTrigger value="menu-items">{t("manage_menu_items")}</TabsTrigger>
+          <TabsTrigger value="customer-club">{t("customer_club")}</TabsTrigger>
         </TabsList>
         <TabsContent value="settings" className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mt-4">
           <form onSubmit={handleSaveSettings} className="space-y-6">
@@ -234,6 +236,7 @@ const AdminDashboard: React.FC = () => {
         </TabsContent>
         <TabsContent value="categories" className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mt-4"><CategoryList /></TabsContent>
         <TabsContent value="menu-items" className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mt-4"><MenuItemList /></TabsContent>
+        <TabsContent value="customer-club" className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mt-4"><CustomerClubList /></TabsContent>
       </Tabs>
       <Link to="/" className="mt-8"><Button variant="outline">{t("back_to_menu")}</Button></Link>
     </div>

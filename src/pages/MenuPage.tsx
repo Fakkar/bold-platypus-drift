@@ -8,9 +8,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useLocation } from "react-router-dom";
-import { Input } from "@/components/ui/input"; // Import Input
-import FeaturedItems from "@/components/FeaturedItems"; // Import FeaturedItems
+import { Input } from "@/components/ui/input";
+import FeaturedItems from "@/components/FeaturedItems";
 import { Search } from "lucide-react";
+import CustomerClubModal from "@/components/CustomerClubModal"; // Import the modal
 
 interface Category {
   id: string;
@@ -38,8 +39,15 @@ const MenuPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<string | undefined>(undefined);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isClubModalOpen, setIsClubModalOpen] = useState(false);
 
   useEffect(() => {
+    // Check if the user has already joined the club
+    const hasJoined = localStorage.getItem('customerClubJoined');
+    if (hasJoined !== 'true') {
+      setIsClubModalOpen(true);
+    }
+
     const fetchData = async () => {
       setLoading(true);
       const { data: categoriesData, error: categoriesError } = await supabase
@@ -76,6 +84,11 @@ const MenuPage: React.FC = () => {
     fetchData();
   }, [t, location.hash]);
 
+  const handleModalSuccess = () => {
+    localStorage.setItem('customerClubJoined', 'true');
+    setIsClubModalOpen(false);
+  };
+
   const featuredItems = menuItems.filter(item => item.is_featured);
   const regularItems = menuItems.filter(item => !item.is_featured);
 
@@ -94,6 +107,7 @@ const MenuPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-800 to-indigo-900">
+      <CustomerClubModal isOpen={isClubModalOpen} onSuccess={handleModalSuccess} />
       <Header />
       <HeroSection />
       <FeaturedItems items={featuredItems} />

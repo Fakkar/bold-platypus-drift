@@ -158,5 +158,20 @@
   "url_copied_to_clipboard": "آدرس در کلیپ‌بورد کپی شد",
   "qr_code_instruction": "این کد را اسکن کنید تا منو را روی گوشی خود ببینید.",
   "chefs_special": "پیشنهاد ویژه سرآشپز",
-  "search_menu_placeholder": "جستجو در منو..."
+  "search_menu_placeholder": "جستجو در منو...",
+  "customer_club": "باشگاه مشتریان",
+  "join_our_club": "به باشگاه مشتریان ما بپیوندید!",
+  "join_club_description": "شماره خود را وارد کنید تا از تخفیف‌ها و پیشنهادات ویژه ما باخبر شوید.",
+  "confirm": "تایید",
+  "invalid_phone_number": "لطفاً یک شماره موبایل معتبر (۹ رقم بعد از ۰۹) وارد کنید.",
+  "club_join_success": "شما با موفقیت به باشگاه مشتریان پیوستید!",
+  "club_join_error": "خطا در عضویت: {{message}}",
+  "first_visit": "اولین مراجعه",
+  "last_visit": "آخرین مراجعه",
+  "total_visits": "تعداد مراجعات",
+  "failed_to_load_customers": "بارگذاری لیست مشتریان ناموفق بود.",
+  "no_customers_found": "هیچ مشتری در باشگاه یافت نشد.",
+  "failed_to_delete_customer": "حذف مشتری ناموفق بود.",
+  "customer_deleted_successfully": "مشتری با موفقیت حذف شد.",
+  "this_action_cannot_be_undone_customer": "این عمل مشتری را برای همیشه از باشگاه حذف می‌کند."
 }
