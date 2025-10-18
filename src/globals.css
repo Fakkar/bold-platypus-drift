@@ -17,6 +17,20 @@
     font-style: normal;
     font-display: swap;
   }
+  @font-face {
+    font-family: 'IRANSans';
+    src: url('/fonts/IRANSansWeb.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Nazanin';
+    src: url('/fonts/BNazanin.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
 
   :root {
     --background: 0 0% 97%; /* Light background from reference */
@@ -96,7 +110,7 @@
   }
 
   body {
-    @apply bg-background text-foreground font-vazirmatn;
+    @apply bg-background text-foreground font-sans;
   }
 
   .dark body {

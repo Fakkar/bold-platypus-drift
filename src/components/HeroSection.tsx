@@ -26,10 +26,10 @@ const HeroSection: React.FC = () => {
             <ChefHat className="h-10 w-10 md:h-12 md:w-12 text-white" />
           </div>
         </div>
-        <h1 className="text-4xl md:text-5xl font-bold leading-tight">
+        <h1 className="text-4xl md:text-5xl font-bold leading-tight font-iransans">
           {tDynamic(settings.hero_title)}
         </h1>
-        <p className="text-base md:text-xl mb-6 md:mb-8 max-w-2xl">
+        <p className="text-base md:text-xl mb-6 md:mb-8 max-w-2xl font-nazanin">
           {tDynamic(settings.hero_description)}
         </p>
         

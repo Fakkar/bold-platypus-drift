@@ -19,8 +19,10 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Vazirmatn', 'sans-serif'], // Set Vazirmatn as the default sans-serif font
+        sans: ['IRANSans', 'Vazirmatn', 'sans-serif'], // Set IRANSans as the default
         vazirmatn: ['Vazirmatn', 'sans-serif'],
+        iransans: ['IRANSans', 'sans-serif'],
+        nazanin: ['Nazanin', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
