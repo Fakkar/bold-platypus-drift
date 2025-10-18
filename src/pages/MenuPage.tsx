@@ -109,11 +109,13 @@ const MenuPage: React.FC = () => {
             
             {categories.map((category) => (
               <TabsContent key={category.id} value={category.id} className="mt-8">
-                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
+                <div className="flex flex-wrap -mx-2 md:-mx-4">
                   {menuItems
                     .filter((item) => item.category_id === category.id)
                     .map((item) => (
-                      <MenuItemCard key={item.id} item={item} />
+                      <div key={item.id} className="w-1/2 lg:w-1/3 xl:w-1/4 px-2 md:px-4 mb-4 md:mb-8">
+                        <MenuItemCard item={item} />
+                      </div>
                     ))}
                 </div>
               </TabsContent>
