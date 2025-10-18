@@ -45,7 +45,7 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
           <p className="text-gray-300 text-sm mb-4 line-clamp-2"> {/* Adjusted text color */}
             {item.description}
           </p>
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-start">
             <span className="text-2xl font-bold text-primary" dir="rtl"> {/* Primary color for price */}
               {formatPriceInToman(item.price)}
             </span>
