@@ -88,23 +88,28 @@ const MenuPage: React.FC = () => {
           <p className="text-center text-gray-300">{t("no_categories_found")}</p>
         ) : (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="flex flex-wrap justify-center gap-4 p-6 bg-indigo-900/70 rounded-lg shadow-lg -mt-8 relative z-20 h-auto">
-              {categories.map((category) => (
-                <TabsTrigger 
-                  key={category.id} 
-                  value={category.id} 
-                  className="flex items-center justify-center space-x-2 rtl:space-x-reverse text-white bg-white/10 hover:bg-white/20 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:animate-pulse-shadow rounded-full px-8 py-4 text-lg transition-colors duration-200 flex-shrink-0"
-                >
-                  {category.icon_url && (
-                    <img src={category.icon_url} alt={category.name} className="h-6 w-6 object-contain rounded-full" />
-                  )}
-                  <span>{category.name}</span>
-                </TabsTrigger>
-              ))}
-            </TabsList>
+            <div className="-mt-8 relative z-20">
+              <div className="sticky top-0 z-30 py-4 bg-purple-900/80 backdrop-blur-sm">
+                <TabsList className="flex flex-wrap justify-center gap-2 md:gap-4 p-2 bg-transparent shadow-none h-auto">
+                  {categories.map((category) => (
+                    <TabsTrigger 
+                      key={category.id} 
+                      value={category.id} 
+                      className="flex items-center justify-center space-x-2 rtl:space-x-reverse text-white bg-white/10 hover:bg-white/20 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:animate-pulse-shadow rounded-full px-4 md:px-8 py-2 md:py-3 text-sm md:text-lg transition-colors duration-200 flex-shrink-0"
+                    >
+                      {category.icon_url && (
+                        <img src={category.icon_url} alt={category.name} className="h-6 w-6 object-contain rounded-full" />
+                      )}
+                      <span>{category.name}</span>
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </div>
+            </div>
+            
             {categories.map((category) => (
               <TabsContent key={category.id} value={category.id} className="mt-8">
-                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
                   {menuItems
                     .filter((item) => item.category_id === category.id)
                     .map((item) => (

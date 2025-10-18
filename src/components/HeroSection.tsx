@@ -14,7 +14,7 @@ const HeroSection: React.FC = () => {
 
   return (
     <section
-      className="relative h-[600px] flex flex-col items-center justify-center text-white p-4 bg-cover bg-center"
+      className="relative h-[500px] md:h-[600px] flex flex-col items-center justify-center text-white p-4 bg-cover bg-center"
       style={{ backgroundImage: `url(${settings.hero_background_image_url})` }}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-purple-800/70 to-indigo-900/70 z-0"></div> {/* Overlay for gradient */}
@@ -24,10 +24,10 @@ const HeroSection: React.FC = () => {
             <ChefHat className="h-12 w-12 text-white" />
           </div>
         </div>
-        <h1 className="text-5xl font-bold mb-4 leading-tight">
+        <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
           {settings.hero_title}
         </h1>
-        <p className="text-xl mb-8 max-w-2xl">
+        <p className="text-lg md:text-xl mb-8 max-w-2xl">
           {settings.hero_description}
         </p>
         
