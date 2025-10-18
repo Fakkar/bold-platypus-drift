@@ -9,17 +9,19 @@ import { toast } from 'sonner';
 import CategoryForm from './CategoryForm';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useSupabaseStorage } from '@/hooks/useSupabaseStorage';
+import { useDynamicTranslation } from '@/context/DynamicTranslationContext';
 
 interface Category {
   id: string;
-  name: any; // Changed to any to handle JSON object
+  name: string;
   icon?: string;
   order?: number;
   icon_url?: string;
 }
 
 const CategoryList: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
+  const { tDynamic } = useDynamicTranslation();
   const { deleteFile } = useSupabaseStorage();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -111,10 +113,10 @@ const CategoryList: React.FC = () => {
             <TableBody>
               {categories.map((category) => (
                 <TableRow key={category.id}>
-                  <TableCell className="font-medium">{category.name[i18n.language] || category.name.fa || 'No Name'}</TableCell>
+                  <TableCell className="font-medium">{tDynamic(category.name)}</TableCell>
                   <TableCell>
                     {category.icon_url ? (
-                      <img src={category.icon_url} alt={category.name.fa} className="h-8 w-8 object-contain rounded-full" />
+                      <img src={category.icon_url} alt={category.name} className="h-8 w-8 object-contain rounded-full" />
                     ) : (
                       category.icon || '-'
                     )}

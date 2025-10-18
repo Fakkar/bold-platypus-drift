@@ -9,16 +9,18 @@ import { useRestaurantSettings } from "@/context/RestaurantSettingsContext";
 import { useSession } from "@/context/SessionContext";
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useDynamicTranslation } from "@/context/DynamicTranslationContext";
 
 interface Category {
   id: string;
-  name: any;
+  name: string;
   order?: number;
   icon_url?: string;
 }
 
 const Header: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
+  const { tDynamic } = useDynamicTranslation();
   const { settings, loading: settingsLoading } = useRestaurantSettings();
   const { user, signOut, loading: sessionLoading } = useSession();
   const [categories, setCategories] = useState<Category[]>([]);
@@ -48,13 +50,13 @@ const Header: React.FC = () => {
     <header className="absolute inset-x-0 top-0 z-50">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center space-x-4 rtl:space-x-reverse">
-          <img src={settings.logo_url} alt={settings.name[i18n.language] || settings.name.fa} className="h-16 w-16 object-cover rounded-full border-2 border-primary" />
+          <img src={settings.logo_url} alt={tDynamic(settings.name)} className="h-16 w-16 object-cover rounded-full border-2 border-primary" />
           <div className="flex flex-col">
             <span className="text-3xl font-bold text-white">
-              {settings.name[i18n.language] || settings.name.fa}
+              {tDynamic(settings.name)}
             </span>
             <span className="text-sm text-gray-300 dark:text-gray-400">
-              {settings.slogan[i18n.language] || settings.slogan.fa}
+              {tDynamic(settings.slogan)}
             </span>
           </div>
         </div>
@@ -66,7 +68,7 @@ const Header: React.FC = () => {
           </div>
           <div className="bg-white/20 backdrop-blur-sm rounded-full px-3 py-2 flex items-center space-x-2 rtl:space-x-reverse text-white">
             <Clock className="h-4 w-4 text-primary" />
-            <span className="text-sm">{settings.working_hours_text[i18n.language] || settings.working_hours_text.fa}</span>
+            <span className="text-sm">{tDynamic(settings.working_hours_text)}</span>
           </div>
           <LanguageSwitcher />
         </div>
@@ -86,7 +88,7 @@ const Header: React.FC = () => {
                 </div>
                 <div className="flex items-center space-x-2 rtl:space-x-reverse text-lg">
                   <Clock className="h-5 w-5 text-primary" />
-                  <span>{settings.working_hours_text[i18n.language] || settings.working_hours_text.fa}</span>
+                  <span>{tDynamic(settings.working_hours_text)}</span>
                 </div>
                 <LanguageSwitcher />
                 
@@ -98,9 +100,9 @@ const Header: React.FC = () => {
                       onClick={() => setIsSheetOpen(false)}
                     >
                       {category.icon_url && (
-                        <img src={category.icon_url} alt={category.name[i18n.language] || category.name.fa} className="h-6 w-6 object-contain rounded-full" />
+                        <img src={category.icon_url} alt={tDynamic(category.name)} className="h-6 w-6 object-contain rounded-full" />
                       )}
-                      <span>{category.name[i18n.language] || category.name.fa}</span>
+                      <span>{tDynamic(category.name)}</span>
                     </Link>
                   </SheetClose>
                 ))}

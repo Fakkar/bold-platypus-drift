@@ -13,18 +13,19 @@ import FeaturedItems from "@/components/FeaturedItems";
 import { Search } from "lucide-react";
 import CustomerClubModal from "@/components/CustomerClubModal";
 import HafezDivination from "@/components/HafezDivination";
+import { useDynamicTranslation } from "@/context/DynamicTranslationContext";
 
 interface Category {
   id: string;
-  name: any;
+  name: string;
   order?: number;
   icon_url?: string;
 }
 
 interface MenuItem {
   id: string;
-  name: any;
-  description?: any;
+  name: string;
+  description?: string;
   price: number;
   category_id?: string;
   image_url?: string;
@@ -33,7 +34,8 @@ interface MenuItem {
 }
 
 const MenuPage: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
+  const { tDynamic } = useDynamicTranslation();
   const location = useLocation();
   const [categories, setCategories] = useState<Category[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
@@ -91,10 +93,11 @@ const MenuPage: React.FC = () => {
   const regularItems = menuItems.filter(item => !item.is_featured);
 
   const filteredItems = regularItems.filter(item => {
-    const currentName = item.name[i18n.language] || item.name.fa || '';
-    const currentDescription = item.description[i18n.language] || item.description.fa || '';
-    return currentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-           currentDescription.toLowerCase().includes(searchTerm.toLowerCase());
+    const translatedName = tDynamic(item.name).toLowerCase();
+    const translatedDescription = tDynamic(item.description || '').toLowerCase();
+    const lowercasedSearchTerm = searchTerm.toLowerCase();
+    return translatedName.includes(lowercasedSearchTerm) ||
+           translatedDescription.includes(lowercasedSearchTerm);
   });
 
   if (loading) {
@@ -139,9 +142,9 @@ const MenuPage: React.FC = () => {
                       className="flex items-center justify-center space-x-2 rtl:space-x-reverse text-white bg-white/10 hover:bg-white/20 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:animate-pulse-shadow rounded-full px-4 md:px-8 py-2 md:py-3 text-sm md:text-lg transition-colors duration-200 flex-shrink-0"
                     >
                       {category.icon_url && (
-                        <img src={category.icon_url} alt={category.name[i18n.language] || category.name.fa} className="h-6 w-6 object-contain rounded-full" />
+                        <img src={category.icon_url} alt={tDynamic(category.name)} className="h-6 w-6 object-contain rounded-full" />
                       )}
-                      <span>{category.name[i18n.language] || category.name.fa}</span>
+                      <span>{tDynamic(category.name)}</span>
                     </TabsTrigger>
                   ))}
                 </TabsList>

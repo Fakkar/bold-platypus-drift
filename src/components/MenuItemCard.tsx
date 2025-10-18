@@ -4,12 +4,13 @@ import { useTranslation } from "react-i18next";
 import { formatPriceInToman } from '@/utils/format';
 import ImageModal from './ImageModal';
 import { cn } from "@/lib/utils";
+import { useDynamicTranslation } from "@/context/DynamicTranslationContext";
 
 interface MenuItemCardProps {
   item: {
     id: string;
-    name: any;
-    description: any;
+    name: string;
+    description: string;
     price: number;
     image_url?: string;
     is_available: boolean;
@@ -17,7 +18,8 @@ interface MenuItemCardProps {
 }
 
 const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
+  const { tDynamic } = useDynamicTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
 
@@ -27,8 +29,8 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
     setIsModalOpen(true);
   };
 
-  const currentName = item.name[i18n.language] || item.name.fa;
-  const currentDescription = item.description[i18n.language] || item.description.fa;
+  const currentName = tDynamic(item.name);
+  const currentDescription = tDynamic(item.description);
 
   return (
     <>

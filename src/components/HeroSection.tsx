@@ -2,10 +2,12 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { ChefHat, Award, Users, Star } from "lucide-react";
 import StatisticCard from "./StatisticCard";
-import { useRestaurantSettings } from "@/context/RestaurantSettingsContext"; // Import useRestaurantSettings
+import { useRestaurantSettings } from "@/context/RestaurantSettingsContext";
+import { useDynamicTranslation } from "@/context/DynamicTranslationContext";
 
 const HeroSection: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
+  const { tDynamic } = useDynamicTranslation();
   const { settings, loading: settingsLoading } = useRestaurantSettings();
 
   if (settingsLoading) {
@@ -25,10 +27,10 @@ const HeroSection: React.FC = () => {
           </div>
         </div>
         <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-          {settings.hero_title[i18n.language] || settings.hero_title.fa}
+          {tDynamic(settings.hero_title)}
         </h1>
         <p className="text-base md:text-xl mb-6 md:mb-8 max-w-2xl">
-          {settings.hero_description[i18n.language] || settings.hero_description.fa}
+          {tDynamic(settings.hero_description)}
         </p>
         
         <div className="flex flex-row items-stretch justify-center gap-2 md:gap-4 mt-6 md:mt-8">

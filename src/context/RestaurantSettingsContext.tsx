@@ -4,20 +4,20 @@ import { toast } from 'sonner'; // For notifications
 
 interface RestaurantSettings {
   id?: string;
-  name: any;
+  name: string;
   logo_url: string;
-  slogan: any;
+  slogan: string;
   phone_number: string;
-  working_hours_text: any;
-  hero_title: any;
-  hero_description: any;
+  working_hours_text: string;
+  hero_title: string;
+  hero_description: string;
   hero_background_image_url: string;
-  about_us_text: any;
-  address: any;
+  about_us_text: string;
+  address: string;
   twitter_url: string;
   instagram_url: string;
   facebook_url: string;
-  copyright_text: any;
+  copyright_text: string;
 }
 
 interface RestaurantSettingsContextType {
@@ -30,20 +30,20 @@ const RestaurantSettingsContext = createContext<RestaurantSettingsContextType | 
 
 export const RestaurantSettingsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [settings, setSettings] = useState<RestaurantSettings>({
-    name: { fa: "رستوران من", en: "My Restaurant" },
+    name: "رستوران من",
     logo_url: "/public/placeholder.svg",
-    slogan: { fa: "طعم تفاوت، تجربه فراموش نشدنی", en: "Taste the difference, experience the unforgettable" },
+    slogan: "طعم تفاوت، تجربه فراموش نشدنی",
     phone_number: "021-1234-5678",
-    working_hours_text: { fa: "۹:۰۰ صبح - ۱۱:۰۰ شب", en: "9:00 AM - 11:00 PM" },
-    hero_title: { fa: "منوی آنلاین", en: "Online Menu" },
-    hero_description: { fa: "از غذاهای خوشمزه ما لذت ببرید. تمام غذاها با بهترین مواد اولیه و عشق به آشپزی تهیه می‌شوند.", en: "Enjoy our delicious food. All dishes are prepared with the best ingredients and a passion for cooking." },
+    working_hours_text: "۹:۰۰ صبح - ۱۱:۰۰ شب",
+    hero_title: "منوی آنلاین",
+    hero_description: "از غذاهای خوشمزه ما لذت ببرید. تمام غذاها با بهترین مواد اولیه و عشق به آشپزی تهیه می‌شوند.",
     hero_background_image_url: "/public/hero-bg.jpg",
-    about_us_text: { fa: 'ما با بیش از ۱۰ سال تجربه در صنعت آشپزی، بهترین غذاهای محلی و بین‌المللی را برای شما آماده می‌کنیم.', en: 'With over 10 years of experience in the culinary industry, we prepare the best local and international dishes for you.' },
-    address: { fa: 'تهران، خیابان ولیعصر، پلاک ۱۲۳', en: 'Tehran, Vali-e Asr St., No. 123' },
+    about_us_text: 'ما با بیش از ۱۰ سال تجربه در صنعت آشپزی، بهترین غذاهای محلی و بین‌المللی را برای شما آماده می‌کنیم.',
+    address: 'تهران، خیابان ولیعصر، پلاک ۱۲۳',
     twitter_url: 'https://twitter.com',
     instagram_url: 'https://instagram.com',
     facebook_url: 'https://facebook.com',
-    copyright_text: { fa: '© ۲۰۲۴ رستوران. تمامی حقوق محفوظ است.', en: '© 2024 Restaurant. All rights reserved.' },
+    copyright_text: '© ۲۰۲۴ رستوران. تمامی حقوق محفوظ است.',
   });
   const [loading, setLoading] = useState(true);
 

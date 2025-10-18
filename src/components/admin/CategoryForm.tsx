@@ -8,22 +8,19 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useSupabaseStorage } from '@/hooks/useSupabaseStorage';
 import { useImageProcessor } from '@/hooks/useImageProcessor';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface CategoryFormProps {
-  category?: { id: string; name: any; icon?: string; order?: number; icon_url?: string };
+  category?: { id: string; name: string; icon?: string; order?: number; icon_url?: string };
   onSave: () => void;
   onCancel: () => void;
 }
-
-const supportedLanguages = ['fa', 'en', 'ar', 'zh'];
 
 const CategoryForm: React.FC<CategoryFormProps> = ({ category, onSave, onCancel }) => {
   const { t } = useTranslation();
   const { uploadFile, deleteFile, loading: uploadLoading } = useSupabaseStorage();
   const { compressAndResizeImage, loading: imageProcessing } = useImageProcessor();
 
-  const [name, setName] = useState(category?.name || {});
+  const [name, setName] = useState(category?.name || '');
   const [order, setOrder] = useState(category?.order?.toString() || '0');
   const [iconUrl, setIconUrl] = useState(category?.icon_url || '');
   const [iconFile, setIconFile] = useState<File | null>(null);
@@ -31,15 +28,11 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ category, onSave, onCancel 
 
   useEffect(() => {
     if (category) {
-      setName(category.name || {});
+      setName(category.name || '');
       setOrder(category.order?.toString() || '0');
       setIconUrl(category.icon_url || '');
     }
   }, [category]);
-
-  const handleNameChange = (lang: string, value: string) => {
-    setName((prev: any) => ({ ...prev, [lang]: value }));
-  };
 
   const handleIconFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -86,27 +79,15 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ category, onSave, onCancel 
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <Tabs defaultValue="fa" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          {supportedLanguages.map(lang => (
-            <TabsTrigger key={lang} value={lang}>{lang.toUpperCase()}</TabsTrigger>
-          ))}
-        </TabsList>
-        {supportedLanguages.map(lang => (
-          <TabsContent key={lang} value={lang}>
-            <div className="space-y-2 mt-2">
-              <Label htmlFor={`category-name-${lang}`}>{t('category_name')} ({lang.toUpperCase()})</Label>
-              <Input
-                id={`category-name-${lang}`}
-                value={name[lang] || ''}
-                onChange={(e) => handleNameChange(lang, e.target.value)}
-                placeholder={`${t('enter_category_name')}...`}
-              />
-            </div>
-          </TabsContent>
-        ))}
-      </Tabs>
-
+      <div>
+        <Label htmlFor="category-name">{t('category_name')}</Label>
+        <Input
+          id="category-name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder={`${t('enter_category_name')}...`}
+        />
+      </div>
       <div>
         <Label htmlFor="category-order">{t('category_order')}</Label>
         <Input id="category-order" type="number" value={order} onChange={(e) => setOrder(e.target.value)} />

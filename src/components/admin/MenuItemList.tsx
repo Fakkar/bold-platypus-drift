@@ -10,21 +10,23 @@ import MenuItemForm from './MenuItemForm';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useSupabaseStorage } from '@/hooks/useSupabaseStorage';
 import { Switch } from '@/components/ui/switch';
+import { useDynamicTranslation } from '@/context/DynamicTranslationContext';
 
 interface MenuItem {
   id: string;
-  name: any;
-  description?: any;
+  name: string;
+  description?: string;
   price: number;
   category_id?: string;
-  image_url?: string;
-  categories?: { name: any };
+  categories?: { name: string };
   is_available: boolean;
   is_featured?: boolean;
+  image_url?: string;
 }
 
 const MenuItemList: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
+  const { tDynamic } = useDynamicTranslation();
   const { deleteFile } = useSupabaseStorage();
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -134,10 +136,10 @@ const MenuItemList: React.FC = () => {
               {menuItems.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell>
-                    <img src={item.image_url || '/public/placeholder.svg'} alt={item.name.fa} className="h-10 w-10 object-cover rounded-md" />
+                    <img src={item.image_url || '/public/placeholder.svg'} alt={item.name} className="h-10 w-10 object-cover rounded-md" />
                   </TableCell>
-                  <TableCell className="font-medium">{item.name[i18n.language] || item.name.fa}</TableCell>
-                  <TableCell>{item.categories?.name[i18n.language] || item.categories?.name.fa || t('uncategorized')}</TableCell>
+                  <TableCell className="font-medium">{tDynamic(item.name)}</TableCell>
+                  <TableCell>{item.categories ? tDynamic(item.categories.name) : t('uncategorized')}</TableCell>
                   <TableCell>${item.price.toFixed(2)}</TableCell>
                   <TableCell>
                     <Switch checked={item.is_available} onCheckedChange={() => handleAvailabilityToggle(item)} aria-label={t('availability')} />

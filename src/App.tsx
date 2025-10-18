@@ -13,6 +13,7 @@ import { RestaurantSettingsProvider } from "./context/RestaurantSettingsContext"
 import Login from "./pages/Login";
 import { SessionContextProvider, useSession } from "./context/SessionContext";
 import { toast } from "sonner";
+import { DynamicTranslationProvider } from "./context/DynamicTranslationContext";
 
 const queryClient = new QueryClient();
 
@@ -52,20 +53,22 @@ const App = () => (
         <BrowserRouter>
           <SessionContextProvider>
             <RestaurantSettingsProvider>
-              <Routes>
-                <Route path="/" element={<MenuPage />} />
-                <Route path="/login" element={<Login />} />
-                <Route 
-                  path="/admin" 
-                  element={
-                    <ProtectedRoute>
-                      <AdminDashboard />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route path="/home" element={<Index />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+              <DynamicTranslationProvider>
+                <Routes>
+                  <Route path="/" element={<MenuPage />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route 
+                    path="/admin" 
+                    element={
+                      <ProtectedRoute>
+                        <AdminDashboard />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route path="/home" element={<Index />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </DynamicTranslationProvider>
             </RestaurantSettingsProvider>
           </SessionContextProvider>
         </BrowserRouter>

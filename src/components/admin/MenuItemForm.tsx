@@ -11,13 +11,13 @@ import { toast } from 'sonner';
 import { useSupabaseStorage } from '@/hooks/useSupabaseStorage';
 import { useImageProcessor } from '@/hooks/useImageProcessor';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useDynamicTranslation } from '@/context/DynamicTranslationContext';
 
 interface MenuItemFormProps {
   menuItem?: {
     id: string;
-    name: any;
-    description?: any;
+    name: string;
+    description?: string;
     price: number;
     category_id?: string;
     image_url?: string;
@@ -29,18 +29,17 @@ interface MenuItemFormProps {
 
 interface Category {
   id: string;
-  name: any;
+  name: string;
 }
 
-const supportedLanguages = ['fa', 'en', 'ar', 'zh'];
-
 const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel }) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
+  const { tDynamic } = useDynamicTranslation();
   const { uploadFile, deleteFile, loading: uploadLoading } = useSupabaseStorage();
   const { compressAndResizeImage, loading: imageProcessing } = useImageProcessor();
 
-  const [name, setName] = useState(menuItem?.name || {});
-  const [description, setDescription] = useState(menuItem?.description || {});
+  const [name, setName] = useState(menuItem?.name || '');
+  const [description, setDescription] = useState(menuItem?.description || '');
   const [price, setPrice] = useState(menuItem?.price?.toString() || '');
   const [categoryId, setCategoryId] = useState(menuItem?.category_id || '');
   const [imageUrl, setImageUrl] = useState(menuItem?.image_url || '');
@@ -51,8 +50,8 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
 
   useEffect(() => {
     if (menuItem) {
-      setName(menuItem.name || {});
-      setDescription(menuItem.description || {});
+      setName(menuItem.name || '');
+      setDescription(menuItem.description || '');
       setPrice(menuItem.price.toString());
       setCategoryId(menuItem.category_id || '');
       setImageUrl(menuItem.image_url || '');
@@ -71,10 +70,6 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
     };
     fetchCategories();
   }, [t]);
-
-  const handleTextChange = (setter: React.Dispatch<React.SetStateAction<any>>, lang: string, value: string) => {
-    setter((prev: any) => ({ ...prev, [lang]: value }));
-  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -124,27 +119,14 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <Tabs defaultValue="fa" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          {supportedLanguages.map(lang => (
-            <TabsTrigger key={lang} value={lang}>{lang.toUpperCase()}</TabsTrigger>
-          ))}
-        </TabsList>
-        {supportedLanguages.map(lang => (
-          <TabsContent key={lang} value={lang}>
-            <div className="space-y-4 mt-2">
-              <div>
-                <Label htmlFor={`menu-item-name-${lang}`}>{t('item_name')} ({lang.toUpperCase()})</Label>
-                <Input id={`menu-item-name-${lang}`} value={name[lang] || ''} onChange={(e) => handleTextChange(setName, lang, e.target.value)} placeholder={t('enter_item_name')} />
-              </div>
-              <div>
-                <Label htmlFor={`menu-item-description-${lang}`}>{t('item_description')} ({lang.toUpperCase()})</Label>
-                <Textarea id={`menu-item-description-${lang}`} value={description[lang] || ''} onChange={(e) => handleTextChange(setDescription, lang, e.target.value)} placeholder={t('enter_item_description')} />
-              </div>
-            </div>
-          </TabsContent>
-        ))}
-      </Tabs>
+      <div>
+        <Label htmlFor="menu-item-name">{t('item_name')}</Label>
+        <Input id="menu-item-name" value={name} onChange={(e) => setName(e.target.value)} placeholder={t('enter_item_name')} />
+      </div>
+      <div>
+        <Label htmlFor="menu-item-description">{t('item_description')}</Label>
+        <Textarea id="menu-item-description" value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t('enter_item_description')} />
+      </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
@@ -156,7 +138,7 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
           <Select onValueChange={setCategoryId} value={categoryId}>
             <SelectTrigger id="menu-item-category"><SelectValue placeholder={t('select_category')} /></SelectTrigger>
             <SelectContent>
-              {categories.map((cat) => (<SelectItem key={cat.id} value={cat.id}>{cat.name[i18n.language] || cat.name.fa}</SelectItem>))}
+              {categories.map((cat) => (<SelectItem key={cat.id} value={cat.id}>{tDynamic(cat.name)}</SelectItem>))}
             </SelectContent>
           </Select>
         </div>
