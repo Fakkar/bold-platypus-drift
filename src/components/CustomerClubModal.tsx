@@ -65,7 +65,7 @@ const CustomerClubModal: React.FC<CustomerClubModalProps> = ({ isOpen, onSuccess
               className="flex h-10 w-full items-center rounded-md border border-input bg-transparent px-3 text-sm focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2" 
               dir="ltr"
             >
-              <span className="font-mono text-muted-foreground">
+              <span className="font-mono tracking-widest">
                 09
               </span>
               <Input
@@ -78,7 +78,7 @@ const CustomerClubModal: React.FC<CustomerClubModalProps> = ({ isOpen, onSuccess
                   }
                 }}
                 placeholder="---------"
-                className="h-auto flex-grow border-0 bg-transparent p-0 pl-2 text-left tracking-widest focus-visible:ring-0 focus-visible:ring-offset-0"
+                className="h-auto flex-grow border-0 bg-transparent p-0 pl-2 text-left tracking-widest focus-visible:ring-0 focus-visible:ring-offset-0 font-mono"
                 required
               />
             </div>
