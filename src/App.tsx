@@ -9,13 +9,40 @@ import { I18nextProvider } from "react-i18next";
 import i18n from "./i18n";
 import MenuPage from "./pages/MenuPage";
 import AdminDashboard from "./pages/AdminDashboard";
-import { RestaurantSettingsProvider } from "./context/RestaurantSettingsContext";
+import { RestaurantSettingsProvider, useRestaurantSettings } from "./context/RestaurantSettingsContext";
 import Login from "./pages/Login";
 import { SessionContextProvider, useSession } from "./context/SessionContext";
 import { toast } from "sonner";
-import { DynamicTranslationProvider } from "./context/DynamicTranslationContext";
+import { DynamicTranslationProvider, useDynamicTranslation } from "./context/DynamicTranslationContext";
+import { useEffect } from "react";
 
 const queryClient = new QueryClient();
+
+// Component to set the document title and favicon
+const PageMetadataSetter = () => {
+  const { settings, loading } = useRestaurantSettings();
+  const { tDynamic } = useDynamicTranslation();
+
+  useEffect(() => {
+    if (!loading && settings.name) {
+      document.title = tDynamic(settings.name);
+    }
+  }, [settings, loading, tDynamic, settings.name]);
+
+  useEffect(() => {
+    if (!loading && settings.logo_url) {
+      let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.getElementsByTagName('head')[0].appendChild(link);
+      }
+      link.href = settings.logo_url;
+    }
+  }, [settings, loading, settings.logo_url]);
+
+  return null; // This component doesn't render anything
+};
 
 // ProtectedRoute component to guard routes
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -54,6 +81,7 @@ const App = () => (
           <SessionContextProvider>
             <RestaurantSettingsProvider>
               <DynamicTranslationProvider>
+                <PageMetadataSetter />
                 <Routes>
                   <Route path="/" element={<MenuPage />} />
                   <Route path="/login" element={<Login />} />
