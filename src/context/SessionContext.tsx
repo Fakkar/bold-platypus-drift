@@ -25,10 +25,11 @@ export const SessionContextProvider: React.FC<{ children: ReactNode }> = ({ chil
   const { t } = useTranslation();
 
   useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, currentSession) => {
-        setSession(currentSession);
-        const currentUser = currentSession?.user || null;
+    const getInitialSession = async () => {
+      try {
+        const { data: { session: initialSession } } = await supabase.auth.getSession();
+        setSession(initialSession);
+        const currentUser = initialSession?.user || null;
         setUser(currentUser);
 
         if (currentUser) {
@@ -38,11 +39,43 @@ export const SessionContextProvider: React.FC<{ children: ReactNode }> = ({ chil
             .eq('id', currentUser.id)
             .single();
           setProfile(userProfile);
-        } else {
-          setProfile(null);
         }
-        
+      } catch (error) {
+        console.error("Error fetching initial session profile:", error);
+        setProfile(null);
+      } finally {
         setLoading(false);
+      }
+    };
+
+    getInitialSession();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, currentSession) => {
+        setLoading(true);
+        setSession(currentSession);
+        const currentUser = currentSession?.user || null;
+        setUser(currentUser);
+
+        try {
+          if (currentUser) {
+            const { data: userProfile, error: profileError } = await supabase
+              .from('profiles')
+              .select('role')
+              .eq('id', currentUser.id)
+              .single();
+            
+            if (profileError) throw profileError;
+            setProfile(userProfile);
+          } else {
+            setProfile(null);
+          }
+        } catch (error) {
+          console.error("Error fetching profile on auth state change:", error);
+          setProfile(null);
+        } finally {
+          setLoading(false);
+        }
 
         if (event === 'SIGNED_OUT') {
           toast.info(t('logged_out_successfully'));
@@ -50,31 +83,12 @@ export const SessionContextProvider: React.FC<{ children: ReactNode }> = ({ chil
             navigate('/login');
           }
         } else if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
-          if (location.pathname === '/login') {
-            navigate('/admin');
+          if (!location.pathname.startsWith('/admin')) {
+             navigate('/admin');
           }
         }
       }
     );
-
-    const getInitialSession = async () => {
-      const { data: { session: initialSession } } = await supabase.auth.getSession();
-      setSession(initialSession);
-      const currentUser = initialSession?.user || null;
-      setUser(currentUser);
-
-      if (currentUser) {
-        const { data: userProfile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', currentUser.id)
-          .single();
-        setProfile(userProfile);
-      }
-      setLoading(false);
-    };
-
-    getInitialSession();
 
     return () => {
       authListener.subscription.unsubscribe();

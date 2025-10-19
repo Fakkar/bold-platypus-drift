@@ -10,11 +10,6 @@ const Login: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const handleAuthError = (error: Error) => {
-    console.error('Auth error:', error);
-    toast.error(t('login_error', { message: error.message }));
-  };
-
   React.useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, session) => {
@@ -42,7 +37,6 @@ const Login: React.FC = () => {
           theme="light" // Can be dynamic based on app theme
           providers={[]} // No third-party providers for now
           redirectTo={window.location.origin + '/admin'} // Redirect after auth
-          view="sign_in" // Only show sign-in form
           localization={{
             variables: {
               sign_in: {
