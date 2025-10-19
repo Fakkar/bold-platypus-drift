@@ -1,14 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useSession } from '@/context/SessionContext';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { PlusCircle } from 'lucide-react';
-import UserForm from './UserForm';
 
 interface User {
   id: string;
@@ -23,30 +19,28 @@ const UserManagement: React.FC = () => {
   const { session } = useSession();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-
-  const fetchUsers = useCallback(async () => {
-    if (!session) return;
-    setLoading(true);
-    
-    const { data, error } = await supabase.functions.invoke('get-all-users');
-
-    if (error) {
-      toast.error(`Failed to load users: ${error.message}`);
-    } else {
-      setUsers(data);
-    }
-    setLoading(false);
-  }, [session]);
 
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+    const fetchUsers = async () => {
+      if (!session) return;
+      setLoading(true);
+      
+      const { data, error } = await supabase.functions.invoke('get-all-users', {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`
+        }
+      });
 
-  const handleFormClose = () => {
-    setIsFormOpen(false);
-    fetchUsers(); // Refresh the list after adding a user
-  };
+      if (error) {
+        toast.error(`Failed to load users: ${error.message}`);
+      } else {
+        setUsers(data);
+      }
+      setLoading(false);
+    };
+
+    fetchUsers();
+  }, [session]);
 
   if (loading) {
     return <p>Loading users...</p>;
@@ -54,22 +48,6 @@ const UserManagement: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h3 className="text-xl font-semibold">لیست کاربران</h3>
-        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => setIsFormOpen(true)}>
-              <PlusCircle className="mr-2 h-4 w-4" /> افزودن کاربر
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>افزودن کاربر جدید</DialogTitle>
-            </DialogHeader>
-            <UserForm onSave={handleFormClose} onCancel={() => setIsFormOpen(false)} />
-          </DialogContent>
-        </Dialog>
-      </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
