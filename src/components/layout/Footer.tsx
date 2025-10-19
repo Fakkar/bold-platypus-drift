@@ -1,6 +1,5 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import { useRestaurantSettings } from "@/context/RestaurantSettingsContext";
 import { MapPin, Phone, Clock, Twitter, Instagram, Facebook } from "lucide-react";
 import { useDynamicTranslation } from "@/context/DynamicTranslationContext";
@@ -70,10 +69,7 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="border-t border-gray-700 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-500 text-sm">{tDynamic(settings.copyright_text)}</p>
-          <div className="mt-4 md:mt-0">
-            <MadeWithDyad />
-          </div>
+          <p className="text-gray-500 text-sm text-center w-full">{tDynamic(settings.copyright_text)}</p>
         </div>
       </div>
     </footer>
