@@ -17,10 +17,9 @@ import { DynamicTranslationProvider } from "./context/DynamicTranslationContext"
 
 const queryClient = new QueryClient();
 
-// ProtectedRoute component to guard routes
+// ProtectedRoute component to guard routes based on roles
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user, loading } = useSession();
-  const ADMIN_EMAIL = "rahasahamrah@gmail.com"; // Define the admin email
+  const { profile, loading } = useSession();
 
   if (loading) {
     return (
@@ -30,13 +29,8 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
     );
   }
 
-  if (!user) {
-    // If not logged in, redirect to login page
-    return <Navigate to="/login" replace />;
-  }
-
-  if (user.email !== ADMIN_EMAIL) {
-    // If logged in but not the admin email, show unauthorized message and redirect to home
+  // Allow access if the user has a profile and their role is either 'admin' or 'editor'
+  if (!profile || !['admin', 'editor'].includes(profile.role)) {
     toast.error(i18n.t("unauthorized_access"));
     return <Navigate to="/" replace />;
   }
