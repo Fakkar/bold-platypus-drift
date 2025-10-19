@@ -19,7 +19,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['IRANSans', 'Vazirmatn', 'sans-serif'], // Set IRANSans as the default
+        sans: ['IRANSans', 'sans-serif'], // Set IRANSans as the primary default
         vazirmatn: ['Vazirmatn', 'sans-serif'],
         iransans: ['IRANSans', 'sans-serif'],
         nazanin: ['Nazanin', 'sans-serif'],

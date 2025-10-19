@@ -80,21 +80,21 @@ const CustomerClubList: React.FC = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t('phone_number')}</TableHead>
-                <TableHead>{t('first_visit')}</TableHead>
-                <TableHead>{t('last_visit')}</TableHead>
-                <TableHead>{t('total_visits')}</TableHead>
-                <TableHead className="text-right">{t('actions')}</TableHead>
+                <TableHead className="text-right">{t('phone_number')}</TableHead>
+                <TableHead className="text-right">{t('first_visit')}</TableHead>
+                <TableHead className="text-right">{t('last_visit')}</TableHead>
+                <TableHead className="text-right">{t('total_visits')}</TableHead>
+                <TableHead className="text-center">{t('actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {customers.map((customer) => (
                 <TableRow key={customer.id}>
-                  <TableCell className="font-medium" dir="ltr">{toPersianNumber(customer.phone_number)}</TableCell>
-                  <TableCell>{formatDate(customer.created_at)}</TableCell>
-                  <TableCell>{formatDate(customer.visit_history[customer.visit_history.length - 1])}</TableCell>
-                  <TableCell>{toPersianNumber(customer.visit_count)}</TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="font-medium text-right" dir="ltr">{toPersianNumber(customer.phone_number)}</TableCell>
+                  <TableCell className="text-right whitespace-nowrap">{formatDate(customer.created_at)}</TableCell>
+                  <TableCell className="text-right whitespace-nowrap">{formatDate(customer.visit_history[customer.visit_history.length - 1])}</TableCell>
+                  <TableCell className="text-right">{toPersianNumber(customer.visit_count)}</TableCell>
+                  <TableCell className="text-center">
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button variant="ghost" size="icon" className="text-destructive">
