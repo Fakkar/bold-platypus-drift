@@ -8,7 +8,6 @@ import { useTranslation } from 'react-i18next';
 interface SessionContextType {
   session: Session | null;
   user: User | null;
-  profile: { role: string } | null;
   loading: boolean;
   signOut: () => Promise<void>;
 }
@@ -18,7 +17,6 @@ const SessionContext = createContext<SessionContextType | undefined>(undefined);
 export const SessionContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<{ role: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
@@ -28,20 +26,7 @@ export const SessionContextProvider: React.FC<{ children: ReactNode }> = ({ chil
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
         setSession(currentSession);
-        const currentUser = currentSession?.user || null;
-        setUser(currentUser);
-
-        if (currentUser) {
-          const { data: userProfile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', currentUser.id)
-            .single();
-          setProfile(userProfile);
-        } else {
-          setProfile(null);
-        }
-        
+        setUser(currentSession?.user || null);
         setLoading(false);
 
         if (event === 'SIGNED_OUT') {
@@ -51,30 +36,25 @@ export const SessionContextProvider: React.FC<{ children: ReactNode }> = ({ chil
           }
         } else if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
           if (location.pathname === '/login') {
-            navigate('/admin');
+            navigate('/admin'); // Redirect to admin dashboard after login
           }
         }
       }
     );
 
-    const getInitialSession = async () => {
-      const { data: { session: initialSession } } = await supabase.auth.getSession();
-      setSession(initialSession);
-      const currentUser = initialSession?.user || null;
-      setUser(currentUser);
-
-      if (currentUser) {
-        const { data: userProfile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', currentUser.id)
-          .single();
-        setProfile(userProfile);
+    // Initial session check
+    const getSession = async () => {
+      const { data: { session: initialSession }, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error('Error getting initial session:', error);
+        toast.error(t('session_error', { message: error.message }));
       }
+      setSession(initialSession);
+      setUser(initialSession?.user || null);
       setLoading(false);
     };
 
-    getInitialSession();
+    getSession();
 
     return () => {
       authListener.subscription.unsubscribe();
@@ -82,15 +62,19 @@ export const SessionContextProvider: React.FC<{ children: ReactNode }> = ({ chil
   }, [navigate, location.pathname, t]);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    setSession(null);
-    setUser(null);
-    setProfile(null);
-    navigate('/login');
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('Error signing out:', error);
+      toast.error(t('logout_error', { message: error.message }));
+    } else {
+      setSession(null);
+      setUser(null);
+      navigate('/login');
+    }
   };
 
   return (
-    <SessionContext.Provider value={{ session, user, profile, loading, signOut }}>
+    <SessionContext.Provider value={{ session, user, loading, signOut }}>
       {children}
     </SessionContext.Provider>
   );
