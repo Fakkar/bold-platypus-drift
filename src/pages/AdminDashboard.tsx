@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useRestaurantSettings } from "@/context/RestaurantSettingsContext";
 import { useSession } from "@/context/SessionContext";
-import { LogOut, Settings, LayoutGrid, ClipboardList, Users, Home } from "lucide-react";
+import { LogOut, Settings, LayoutGrid, ClipboardList, Users, Home, Shield } from "lucide-react";
 import CategoryList from "@/components/admin/CategoryList";
 import MenuItemList from "@/components/admin/MenuItemList";
 import { useSupabaseStorage } from "@/hooks/useSupabaseStorage";
@@ -17,13 +17,14 @@ import CustomerClubList from "@/components/admin/CustomerClubList";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useDynamicTranslation } from "@/context/DynamicTranslationContext";
+import UserManagement from "@/components/admin/UserManagement";
 
-type AdminView = 'settings' | 'categories' | 'menu-items' | 'customer-club';
+type AdminView = 'settings' | 'categories' | 'menu-items' | 'customer-club' | 'users';
 
 const AdminDashboard: React.FC = () => {
   const { t } = useTranslation();
   const { settings, loading: settingsLoading } = useRestaurantSettings();
-  const { user, signOut, loading: sessionLoading } = useSession();
+  const { user, profile, signOut, loading: sessionLoading } = useSession();
   const [activeView, setActiveView] = useState<AdminView>('settings');
 
   if (settingsLoading || sessionLoading) {
@@ -50,11 +51,12 @@ const AdminDashboard: React.FC = () => {
     categories: t("manage_categories"),
     'menu-items': t("manage_menu_items"),
     'customer-club': t("customer_club"),
+    users: "مدیریت کاربران",
   };
 
   return (
     <div className="min-h-screen w-full flex bg-card" dir="rtl">
-      <SidebarNav activeView={activeView} setActiveView={setActiveView} signOut={signOut} />
+      <SidebarNav activeView={activeView} setActiveView={setActiveView} signOut={signOut} profile={profile} />
       <main className="flex-1 p-6 md:p-8 overflow-y-auto">
         <h1 className="text-3xl font-bold mb-6 text-foreground">{viewTitles[activeView]}</h1>
         <div className="w-full">
@@ -62,6 +64,7 @@ const AdminDashboard: React.FC = () => {
           {activeView === 'categories' && <Card><CardContent className="p-6"><CategoryList /></CardContent></Card>}
           {activeView === 'menu-items' && <Card><CardContent className="p-6"><MenuItemList /></CardContent></Card>}
           {activeView === 'customer-club' && <Card><CardContent className="p-6"><CustomerClubList /></CardContent></Card>}
+          {activeView === 'users' && profile?.role === 'admin' && <Card><CardContent className="p-6"><UserManagement /></CardContent></Card>}
         </div>
       </main>
     </div>
@@ -73,18 +76,20 @@ interface SidebarNavProps {
   activeView: AdminView;
   setActiveView: (view: AdminView) => void;
   signOut: () => void;
+  profile: { role: string } | null;
 }
 
-const SidebarNav: React.FC<SidebarNavProps> = ({ activeView, setActiveView, signOut }) => {
+const SidebarNav: React.FC<SidebarNavProps> = ({ activeView, setActiveView, signOut, profile }) => {
   const { t } = useTranslation();
   const { settings } = useRestaurantSettings();
   const { tDynamic } = useDynamicTranslation();
 
   const navItems = [
-    { id: 'settings', label: t('restaurant_settings'), icon: Settings },
-    { id: 'categories', label: t('manage_categories'), icon: LayoutGrid },
-    { id: 'menu-items', label: t('manage_menu_items'), icon: ClipboardList },
-    { id: 'customer-club', label: t('customer_club'), icon: Users },
+    { id: 'settings', label: t('restaurant_settings'), icon: Settings, roles: ['admin'] },
+    { id: 'categories', label: t('manage_categories'), icon: LayoutGrid, roles: ['admin', 'editor'] },
+    { id: 'menu-items', label: t('manage_menu_items'), icon: ClipboardList, roles: ['admin', 'editor'] },
+    { id: 'customer-club', label: t('customer_club'), icon: Users, roles: ['admin'] },
+    { id: 'users', label: "مدیریت کاربران", icon: Shield, roles: ['admin'] },
   ];
 
   return (
@@ -95,18 +100,20 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ activeView, setActiveView, sign
       </div>
       <nav className="flex flex-col gap-2 flex-1">
         {navItems.map((item) => (
-          <Button
-            key={item.id}
-            variant="ghost"
-            onClick={() => setActiveView(item.id as AdminView)}
-            className={cn(
-              "justify-start gap-3 px-3 text-base",
-              activeView === item.id && "bg-primary text-primary-foreground"
-            )}
-          >
-            <item.icon className="h-5 w-5" />
-            {item.label}
-          </Button>
+          profile && item.roles.includes(profile.role) && (
+            <Button
+              key={item.id}
+              variant="ghost"
+              onClick={() => setActiveView(item.id as AdminView)}
+              className={cn(
+                "justify-start gap-3 px-3 text-base",
+                activeView === item.id && "bg-primary text-primary-foreground"
+              )}
+            >
+              <item.icon className="h-5 w-5" />
+              {item.label}
+            </Button>
+          )
         ))}
       </nav>
       <div className="flex flex-col gap-2 pt-4 border-t border-border">
@@ -124,6 +131,7 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ activeView, setActiveView, sign
 };
 
 // --- Settings Panel Component ---
+// ... (The SettingsPanel component remains unchanged)
 const SettingsPanel: React.FC<{ settings: any }> = ({ settings: initialSettings }) => {
   const { t } = useTranslation();
   const { updateSettings } = useRestaurantSettings();
