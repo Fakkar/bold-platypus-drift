@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import Header from "@/components/layout/Header";
 import HeroSection from "@/components/HeroSection";
 import MenuItemCard from "@/components/MenuItemCard";
+import MenuGroupCard from "@/components/MenuGroupCard";
 import Footer from "@/components/layout/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from '@/integrations/supabase/client';
@@ -31,6 +32,7 @@ interface MenuItem {
   image_url?: string;
   is_featured: boolean;
   is_available: boolean;
+  group_name?: string;
 }
 
 const MenuPage: React.FC = () => {
@@ -90,15 +92,34 @@ const MenuPage: React.FC = () => {
   };
 
   const featuredItems = menuItems.filter(item => item.is_featured);
-  const regularItems = menuItems.filter(item => !item.is_featured);
 
-  const filteredItems = regularItems.filter(item => {
-    const translatedName = tDynamic(item.name).toLowerCase();
-    const translatedDescription = tDynamic(item.description || '').toLowerCase();
-    const lowercasedSearchTerm = searchTerm.toLowerCase();
-    return translatedName.includes(lowercasedSearchTerm) ||
-           translatedDescription.includes(lowercasedSearchTerm);
-  });
+  const processedItems = useMemo(() => {
+    const regularItems = menuItems.filter(item => !item.is_featured);
+
+    const filtered = regularItems.filter(item => {
+      const translatedName = tDynamic(item.name).toLowerCase();
+      const translatedDescription = tDynamic(item.description || '').toLowerCase();
+      const lowercasedSearchTerm = searchTerm.toLowerCase();
+      return translatedName.includes(lowercasedSearchTerm) ||
+             translatedDescription.includes(lowercasedSearchTerm);
+    });
+
+    const grouped: Record<string, MenuItem[]> = {};
+    const single: MenuItem[] = [];
+
+    filtered.forEach(item => {
+      if (item.group_name) {
+        if (!grouped[item.group_name]) {
+          grouped[item.group_name] = [];
+        }
+        grouped[item.group_name].push(item);
+      } else {
+        single.push(item);
+      }
+    });
+
+    return { grouped, single };
+  }, [menuItems, searchTerm, tDynamic]);
 
   if (loading) {
     return (
@@ -157,7 +178,12 @@ const MenuPage: React.FC = () => {
                   className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8"
                   style={{ direction: 'rtl' }}
                 >
-                  {filteredItems
+                  {Object.entries(processedItems.grouped)
+                    .filter(([, items]) => items[0].category_id === category.id)
+                    .map(([groupName, items]) => (
+                      <MenuGroupCard key={groupName} groupName={groupName} items={items} imageUrl={items[0].image_url} />
+                    ))}
+                  {processedItems.single
                     .filter((item) => item.category_id === category.id)
                     .map((item) => (
                       <MenuItemCard key={item.id} item={item} />

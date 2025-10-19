@@ -22,6 +22,7 @@ interface MenuItemFormProps {
     category_id?: string;
     image_url?: string;
     is_featured?: boolean;
+    group_name?: string;
   };
   onSave: () => void;
   onCancel: () => void;
@@ -45,6 +46,7 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
   const [imageUrl, setImageUrl] = useState(menuItem?.image_url || '');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isFeatured, setIsFeatured] = useState(menuItem?.is_featured || false);
+  const [groupName, setGroupName] = useState(menuItem?.group_name || '');
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -56,6 +58,7 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
       setCategoryId(menuItem.category_id || '');
       setImageUrl(menuItem.image_url || '');
       setIsFeatured(menuItem.is_featured || false);
+      setGroupName(menuItem.group_name || '');
     }
   }, [menuItem]);
 
@@ -102,6 +105,7 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
       category_id: categoryId || null,
       image_url: finalImageUrl,
       is_featured: isFeatured,
+      group_name: groupName.trim() === '' ? null : groupName.trim(),
     };
 
     const { error } = menuItem
@@ -119,6 +123,11 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <Label htmlFor="group-name">نام گروه (اختیاری)</Label>
+        <Input id="group-name" value={groupName} onChange={(e) => setGroupName(e.target.value)} placeholder="مثال: کباب‌های مخصوص" />
+        <p className="text-xs text-muted-foreground mt-1">برای گروه‌بندی چند آیتم در یک کارت، این نام را برای همه آنها یکسان وارد کنید.</p>
+      </div>
       <div>
         <Label htmlFor="menu-item-name">{t('item_name')}</Label>
         <Input id="menu-item-name" value={name} onChange={(e) => setName(e.target.value)} placeholder={t('enter_item_name')} />
