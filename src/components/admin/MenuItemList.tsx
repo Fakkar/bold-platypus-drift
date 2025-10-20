@@ -165,10 +165,12 @@ const MenuItemList: React.FC = () => {
         order: index,
       }));
 
-      const { error } = await supabase.from('menu_items').upsert(updates);
+      const { error } = await supabase.rpc('update_menu_item_order', { items_to_update: updates });
+
       if (error) {
         toast.error("Failed to save new order.");
-        setMenuItems(menuItems); // Revert on error
+        // Revert to the original order on error
+        setMenuItems(menuItems);
       } else {
         toast.success("Order saved successfully.");
       }
