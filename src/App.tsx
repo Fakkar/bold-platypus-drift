@@ -15,6 +15,7 @@ import { SessionContextProvider, useSession } from "./context/SessionContext";
 import { toast } from "sonner";
 import { DynamicTranslationProvider, useDynamicTranslation } from "./context/DynamicTranslationContext";
 import { useEffect } from "react";
+import UpdatePassword from "./pages/UpdatePassword";
 
 const queryClient = new QueryClient();
 
@@ -85,6 +86,7 @@ const App = () => (
                 <Routes>
                   <Route path="/" element={<MenuPage />} />
                   <Route path="/login" element={<Login />} />
+                  <Route path="/update-password" element={<UpdatePassword />} />
                   <Route 
                     path="/admin" 
                     element={

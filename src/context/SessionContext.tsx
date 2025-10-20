@@ -29,14 +29,19 @@ export const SessionContextProvider: React.FC<{ children: ReactNode }> = ({ chil
         setUser(currentSession?.user || null);
         setLoading(false);
 
-        if (event === 'SIGNED_OUT') {
+        if (event === 'PASSWORD_RECOVERY') {
+          // This event is fired when the user clicks the password recovery link.
+          // We navigate them to the update password page.
+          navigate('/update-password');
+        } else if (event === 'SIGNED_OUT') {
           toast.info(t('logged_out_successfully'));
           if (location.pathname.startsWith('/admin')) {
             navigate('/login');
           }
-        } else if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+        } else if (event === 'SIGNED_IN') {
+          // This handles regular sign-ins.
           if (location.pathname === '/login') {
-            navigate('/admin'); // Redirect to admin dashboard after login
+            navigate('/admin');
           }
         }
       }
