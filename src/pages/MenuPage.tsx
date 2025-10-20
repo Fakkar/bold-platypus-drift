@@ -78,7 +78,7 @@ const MenuPage: React.FC = () => {
       const { data: menuItemsData, error: menuItemsError } = await supabase
         .from('menu_items')
         .select('*')
-        .order('name', { ascending: true });
+        .order('order', { ascending: true });
 
       if (menuItemsError) {
         toast.error(t('failed_to_load_menu_items', { message: menuItemsError.message }));
