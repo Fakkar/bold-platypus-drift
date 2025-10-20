@@ -12,6 +12,12 @@ import { useSupabaseStorage } from '@/hooks/useSupabaseStorage';
 import { useImageProcessor } from '@/hooks/useImageProcessor';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useDynamicTranslation } from '@/context/DynamicTranslationContext';
+import { PlusCircle, Trash2 } from 'lucide-react';
+
+interface Variation {
+  name: string;
+  price: number | string;
+}
 
 interface MenuItemFormProps {
   menuItem?: {
@@ -22,7 +28,7 @@ interface MenuItemFormProps {
     category_id?: string;
     image_url?: string;
     is_featured?: boolean;
-    group_name?: string;
+    variations?: Variation[];
   };
   onSave: () => void;
   onCancel: () => void;
@@ -46,7 +52,7 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
   const [imageUrl, setImageUrl] = useState(menuItem?.image_url || '');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isFeatured, setIsFeatured] = useState(menuItem?.is_featured || false);
-  const [groupName, setGroupName] = useState(menuItem?.group_name || '');
+  const [variations, setVariations] = useState<Variation[]>(menuItem?.variations || []);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -58,7 +64,7 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
       setCategoryId(menuItem.category_id || '');
       setImageUrl(menuItem.image_url || '');
       setIsFeatured(menuItem.is_featured || false);
-      setGroupName(menuItem.group_name || '');
+      setVariations(menuItem.variations || []);
     }
   }, [menuItem]);
 
@@ -81,6 +87,20 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
     }
   };
 
+  const addVariation = () => {
+    setVariations([...variations, { name: '', price: '' }]);
+  };
+
+  const updateVariation = (index: number, field: 'name' | 'price', value: string) => {
+    const newVariations = [...variations];
+    newVariations[index] = { ...newVariations[index], [field]: value };
+    setVariations(newVariations);
+  };
+
+  const removeVariation = (index: number) => {
+    setVariations(variations.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -101,11 +121,11 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
     const menuItemData = {
       name,
       description,
-      price: parseFloat(price),
+      price: variations.length > 0 ? 0 : parseFloat(price),
       category_id: categoryId || null,
       image_url: finalImageUrl,
       is_featured: isFeatured,
-      group_name: groupName.trim() === '' ? null : groupName.trim(),
+      variations: variations.length > 0 ? variations.map(v => ({ ...v, price: parseFloat(v.price as string) })) : null,
     };
 
     const { error } = menuItem
@@ -124,11 +144,6 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <Label htmlFor="group-name">نام گروه (اختیاری)</Label>
-        <Input id="group-name" value={groupName} onChange={(e) => setGroupName(e.target.value)} placeholder="مثال: کباب‌های مخصوص" />
-        <p className="text-xs text-muted-foreground mt-1">برای گروه‌بندی چند آیتم در یک کارت، این نام را برای همه آنها یکسان وارد کنید.</p>
-      </div>
-      <div>
         <Label htmlFor="menu-item-name">{t('item_name')}</Label>
         <Input id="menu-item-name" value={name} onChange={(e) => setName(e.target.value)} placeholder={t('enter_item_name')} />
       </div>
@@ -138,10 +153,12 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="menu-item-price">{t('item_price')}</Label>
-          <Input id="menu-item-price" type="number" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} placeholder={t('enter_item_price')} required />
-        </div>
+        {variations.length === 0 && (
+          <div>
+            <Label htmlFor="menu-item-price">{t('item_price')}</Label>
+            <Input id="menu-item-price" type="number" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} placeholder={t('enter_item_price')} required />
+          </div>
+        )}
         <div>
           <Label htmlFor="menu-item-category">{t('category')}</Label>
           <Select onValueChange={setCategoryId} value={categoryId}>
@@ -151,6 +168,22 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
             </SelectContent>
           </Select>
         </div>
+      </div>
+
+      <div>
+        <Label>{t('variations')}</Label>
+        <div className="space-y-2">
+          {variations.map((v, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <Input placeholder={t('variation_name_placeholder')} value={v.name} onChange={(e) => updateVariation(index, 'name', e.target.value)} />
+              <Input type="number" placeholder={t('variation_price_placeholder')} value={v.price as string} onChange={(e) => updateVariation(index, 'price', e.target.value)} />
+              <Button type="button" variant="destructive" size="icon" onClick={() => removeVariation(index)}><Trash2 className="h-4 w-4" /></Button>
+            </div>
+          ))}
+        </div>
+        <Button type="button" variant="outline" size="sm" onClick={addVariation} className="mt-2">
+          <PlusCircle className="mr-2 h-4 w-4" /> {t('add_variation')}
+        </Button>
       </div>
 
       <div>

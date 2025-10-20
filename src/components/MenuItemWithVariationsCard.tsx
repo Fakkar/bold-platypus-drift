@@ -6,31 +6,34 @@ import { cn } from "@/lib/utils";
 import { useDynamicTranslation } from "@/context/DynamicTranslationContext";
 import { Separator } from './ui/separator';
 
-interface MenuItem {
-  id: string;
+interface Variation {
   name: string;
   price: number;
+}
+
+interface MenuItemWithVariations {
+  id: string;
+  name: string;
+  description?: string;
+  image_url?: string;
+  variations: Variation[];
   is_available: boolean;
 }
 
-interface MenuGroupCardProps {
-  groupName: string;
-  items: MenuItem[];
-  imageUrl?: string;
+interface MenuItemWithVariationsCardProps {
+  item: MenuItemWithVariations;
 }
 
-const MenuGroupCard: React.FC<MenuGroupCardProps> = ({ groupName, items, imageUrl }) => {
+const MenuItemWithVariationsCard: React.FC<MenuItemWithVariationsCardProps> = ({ item }) => {
   const { t } = useTranslation();
   const { tDynamic } = useDynamicTranslation();
-
-  const allItemsUnavailable = items.every(item => !item.is_available);
 
   return (
     <Card className={cn(
       "w-full max-w-sm overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-purple-800/50 text-white relative",
-      allItemsUnavailable && "grayscale opacity-60"
+      !item.is_available && "grayscale opacity-60"
     )}>
-      {allItemsUnavailable && (
+      {!item.is_available && (
         <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-10 rounded-lg">
           <span className="text-white text-xl font-bold bg-destructive px-4 py-2 rounded-md -rotate-12">
             {t('out_of_stock')}
@@ -39,28 +42,29 @@ const MenuGroupCard: React.FC<MenuGroupCardProps> = ({ groupName, items, imageUr
       )}
       <div className="w-full aspect-square overflow-hidden">
         <img 
-          src={imageUrl || '/public/placeholder.svg'} 
-          alt={tDynamic(groupName)} 
+          src={item.image_url || '/public/placeholder.svg'} 
+          alt={tDynamic(item.name)} 
           className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" 
         />
       </div>
       <CardHeader className="text-right">
-        <CardTitle className="text-xl font-semibold">{tDynamic(groupName)}</CardTitle>
+        <CardTitle className="text-xl font-semibold">{tDynamic(item.name)}</CardTitle>
       </CardHeader>
       <CardContent className="text-right space-y-2">
-        {items.map((item, index) => (
-          <React.Fragment key={item.id}>
-            <div className={cn(
-              "flex justify-between items-center",
-              !item.is_available && "opacity-50"
-            )}>
-              <span className="text-gray-300 text-sm">{tDynamic(item.name)}</span>
+        {item.description && (
+          <p className="text-gray-300 text-sm mb-4 line-clamp-2">
+            {tDynamic(item.description)}
+          </p>
+        )}
+        {item.variations.map((variation, index) => (
+          <React.Fragment key={index}>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-300 text-sm">{tDynamic(variation.name)}</span>
               <span className="text-lg font-bold text-primary" dir="rtl">
-                {formatPriceInToman(item.price)}
+                {formatPriceInToman(variation.price)}
               </span>
             </div>
-            {!item.is_available && <p className="text-xs text-destructive text-left -mt-1">{t('out_of_stock')}</p>}
-            {index < items.length - 1 && <Separator className="bg-white/20" />}
+            {index < item.variations.length - 1 && <Separator className="bg-white/20" />}
           </React.Fragment>
         ))}
       </CardContent>
@@ -68,4 +72,4 @@ const MenuGroupCard: React.FC<MenuGroupCardProps> = ({ groupName, items, imageUr
   );
 };
 
-export default MenuGroupCard;
+export default MenuItemWithVariationsCard;
