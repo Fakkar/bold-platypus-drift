@@ -88,7 +88,7 @@ const CategoryList: React.FC = () => {
               <PlusCircle className="mr-2 h-4 w-4" /> {t('add_category')}
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{selectedCategory ? t('edit_category') : t('add_category')}</DialogTitle>
             </DialogHeader>

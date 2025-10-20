@@ -108,7 +108,7 @@ const MenuItemList: React.FC = () => {
               <PlusCircle className="mr-2 h-4 w-4" /> {t('add_menu_item')}
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px]">
+          <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{selectedMenuItem ? t('edit_menu_item') : t('add_menu_item')}</DialogTitle>
             </DialogHeader>
