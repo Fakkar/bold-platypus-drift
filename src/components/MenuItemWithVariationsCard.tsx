@@ -10,6 +10,7 @@ import ImageModal from './ImageModal';
 interface Variation {
   name: string;
   price: number;
+  is_available?: boolean;
 }
 
 interface MenuItemWithVariations {
@@ -73,9 +74,14 @@ const MenuItemWithVariationsCard: React.FC<MenuItemWithVariationsCardProps> = ({
           )}
           {item.variations.map((variation, index) => (
             <React.Fragment key={index}>
-              <div className="flex justify-between items-center">
-                <span className="text-gray-300 text-sm">{tDynamic(variation.name)}</span>
-                <span className="text-lg font-bold text-primary" dir="rtl">
+              <div className={cn(
+                "flex justify-between items-center",
+                variation.is_available === false && "opacity-50"
+              )}>
+                <span className={cn("text-gray-300 text-sm", variation.is_available === false && "line-through")}>
+                  {tDynamic(variation.name)}
+                </span>
+                <span className={cn("text-lg font-bold text-primary", variation.is_available === false && "line-through")} dir="rtl">
                   {formatPriceInToman(variation.price)}
                 </span>
               </div>

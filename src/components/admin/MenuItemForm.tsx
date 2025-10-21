@@ -13,10 +13,12 @@ import { useImageProcessor } from '@/hooks/useImageProcessor';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useDynamicTranslation } from '@/context/DynamicTranslationContext';
 import { PlusCircle, Trash2 } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
 
 interface Variation {
   name: string;
   price: number | string;
+  is_available?: boolean;
 }
 
 interface MenuItemFormProps {
@@ -88,10 +90,10 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
   };
 
   const addVariation = () => {
-    setVariations([...variations, { name: '', price: '' }]);
+    setVariations([...variations, { name: '', price: '', is_available: true }]);
   };
 
-  const updateVariation = (index: number, field: 'name' | 'price', value: string) => {
+  const updateVariation = (index: number, field: 'name' | 'price' | 'is_available', value: string | boolean) => {
     const newVariations = [...variations];
     newVariations[index] = { ...newVariations[index], [field]: value };
     setVariations(newVariations);
@@ -125,7 +127,7 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
       category_id: categoryId || null,
       image_url: finalImageUrl,
       is_featured: isFeatured,
-      variations: variations.length > 0 ? variations.map(v => ({ ...v, price: parseFloat(v.price as string) })) : null,
+      variations: variations.length > 0 ? variations.map(v => ({ ...v, price: parseFloat(v.price as string), is_available: v.is_available !== false })) : null,
     };
 
     const { error } = menuItem
@@ -175,6 +177,14 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
         <div className="space-y-2">
           {variations.map((v, index) => (
             <div key={index} className="flex items-center gap-2">
+              <div className="flex flex-col items-center justify-center pt-2">
+                <Switch
+                  checked={v.is_available !== false}
+                  onCheckedChange={(checked) => updateVariation(index, 'is_available', checked)}
+                  aria-label={t('availability')}
+                />
+                <Label className="text-xs mt-1 text-muted-foreground">{t('availability')}</Label>
+              </div>
               <Input placeholder={t('variation_name_placeholder')} value={v.name} onChange={(e) => updateVariation(index, 'name', e.target.value)} />
               <Input type="number" placeholder={t('variation_price_placeholder')} value={v.price as string} onChange={(e) => updateVariation(index, 'price', e.target.value)} />
               <Button type="button" variant="destructive" size="icon" onClick={() => removeVariation(index)}><Trash2 className="h-4 w-4" /></Button>
