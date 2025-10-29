@@ -4,6 +4,9 @@ export const toPersianNumber = (num: number | string): string => {
 };
 
 export const formatPriceInToman = (price: number): string => {
+  if (typeof price !== 'number' || isNaN(price)) {
+    return `${toPersianNumber(0)} تومان`;
+  }
   const formattedPrice = price.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-  return `${toPersianNumber(formattedPrice)} تومان`; // Corrected order: number first, then "تومان"
+  return `${toPersianNumber(formattedPrice)} تومان`;
 };

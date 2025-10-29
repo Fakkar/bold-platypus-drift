@@ -105,6 +105,26 @@ const MenuItemForm: React.FC<MenuItemFormProps> = ({ menuItem, onSave, onCancel 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validation
+    if (variations.length > 0) {
+      for (const v of variations) {
+        if (!v.name || String(v.price).trim() === '') {
+          toast.error(t('variation_fields_required'));
+          return;
+        }
+        if (isNaN(parseFloat(v.price as string))) {
+          toast.error(t('invalid_variation_price', { name: v.name }));
+          return;
+        }
+      }
+    } else {
+      if (price.trim() === '' || isNaN(parseFloat(price))) {
+        toast.error(t('invalid_item_price'));
+        return;
+      }
+    }
+
     setLoading(true);
     let finalImageUrl = imageUrl;
 
