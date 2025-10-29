@@ -26,6 +26,7 @@ interface Category {
 interface Variation {
   name: string;
   price: number;
+  is_available?: boolean;
 }
 
 interface MenuItem {
@@ -99,13 +100,34 @@ const MenuPage: React.FC = () => {
   const featuredItems = menuItems.filter(item => item.is_featured);
 
   const filteredItems = useMemo(() => {
+    const itemsToFilter = menuItems.filter(item => !item.is_featured);
     if (!searchTerm) {
-      return menuItems.filter(item => !item.is_featured);
+      return itemsToFilter;
+    }
+    const lowercasedSearchTerm = searchTerm.toLowerCase();
+    return itemsToFilter.filter(item => {
+      const translatedName = tDynamic(item.name).toLowerCase();
+      if (translatedName.includes(lowercasedSearchTerm)) return true;
+
+      const translatedDescription = tDynamic(item.description || '').toLowerCase();
+      if (translatedDescription.includes(lowercasedSearchTerm)) return true;
+
+      if (item.variations && item.variations.length > 0) {
+        return item.variations.some(v => 
+          tDynamic(v.name).toLowerCase().includes(lowercasedSearchTerm)
+        );
+      }
+
+      return false;
+    });
+  }, [menuItems, searchTerm, tDynamic]);
+  
+  const allFilteredItems = useMemo(() => {
+    if (!searchTerm) {
+      return menuItems;
     }
     const lowercasedSearchTerm = searchTerm.toLowerCase();
     return menuItems.filter(item => {
-      if (item.is_featured) return false;
-
       const translatedName = tDynamic(item.name).toLowerCase();
       if (translatedName.includes(lowercasedSearchTerm)) return true;
 
@@ -179,7 +201,7 @@ const MenuPage: React.FC = () => {
                   className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8"
                   style={{ direction: 'rtl' }}
                 >
-                  {filteredItems
+                  {allFilteredItems
                     .filter((item) => item.category_id === category.id)
                     .map((item) => {
                       if (item.variations && item.variations.length > 0) {
