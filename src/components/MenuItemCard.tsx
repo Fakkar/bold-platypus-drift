@@ -5,6 +5,7 @@ import { formatPriceInToman } from '@/utils/format';
 import ImageModal from './ImageModal';
 import { cn } from "@/lib/utils";
 import { useDynamicTranslation } from "@/context/DynamicTranslationContext";
+import DescriptionDialog from './DescriptionDialog';
 
 interface MenuItemCardProps {
   item: {
@@ -31,6 +32,7 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
 
   const currentName = tDynamic(item.name);
   const currentDescription = tDynamic(item.description);
+  const shouldShowMore = !!currentDescription && currentDescription.length > 100;
 
   return (
     <>
@@ -59,9 +61,18 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
           <CardTitle className="text-xl font-semibold">{currentName}</CardTitle>
         </CardHeader>
         <CardContent className="text-right">
-          <p className="text-gray-300 text-sm mb-4 line-clamp-2">
+          <p className="text-gray-300 text-sm mb-2 line-clamp-2">
             {currentDescription}
           </p>
+          {shouldShowMore && (
+            <div className="mb-4 flex justify-end">
+              <DescriptionDialog
+                title={currentName}
+                description={currentDescription}
+                triggerLabel="مشاهده کامل"
+              />
+            </div>
+          )}
           <div className="flex items-center justify-center">
             <span className="text-2xl font-bold text-primary" dir="rtl">
               {formatPriceInToman(item.price)}

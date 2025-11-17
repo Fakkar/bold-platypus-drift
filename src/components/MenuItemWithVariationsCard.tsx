@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useDynamicTranslation } from "@/context/DynamicTranslationContext";
 import { Separator } from './ui/separator';
 import ImageModal from './ImageModal';
+import DescriptionDialog from './DescriptionDialog';
 
 interface Variation {
   name: string;
@@ -39,6 +40,8 @@ const MenuItemWithVariationsCard: React.FC<MenuItemWithVariationsCardProps> = ({
   };
 
   const currentName = tDynamic(item.name);
+  const currentDescription = item.description ? tDynamic(item.description) : undefined;
+  const shouldShowMore = !!currentDescription && currentDescription.length > 100;
 
   return (
     <>
@@ -68,9 +71,20 @@ const MenuItemWithVariationsCard: React.FC<MenuItemWithVariationsCardProps> = ({
         </CardHeader>
         <CardContent className="text-right space-y-2">
           {item.description && (
-            <p className="text-gray-300 text-sm mb-4 line-clamp-2">
-              {tDynamic(item.description)}
-            </p>
+            <>
+              <p className="text-gray-300 text-sm mb-2 line-clamp-2">
+                {currentDescription}
+              </p>
+              {shouldShowMore && (
+                <div className="mb-2 flex justify-end">
+                  <DescriptionDialog
+                    title={currentName}
+                    description={currentDescription!}
+                    triggerLabel="مشاهده کامل"
+                  />
+                </div>
+              )}
+            </>
           )}
           {item.variations.map((variation, index) => (
             <React.Fragment key={index}>
