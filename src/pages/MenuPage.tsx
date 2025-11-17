@@ -172,7 +172,20 @@ const MenuPage: React.FC = () => {
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-300" />
         </div>
 
-        {categories.length === 0 ? (
+        {searchTerm ? (
+          <div className="mt-6">
+            <div 
+              className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8"
+              style={{ direction: 'rtl' }}
+            >
+              {allFilteredItems.map((item) => (
+                item.variations && item.variations.length > 0
+                  ? <MenuItemWithVariationsCard key={item.id} item={item as MenuItem & { variations: Variation[] }} />
+                  : <MenuItemCard key={item.id} item={item} />
+              ))}
+            </div>
+          </div>
+        ) : categories.length === 0 ? (
           <p className="text-center text-gray-300">{t("no_categories_found")}</p>
         ) : (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
