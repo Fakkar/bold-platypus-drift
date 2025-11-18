@@ -51,7 +51,6 @@ const Login: React.FC = () => {
                 email_input_placeholder: t('email_input_placeholder'),
                 password_input_placeholder: t('password_input_placeholder'),
                 button_label: t('sign_in_button'),
-                social_auth_typography: t('social_auth_typography'),
                 link_text: t('sign_in_link_text'),
                 forgotten_password_link_text: t('forgot_password_link_text'),
                 confirmation_text: t('check_email_for_magic_link'),

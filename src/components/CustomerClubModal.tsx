@@ -51,8 +51,8 @@ const CustomerClubModal: React.FC<CustomerClubModalProps> = ({ isOpen, onSuccess
       <DialogContent
         className="sm:max-w-[425px]"
         onInteractOutside={(e) => e.preventDefault()} // Prevent closing on outside click
-        hideCloseButton={true} // Hide the default close button
       >
+        <div className="hidden" />
         <DialogHeader>
           <DialogTitle className="text-center text-2xl">{t('join_our_club')}</DialogTitle>
           <DialogDescription className="text-center">
