@@ -32,7 +32,7 @@ interface Variation {
 interface MenuItem {
   id: string;
   name: string;
-  description: string;
+  description?: string;
   price: number;
   category_id?: string;
   image_url?: string;

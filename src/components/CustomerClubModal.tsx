@@ -52,7 +52,6 @@ const CustomerClubModal: React.FC<CustomerClubModalProps> = ({ isOpen, onSuccess
         className="sm:max-w-[425px]"
         onInteractOutside={(e) => e.preventDefault()} // Prevent closing on outside click
       >
-        <div className="hidden" />
         <DialogHeader>
           <DialogTitle className="text-center text-2xl">{t('join_our_club')}</DialogTitle>
           <DialogDescription className="text-center">

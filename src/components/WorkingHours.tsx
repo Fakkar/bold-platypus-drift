@@ -5,9 +5,8 @@ import { useRestaurantSettings } from "@/context/RestaurantSettingsContext";
 import { useDynamicTranslation } from "@/context/DynamicTranslationContext";
 
 const WorkingHours: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { settings, loading } = useRestaurantSettings();
-  const { tDynamic } = useDynamicTranslation();
 
   if (loading) {
     return null; // Or a loading spinner
@@ -19,7 +18,7 @@ const WorkingHours: React.FC = () => {
         <CardTitle className="text-2xl font-bold text-center">{t("working_hours")}</CardTitle>
       </CardHeader>
       <CardContent className="p-6 text-gray-800 dark:text-gray-200 text-center">
-        <p className="text-lg font-medium">{tDynamic(settings.working_hours_text)}</p>
+        <p className="text-lg font-medium">{settings.working_hours_text[i18n.language] || settings.working_hours_text.fa}</p>
       </CardContent>
     </Card>
   );
