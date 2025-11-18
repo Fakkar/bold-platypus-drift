@@ -181,5 +181,7 @@
   "variation_price_placeholder": "قیمت",
   "variation_fields_required": "لطفاً نام و قیمت همه تنوع‌ها را وارد کنید.",
   "invalid_variation_price": "قیمت وارد شده برای تنوع '{{name}}' نامعتبر است.",
-  "invalid_item_price": "لطفاً قیمت معتبری برای آیتم وارد کنید."
+  "invalid_item_price": "لطفاً قیمت معتبری برای آیتم وارد کنید.",
+  "page": "صفحه",
+  "of": "از"
 }
