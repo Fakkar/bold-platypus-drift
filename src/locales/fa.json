@@ -183,5 +183,13 @@
   "invalid_variation_price": "قیمت وارد شده برای تنوع '{{name}}' نامعتبر است.",
   "invalid_item_price": "لطفاً قیمت معتبری برای آیتم وارد کنید.",
   "page": "صفحه",
-  "of": "از"
+  "of": "از",
+  "customer_club_report": "گزارش باشگاه مشتریان",
+  "select_date_range": "بازه زمانی را انتخاب کنید",
+  "generate_report": "تولید گزارش",
+  "generating_report": "در حال تولید گزارش...",
+  "failed_to_generate_report": "تولید گزارش ناموفق بود",
+  "new_customers": "مشتریان جدید",
+  "repeat_customers": "مشتریان تکراری",
+  "total_customers": "کل مشتریان"
 }

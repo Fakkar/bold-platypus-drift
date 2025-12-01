@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useRestaurantSettings } from "@/context/RestaurantSettingsContext";
 import { useSession } from "@/context/SessionContext";
-import { LogOut, Settings, LayoutGrid, ClipboardList, Users, Home } from "lucide-react";
+import { LogOut, Settings, LayoutGrid, ClipboardList, Users, Home, BarChart } from "lucide-react";
 import CategoryList from "@/components/admin/CategoryList";
 import MenuItemList from "@/components/admin/MenuItemList";
 import { useSupabaseStorage } from "@/hooks/useSupabaseStorage";
@@ -17,8 +17,9 @@ import CustomerClubList from "@/components/admin/CustomerClubList";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useDynamicTranslation } from "@/context/DynamicTranslationContext";
+import CustomerClubReport from "@/components/admin/CustomerClubReport";
 
-type AdminView = 'settings' | 'categories' | 'menu-items' | 'customer-club';
+type AdminView = 'settings' | 'categories' | 'menu-items' | 'customer-club' | 'customer-club-report';
 
 const AdminDashboard: React.FC = () => {
   const { t } = useTranslation();
@@ -50,6 +51,7 @@ const AdminDashboard: React.FC = () => {
     categories: t("manage_categories"),
     'menu-items': t("manage_menu_items"),
     'customer-club': t("customer_club"),
+    'customer-club-report': t("customer_club_report"),
   };
 
   return (
@@ -62,6 +64,7 @@ const AdminDashboard: React.FC = () => {
           {activeView === 'categories' && <Card><CardContent className="p-6"><CategoryList /></CardContent></Card>}
           {activeView === 'menu-items' && <Card><CardContent className="p-6"><MenuItemList /></CardContent></Card>}
           {activeView === 'customer-club' && <Card><CardContent className="p-6"><CustomerClubList /></CardContent></Card>}
+          {activeView === 'customer-club-report' && <Card><CardContent className="p-6"><CustomerClubReport /></CardContent></Card>}
         </div>
       </main>
     </div>
@@ -85,6 +88,7 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ activeView, setActiveView, sign
     { id: 'categories', label: t('manage_categories'), icon: LayoutGrid },
     { id: 'menu-items', label: t('manage_menu_items'), icon: ClipboardList },
     { id: 'customer-club', label: t('customer_club'), icon: Users },
+    { id: 'customer-club-report', label: t('customer_club_report'), icon: BarChart },
   ];
 
   return (
