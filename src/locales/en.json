@@ -260,5 +260,13 @@
   "order_status_cancelled": "Cancelled",
   "variation_out_of_stock": "This variation is currently out of stock.",
   "select_at_least_one_variation_quantity": "Please select at least one variation with a specified quantity.",
-  "confirming_order": "Confirming Order..."
+  "confirming_order": "Confirming Order...",
+  "order_button": "Order",
+  "order_from_unknown_item": "Unknown Item",
+  "order_receipt": "Order Receipt",
+  "thank_you_for_your_order": "Thank you for your order!",
+  "failed_to_open_print_window": "Failed to open print window.",
+  "failed_to_delete_order": "Failed to delete order.",
+  "order_deleted_successfully": "Order deleted successfully.",
+  "this_action_cannot_be_undone_order": "This action will permanently delete the order and cannot be undone."
 }

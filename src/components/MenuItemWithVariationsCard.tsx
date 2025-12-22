@@ -186,7 +186,7 @@ const MenuItemWithVariationsCard: React.FC<MenuItemWithVariationsCardProps> = ({
               className="bg-primary hover:bg-primary/90 text-primary-foreground w-full"
             >
               <ShoppingCart className="h-4 w-4 ml-2 rtl:ml-0 rtl:mr-2" />
-              {t('add_to_cart_button')}
+              {t('order_button')}
             </Button>
           </div>
         </CardContent>
@@ -275,7 +275,7 @@ const MenuItemWithVariationsCard: React.FC<MenuItemWithVariationsCardProps> = ({
               <Button variant="outline">{t('cancel')}</Button>
             </DialogClose>
             <Button onClick={handleAddToCart} disabled={!item.is_available || Object.values(selectedVariationsQuantities).every(q => q === 0)}>
-              {t('add_to_cart_button')}
+              {t('order_button')}
             </Button>
           </DialogFooter>
         </DialogContent>

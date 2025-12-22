@@ -4,12 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Eye, CheckCircle, XCircle } from 'lucide-react';
+import { Eye, CheckCircle, XCircle, Printer, Trash2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { toPersianNumber, formatPriceInToman } from '@/utils/format';
 import { useDynamicTranslation } from '@/context/DynamicTranslationContext';
-import { Separator } from '@/components/ui/separator'; // Import Separator
+import { Separator } from '@/components/ui/separator';
+import CustomToast from '@/components/CustomToast'; // Import CustomToast
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 
 interface OrderItem {
   id: string;
@@ -38,7 +40,8 @@ const OrderList: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const waiterCallAudioRef = useRef<HTMLAudioElement | null>(null); // Existing for waiter calls
+  const orderNotificationAudioRef = useRef<HTMLAudioElement | null>(null); // New for order notifications
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -76,15 +79,19 @@ const OrderList: React.FC = () => {
               if (!fullOrderError && fullOrderData) {
                 setOrders((prevOrders) => [fullOrderData, ...prevOrders]);
                 const locationName = fullOrderData.restaurant_locations?.name || t('unknown_location');
-                toast.info(t('new_order_notification', { location: locationName }));
-                if (audioRef.current) {
-                  audioRef.current.play();
+                toast.custom(() => ( // Removed (t) here
+                  <CustomToast type="order" location={locationName} />
+                ));
+                if (orderNotificationAudioRef.current) {
+                  orderNotificationAudioRef.current.play();
                 }
               } else {
                 console.error('Error fetching full order data for new order:', fullOrderError);
-                toast.info(t('new_order_notification_generic'));
-                if (audioRef.current) {
-                  audioRef.current.play();
+                toast.custom(() => ( // Removed (t) here
+                  <CustomToast type="order" location={t('unknown_location')} />
+                ));
+                if (orderNotificationAudioRef.current) {
+                  orderNotificationAudioRef.current.play();
                 }
               }
             });
@@ -118,6 +125,87 @@ const OrderList: React.FC = () => {
         )
       );
     }
+  };
+
+  const handleDeleteOrder = async (orderId: string) => {
+    const { error } = await supabase
+      .from('orders')
+      .delete()
+      .eq('id', orderId);
+
+    if (error) {
+      toast.error(t('failed_to_delete_order', { message: error.message }));
+    } else {
+      toast.success(t('order_deleted_successfully'));
+      fetchOrders(); // Re-fetch orders to update the list
+    }
+  };
+
+  const handlePrintOrder = (order: Order) => {
+    const printWindow = window.open('', '_blank', 'width=300,height=400'); // 8cm is roughly 300px
+    if (!printWindow) {
+      toast.error(t('failed_to_open_print_window'));
+      return;
+    }
+
+    const orderDetailsHtml = `
+      <!DOCTYPE html>
+      <html lang="fa" dir="rtl">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>${t('order_receipt')}</title>
+          <style>
+              body { font-family: 'Vazirmatn', 'IRANSans', sans-serif; margin: 0; padding: 10px; font-size: 12px; line-height: 1.4; color: #000; }
+              h1, h2, h3 { text-align: center; margin-bottom: 5px; }
+              .header { border-bottom: 1px dashed #000; padding-bottom: 5px; margin-bottom: 10px; }
+              .item { display: flex; justify-content: space-between; margin-bottom: 5px; }
+              .item-name { flex-grow: 1; }
+              .item-qty { width: 30px; text-align: center; }
+              .item-price { width: 60px; text-align: left; }
+              .total { border-top: 1px dashed #000; padding-top: 5px; margin-top: 10px; display: flex; justify-content: space-between; font-weight: bold; font-size: 14px; }
+              .notes { font-size: 10px; color: #555; margin-top: 2px; }
+              .footer { text-align: center; margin-top: 20px; font-size: 10px; }
+              @media print {
+                  body { width: 8cm; } /* Set width for 8cm thermal paper */
+              }
+          </style>
+      </head>
+      <body>
+          <div class="header">
+              <h1>${tDynamic(selectedOrder?.restaurant_locations?.name || t('order_from_unknown_location'))}</h1>
+              <h2>${t('order_receipt')}</h2>
+              <p style="text-align: center;">${formatDate(order.created_at)}</p>
+              <p style="text-align: center;">${t('order_id')}: ${order.id.substring(0, 8)}</p>
+          </div>
+          
+          <h3>${t('items')}</h3>
+          ${order.order_items.map(item => `
+              <div class="item">
+                  <span class="item-name">${tDynamic(item.menu_items?.name || t('order_from_unknown_item'))} ${item.variations ? `(${tDynamic(item.variations.name)})` : ''}</span>
+                  <span class="item-qty">${toPersianNumber(item.quantity)}x</span>
+                  <span class="item-price">${formatPriceInToman(item.price)}</span>
+              </div>
+              ${item.notes ? `<div class="notes">${t('notes')}: ${item.notes}</div>` : ''}
+          `).join('')}
+
+          <div class="total">
+              <span>${t('total')}:</span>
+              <span>${formatPriceInToman(order.total_amount)}</span>
+          </div>
+
+          <div class="footer">
+              <p>${t('thank_you_for_your_order')}</p>
+          </div>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.write(orderDetailsHtml);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
   };
 
   const getStatusColor = (status: Order['status']) => {
@@ -180,6 +268,9 @@ const OrderList: React.FC = () => {
                     <Button variant="ghost" size="icon" onClick={() => handleViewDetails(order)}>
                       <Eye className="h-4 w-4" />
                     </Button>
+                    <Button variant="ghost" size="icon" onClick={() => handlePrintOrder(order)}>
+                      <Printer className="h-4 w-4" />
+                    </Button>
                     <Select value={order.status} onValueChange={(value: Order['status']) => handleStatusChange(order.id, value)}>
                       <SelectTrigger className="w-[120px]">
                         <SelectValue placeholder={t('change_status')} />
@@ -192,6 +283,27 @@ const OrderList: React.FC = () => {
                         <SelectItem value="cancelled">{t('order_status_cancelled')}</SelectItem>
                       </SelectContent>
                     </Select>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="ghost" size="icon" className="text-destructive">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>{t('are_you_absolutely_sure')}</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            {t('this_action_cannot_be_undone_order')}
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => handleDeleteOrder(order.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                            {t('delete')}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </TableCell>
                 </TableRow>
               ))}
@@ -222,7 +334,7 @@ const OrderList: React.FC = () => {
                       <img src={item.menu_items.image_url} alt={tDynamic(item.menu_items.name || '')} className="h-12 w-12 object-cover rounded-md" />
                     )}
                     <div className="flex-1">
-                      <p className="font-medium">{tDynamic(item.menu_items?.name || t('unknown_item'))}</p>
+                      <p className="font-medium">{tDynamic(item.menu_items?.name || t('order_from_unknown_item'))}</p>
                       {item.variations && (
                         <p className="text-sm text-muted-foreground">{tDynamic(item.variations.name)}</p>
                       )}
@@ -243,7 +355,8 @@ const OrderList: React.FC = () => {
           )}
         </DialogContent>
       </Dialog>
-      <audio ref={audioRef} src="/sounds/notification.mp3" preload="auto" />
+      <audio ref={waiterCallAudioRef} src="/sounds/notification.mp3" preload="auto" />
+      <audio ref={orderNotificationAudioRef} src="/sounds/order-notification.mp3" preload="auto" />
     </div>
   );
 };

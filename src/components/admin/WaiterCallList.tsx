@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -6,6 +6,7 @@ import { CheckCircle, BellOff } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { toPersianNumber } from '@/utils/format';
+import CustomToast from '@/components/CustomToast'; // Import CustomToast
 
 interface WaiterCall {
   id: string;
@@ -59,14 +60,18 @@ const WaiterCallList: React.FC = () => {
                 if (!error && locationData) {
                   const callWithLocation = { ...newCall, restaurant_locations: locationData };
                   setCalls((prevCalls) => [callWithLocation, ...prevCalls]);
-                  toast.info(t('new_waiter_call_notification', { location: locationData.name }));
+                  toast.custom(() => ( // Removed (t) here
+                    <CustomToast type="waiter" location={locationData.name} />
+                  ));
                   if (audioRef.current) {
                     audioRef.current.play();
                   }
                 } else {
                   console.error('Error fetching location for new call:', error);
                   setCalls((prevCalls) => [{ ...newCall, restaurant_locations: null }, ...prevCalls]);
-                  toast.info(t('new_waiter_call_notification_generic'));
+                  toast.custom(() => ( // Removed (t) here
+                    <CustomToast type="waiter" location={t('unknown_location')} />
+                  ));
                   if (audioRef.current) {
                     audioRef.current.play();
                   }

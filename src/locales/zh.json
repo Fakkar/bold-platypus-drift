@@ -260,5 +260,13 @@
   "order_status_cancelled": "已取消",
   "variation_out_of_stock": "此变体目前缺货。",
   "select_at_least_one_variation_quantity": "Please select at least one variation with a specified quantity.",
-  "confirming_order": "Confirming Order..."
+  "confirming_order": "Confirming Order...",
+  "order_button": "订单",
+  "order_from_unknown_item": "未知项目",
+  "order_receipt": "订单收据",
+  "thank_you_for_your_order": "感谢您的订单！",
+  "failed_to_open_print_window": "无法打开打印窗口。",
+  "failed_to_delete_order": "删除订单失败。",
+  "order_deleted_successfully": "订单删除成功。",
+  "this_action_cannot_be_undone_order": "此操作将永久删除订单，无法撤消。"
 }

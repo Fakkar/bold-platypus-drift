@@ -157,7 +157,7 @@
   "qr_code_for_menu": "QR Code برای منو",
   "url_copied_to_clipboard": "آدرس در کلیپ‌بورد کپی شد",
   "qr_code_instruction": "این کد را اسکن کنید تا منو را روی گوشی خود ببینید.",
-  "chefs_special": "پیشنهاد ویژه سرآشپز",
+  "chefs_special": "پیشنهاد ویژه سرآشpز",
   "search_menu_placeholder": "جستجو در منو...",
   "customer_club": "باشگاه مشتریان",
   "join_our_club": "به باشگاه مشتریان ما بپیوندید!",
@@ -260,5 +260,13 @@
   "order_status_cancelled": "لغو شد",
   "variation_out_of_stock": "این تنوع در حال حاضر موجود نیست.",
   "select_at_least_one_variation_quantity": "لطفاً حداقل یک تنوع را با تعداد مشخص انتخاب کنید.",
-  "confirming_order": "در حال تایید سفارش..."
+  "confirming_order": "در حال تایید سفارش...",
+  "order_button": "سفارش",
+  "order_from_unknown_item": "آیتم نامشخص",
+  "order_receipt": "رسید سفارش",
+  "thank_you_for_your_order": "از سفارش شما متشکریم!",
+  "failed_to_open_print_window": "باز کردن پنجره چاپ ناموفق بود.",
+  "failed_to_delete_order": "حذف سفارش ناموفق بود.",
+  "order_deleted_successfully": "سفارش با موفقیت حذف شد.",
+  "this_action_cannot_be_undone_order": "این عمل سفارش را به طور دائم حذف می‌کند و نمی‌توان آن را بازگرداند."
 }

@@ -99,7 +99,7 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
               className="bg-primary hover:bg-primary/90 text-primary-foreground"
             >
               <ShoppingCart className="h-4 w-4 ml-2 rtl:ml-0 rtl:mr-2" />
-              {t('add_to_cart_button')}
+              {t('order_button')}
             </Button>
             <span className="text-2xl font-bold text-primary" dir="rtl">
               {formatPriceInToman(item.price)}
