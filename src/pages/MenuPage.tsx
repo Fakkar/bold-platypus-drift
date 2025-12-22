@@ -15,6 +15,7 @@ import { Search } from "lucide-react";
 import CustomerClubModal from "@/components/CustomerClubModal";
 import HafezDivination from "@/components/HafezDivination";
 import { useDynamicTranslation } from "@/context/DynamicTranslationContext";
+import CallWaiterButton from "@/components/CallWaiterButton"; // Import the new button
 
 interface Category {
   id: string;
@@ -230,6 +231,7 @@ const MenuPage: React.FC = () => {
         )}
       </main>
 
+      <CallWaiterButton /> {/* Add the Call Waiter button */}
       <Footer />
     </div>
   );

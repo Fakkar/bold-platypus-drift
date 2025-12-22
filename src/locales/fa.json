@@ -204,5 +204,19 @@
   "location_deleted_successfully": "مکان با موفقیت حذف شد",
   "this_action_cannot_be_undone_location": "این عمل مکان را برای همیشه حذف می‌کند.",
   "qr_code_for_location": "QR Code برای {{location}}",
-  "scan_qr_for_location": "این کد را برای مکان‌یابی مشتری اسکن کنید."
+  "scan_qr_for_location": "این کد را برای مکان‌یابی مشتری اسکن کنید.",
+  "call_waiter": "فراخوانی گارسون",
+  "cannot_call_waiter_no_location": "مکان شما مشخص نیست. لطفاً QR Code میز را اسکن کنید.",
+  "waiter_called_successfully": "گارسون با موفقیت فراخوانی شد. لطفاً منتظر بمانید.",
+  "failed_to_call_waiter": "خطا در فراخوانی گارسون: {{message}}",
+  "waiter_calls": "فراخوانی گارسون‌ها",
+  "failed_to_load_waiter_calls": "بارگذاری فراخوانی گارسون‌ها ناموفق بود.",
+  "no_pending_waiter_calls": "هیچ فراخوانی گارسون در انتظار نیست.",
+  "location": "مکان",
+  "time": "زمان",
+  "new_waiter_call_notification": "فراخوانی جدید گارسون از {{location}}!",
+  "new_waiter_call_notification_generic": "فراخوانی جدید گارسون!",
+  "failed_to_resolve_call": "حل فراخوانی ناموفق بود: {{message}}",
+  "call_resolved_successfully": "فراخوانی با موفقیت حل شد.",
+  "unknown_location": "مکان نامشخص"
 }

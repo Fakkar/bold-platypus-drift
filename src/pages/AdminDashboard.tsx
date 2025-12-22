@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useRestaurantSettings } from "@/context/RestaurantSettingsContext";
 import { useSession } from "@/context/SessionContext";
-import { LogOut, Settings, LayoutGrid, ClipboardList, Users, Home, BarChart, Map } from "lucide-react";
+import { LogOut, Settings, LayoutGrid, ClipboardList, Users, Home, BarChart, Map, BellRing } from "lucide-react";
 import CategoryList from "@/components/admin/CategoryList";
 import MenuItemList from "@/components/admin/MenuItemList";
 import { useSupabaseStorage } from "@/hooks/useSupabaseStorage";
@@ -19,8 +19,9 @@ import { cn } from "@/lib/utils";
 import { useDynamicTranslation } from "@/context/DynamicTranslationContext";
 import CustomerClubReport from "@/components/admin/CustomerClubReport";
 import LocationManager from "@/components/admin/LocationManager";
+import WaiterCallList from "@/components/admin/WaiterCallList"; // Import the new component
 
-type AdminView = 'settings' | 'categories' | 'menu-items' | 'customer-club' | 'customer-club-report' | 'locations';
+type AdminView = 'settings' | 'categories' | 'menu-items' | 'customer-club' | 'customer-club-report' | 'locations' | 'waiter-calls';
 
 const AdminDashboard: React.FC = () => {
   const { t } = useTranslation();
@@ -54,6 +55,7 @@ const AdminDashboard: React.FC = () => {
     'customer-club': t("customer_club"),
     'customer-club-report': t("customer_club_report"),
     'locations': t("manage_locations"),
+    'waiter-calls': t("waiter_calls"),
   };
 
   return (
@@ -68,6 +70,7 @@ const AdminDashboard: React.FC = () => {
           {activeView === 'customer-club' && <Card><CardContent className="p-6"><CustomerClubList /></CardContent></Card>}
           {activeView === 'customer-club-report' && <Card><CardContent className="p-6"><CustomerClubReport /></CardContent></Card>}
           {activeView === 'locations' && <Card><CardContent className="p-6"><LocationManager /></CardContent></Card>}
+          {activeView === 'waiter-calls' && <Card><CardContent className="p-6"><WaiterCallList /></CardContent></Card>}
         </div>
       </main>
     </div>
@@ -93,6 +96,7 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ activeView, setActiveView, sign
     { id: 'customer-club', label: t('customer_club'), icon: Users },
     { id: 'customer-club-report', label: t('customer_club_report'), icon: BarChart },
     { id: 'locations', label: t('manage_locations'), icon: Map },
+    { id: 'waiter-calls', label: t('waiter_calls'), icon: BellRing },
   ];
 
   return (
