@@ -259,5 +259,6 @@
   "order_status_preparing": "Preparing",
   "order_status_ready": "Ready",
   "order_status_delivered": "Delivered",
-  "order_status_cancelled": "Cancelled"
+  "order_status_cancelled": "Cancelled",
+  "variation_out_of_stock": "This variation is currently out of stock."
 }

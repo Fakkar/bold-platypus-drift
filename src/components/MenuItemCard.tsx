@@ -6,6 +6,10 @@ import ImageModal from './ImageModal';
 import { cn } from "@/lib/utils";
 import { useDynamicTranslation } from "@/context/DynamicTranslationContext";
 import DescriptionDialog from './DescriptionDialog';
+import { Button } from "@/components/ui/button"; // Import Button
+import { ShoppingCart } from "lucide-react"; // Import ShoppingCart icon
+import { useCart } from "@/context/CartContext"; // Import useCart hook
+import { toast } from 'sonner'; // Import toast
 
 interface MenuItemCardProps {
   item: {
@@ -21,6 +25,7 @@ interface MenuItemCardProps {
 const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
   const { t } = useTranslation();
   const { tDynamic } = useDynamicTranslation();
+  const { addToCart } = useCart(); // Use the addToCart function
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
 
@@ -28,6 +33,20 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
     if (!item.is_available) return;
     setSelectedImage(url);
     setIsModalOpen(true);
+  };
+
+  const handleAddToCart = () => {
+    if (!item.is_available) {
+      toast.error(t('out_of_stock'));
+      return;
+    }
+    addToCart({
+      menuItemId: item.id,
+      name: item.name,
+      price: item.price,
+      quantity: 1,
+      imageUrl: item.image_url,
+    });
   };
 
   const currentName = tDynamic(item.name);
@@ -73,7 +92,15 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
               />
             </div>
           )}
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-between mt-4">
+            <Button 
+              onClick={handleAddToCart} 
+              disabled={!item.is_available}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
+            >
+              <ShoppingCart className="h-4 w-4 ml-2 rtl:ml-0 rtl:mr-2" />
+              {t('add_to_cart_button')}
+            </Button>
             <span className="text-2xl font-bold text-primary" dir="rtl">
               {formatPriceInToman(item.price)}
             </span>

@@ -259,5 +259,6 @@
   "order_status_preparing": "准备中",
   "order_status_ready": "已准备",
   "order_status_delivered": "已送达",
-  "order_status_cancelled": "已取消"
+  "order_status_cancelled": "已取消",
+  "variation_out_of_stock": "此变体目前缺货。"
 }
