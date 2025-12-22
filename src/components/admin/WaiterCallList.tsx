@@ -60,7 +60,7 @@ const WaiterCallList: React.FC = () => {
                 if (!error && locationData) {
                   const callWithLocation = { ...newCall, restaurant_locations: locationData };
                   setCalls((prevCalls) => [callWithLocation, ...prevCalls]);
-                  toast.custom(() => ( // Removed (t) here
+                  toast.custom(() => (
                     <CustomToast type="waiter" location={locationData.name} />
                   ));
                   if (audioRef.current) {
@@ -69,7 +69,7 @@ const WaiterCallList: React.FC = () => {
                 } else {
                   console.error('Error fetching location for new call:', error);
                   setCalls((prevCalls) => [{ ...newCall, restaurant_locations: null }, ...prevCalls]);
-                  toast.custom(() => ( // Removed (t) here
+                  toast.custom(() => (
                     <CustomToast type="waiter" location={t('unknown_location')} />
                   ));
                   if (audioRef.current) {

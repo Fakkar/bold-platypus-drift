@@ -153,10 +153,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onOpenChange }) => {
             <span>{t('total_items')}:</span>
             <span>{toPersianNumber(totalItems)}</span>
           </div>
-          <div className="flex justify-between text-xl font-bold text-primary">
-            <span>{t('total')}:</span>
-            <span dir="rtl">{formatPriceInToman(totalAmount)}</span>
-          </div>
+          {/* Removed total amount display */}
           <Button
             onClick={handlePlaceOrder}
             disabled={cartItems.length === 0 || isOrdering || !tableId}
