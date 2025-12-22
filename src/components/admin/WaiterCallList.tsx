@@ -31,6 +31,7 @@ const WaiterCallList: React.FC = () => {
       .order('created_at', { ascending: true });
 
     if (error) {
+      console.error('Error fetching waiter calls:', error);
       toast.error(t('failed_to_load_waiter_calls', { message: error.message }));
     } else {
       setCalls(data || []);
@@ -48,7 +49,7 @@ const WaiterCallList: React.FC = () => {
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'waiter_calls' },
         (payload) => {
-          console.log('Realtime: New waiter call received!', payload);
+          console.log('Realtime: New waiter call event received!', payload); // Added more specific log
           const newCall = payload.new as WaiterCall;
           if (!newCall.is_resolved) {
             // Fetch the location name for the new call

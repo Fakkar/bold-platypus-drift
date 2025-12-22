@@ -51,6 +51,7 @@ const OrderList: React.FC = () => {
       .order('created_at', { ascending: false });
 
     if (error) {
+      console.error('Error fetching orders:', error);
       toast.error(t('failed_to_load_orders', { message: error.message }));
     } else {
       setOrders(data || []);
@@ -68,7 +69,7 @@ const OrderList: React.FC = () => {
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'orders' },
         (payload) => {
-          console.log('Realtime: New order received!', payload);
+          console.log('Realtime: New order event received!', payload); // Added more specific log
           const newOrder = payload.new as Order;
           // Fetch related data for the new order
           supabase
@@ -206,7 +207,7 @@ const OrderList: React.FC = () => {
     printWindow.document.write(orderDetailsHtml);
     printWindow.document.close();
     printWindow.focus();
-    printWindow.print();
+printWindow.print();
     printWindow.close();
   };
 
