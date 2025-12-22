@@ -21,6 +21,7 @@ import CustomerClubReport from "@/components/admin/CustomerClubReport";
 import LocationManager from "@/components/admin/LocationManager";
 import WaiterCallList from "@/components/admin/WaiterCallList";
 import OrderList from "@/components/admin/OrderList"; // Import the new OrderList component
+import NotificationDialog from "@/components/NotificationDialog"; // Import NotificationDialog
 
 type AdminView = 'settings' | 'categories' | 'menu-items' | 'customer-club' | 'customer-club-report' | 'locations' | 'waiter-calls' | 'orders';
 
@@ -29,6 +30,10 @@ const AdminDashboard: React.FC = () => {
   const { settings, loading: settingsLoading } = useRestaurantSettings();
   const { user, signOut, loading: sessionLoading } = useSession();
   const [activeView, setActiveView] = useState<AdminView>('settings');
+
+  // State for testing notifications
+  const [isTestNotificationOpen, setIsTestNotificationOpen] = useState(false);
+  const [testNotificationData, setTestNotificationData] = useState<{ type: 'order' | 'waiter'; locationName: string; message?: string } | null>(null);
 
   if (settingsLoading || sessionLoading) {
     return (
@@ -60,13 +65,34 @@ const AdminDashboard: React.FC = () => {
     'orders': t("manage_orders"), // New title
   };
 
+  const handleTestWaiterCall = () => {
+    setTestNotificationData({ type: 'waiter', locationName: 'میز تست ۱' });
+    setIsTestNotificationOpen(true);
+  };
+
+  const handleTestOrder = () => {
+    setTestNotificationData({ type: 'order', locationName: 'میز تست ۲' });
+    setIsTestNotificationOpen(true);
+  };
+
   return (
     <div className="min-h-screen w-full flex bg-card" dir="rtl">
       <SidebarNav activeView={activeView} setActiveView={setActiveView} signOut={signOut} />
       <main className="flex-1 p-6 md:p-8 overflow-y-auto">
         <h1 className="text-3xl font-bold mb-6 text-foreground">{viewTitles[activeView]}</h1>
         <div className="w-full">
-          {activeView === 'settings' && <SettingsPanel settings={settings} />}
+          {activeView === 'settings' && (
+            <>
+              <SettingsPanel settings={settings} />
+              <Card className="mt-8">
+                <CardHeader><CardTitle>{t('test_notifications')}</CardTitle></CardHeader>
+                <CardContent className="flex gap-4">
+                  <Button onClick={handleTestWaiterCall}>{t('test_waiter_call_notification')}</Button>
+                  <Button onClick={handleTestOrder}>{t('test_order_notification')}</Button>
+                </CardContent>
+              </Card>
+            </>
+          )}
           {activeView === 'categories' && <Card><CardContent className="p-6"><CategoryList /></CardContent></Card>}
           {activeView === 'menu-items' && <Card><CardContent className="p-6"><MenuItemList /></CardContent></Card>}
           {activeView === 'customer-club' && <Card><CardContent className="p-6"><CustomerClubList /></CardContent></Card>}
@@ -76,6 +102,15 @@ const AdminDashboard: React.FC = () => {
           {activeView === 'orders' && <Card><CardContent className="p-6"><OrderList /></CardContent></Card>} {/* New OrderList component */}
         </div>
       </main>
+      {testNotificationData && (
+        <NotificationDialog
+          isOpen={isTestNotificationOpen}
+          onClose={() => setIsTestNotificationOpen(false)}
+          type={testNotificationData.type}
+          locationName={testNotificationData.locationName}
+          message={testNotificationData.message}
+        />
+      )}
     </div>
   );
 };

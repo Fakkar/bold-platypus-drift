@@ -6,7 +6,7 @@ import { CheckCircle, BellOff } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { toPersianNumber } from '@/utils/format';
-import CustomToast from '@/components/CustomToast'; // Import CustomToast
+import NotificationDialog from '@/components/NotificationDialog'; // Import NotificationDialog
 
 interface WaiterCall {
   id: string;
@@ -20,7 +20,8 @@ const WaiterCallList: React.FC = () => {
   const { t } = useTranslation();
   const [calls, setCalls] = useState<WaiterCall[]>([]);
   const [loading, setLoading] = useState(true);
-  const audioRef = React.useRef<HTMLAudioElement | null>(null);
+  const [isNotificationDialogOpen, setIsNotificationDialogOpen] = useState(false);
+  const [notificationDialogData, setNotificationDialogData] = useState<{ type: 'order' | 'waiter'; locationName: string; message?: string } | null>(null);
 
   const fetchCalls = async () => {
     setLoading(true);
@@ -49,7 +50,7 @@ const WaiterCallList: React.FC = () => {
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'waiter_calls' },
         (payload) => {
-          console.log('Realtime: New waiter call event received!', payload); // Added more specific log
+          console.log('Realtime: New waiter call event received!', payload);
           const newCall = payload.new as WaiterCall;
           if (!newCall.is_resolved) {
             // Fetch the location name for the new call
@@ -62,21 +63,13 @@ const WaiterCallList: React.FC = () => {
                 if (!error && locationData) {
                   const callWithLocation = { ...newCall, restaurant_locations: locationData };
                   setCalls((prevCalls) => [callWithLocation, ...prevCalls]);
-                  toast.custom(() => (
-                    <CustomToast type="waiter" location={locationData.name} />
-                  ));
-                  if (audioRef.current) {
-                    audioRef.current.play().catch(e => console.error("Error playing waiter call audio:", e));
-                  }
+                  setNotificationDialogData({ type: 'waiter', locationName: locationData.name });
+                  setIsNotificationDialogOpen(true);
                 } else {
                   console.error('Error fetching location for new call:', error);
                   setCalls((prevCalls) => [{ ...newCall, restaurant_locations: null }, ...prevCalls]);
-                  toast.custom(() => (
-                    <CustomToast type="waiter" location={t('unknown_location')} />
-                  ));
-                  if (audioRef.current) {
-                    audioRef.current.play().catch(e => console.error("Error playing waiter call audio:", e));
-                  }
+                  setNotificationDialogData({ type: 'waiter', locationName: t('unknown_location') });
+                  setIsNotificationDialogOpen(true);
                 }
               });
           }
@@ -151,7 +144,15 @@ const WaiterCallList: React.FC = () => {
           </Table>
         </div>
       )}
-      <audio ref={audioRef} src="/sounds/notification.mp3" preload="auto" />
+      {notificationDialogData && (
+        <NotificationDialog
+          isOpen={isNotificationDialogOpen}
+          onClose={() => setIsNotificationDialogOpen(false)}
+          type={notificationDialogData.type}
+          locationName={notificationDialogData.locationName}
+          message={notificationDialogData.message}
+        />
+      )}
     </div>
   );
 };

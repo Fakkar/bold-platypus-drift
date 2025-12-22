@@ -270,5 +270,7 @@
   "failed_to_open_print_window": "باز کردن پنجره چاپ ناموفق بود.",
   "failed_to_delete_order": "حذف سفارش ناموفق بود.",
   "order_deleted_successfully": "سفارش با موفقیت حذف شد.",
-  "this_action_cannot_be_undone_order": "این عمل سفارش را به طور دائم حذف می‌کند و نمی‌توان آن را بازگرداند."
+  "this_action_cannot_be_undone_order": "این عمل سفارش را به طور دائم حذف می‌کند و نمی‌توان آن را بازگرداند.",
+  "test_waiter_call_notification": "تست نوتیفیکیشن فراخوانی گارسون",
+  "test_order_notification": "تست نوتیفیکیشن سفارش"
 }

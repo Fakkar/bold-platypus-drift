@@ -199,6 +199,8 @@
   "time": "الوقت",
   "new_waiter_call_notification": "طلب جديد من الطاولة {{location}}!",
   "new_waiter_call_notification_generic": "طلب جديد!",
+  "new_order_notification": "سفارش جدید از میز {{location}}!",
+  "new_order_notification_generic": "سفارش جدید!",
   "failed_to_resolve_call": "فشل حل المكالمة: {{message}}",
   "call_resolved_successfully": "تم حل المكالمة بنجاح.",
   "unknown_location": "موقع غير معروف",
@@ -245,5 +247,13 @@
   "select_at_least_one_variation_quantity": "الرجاء تحديد اختلاف واحد على الأقل بكمية محددة.",
   "confirming_order": "جاري تأكيد الطلب...",
   "order_button": "طلب",
-  "order_from_unknown_item": "عنصر غير معروف"
+  "order_from_unknown_item": "عنصر غير معروف",
+  "order_receipt": "إيصال الطلب",
+  "thank_you_for_your_order": "شكرا لطلبك!",
+  "failed_to_open_print_window": "تعذر فتح نافذة الطباعة.",
+  "failed_to_delete_order": "فشل حذف الطلب.",
+  "order_deleted_successfully": "تم حذف الطلب بنجاح.",
+  "this_action_cannot_be_undone_order": "سيؤدي هذا الإجراء إلى حذف الطلب نهائيًا ولا يمكن التراجع عنه.",
+  "test_waiter_call_notification": "اختبار إشعار استدعاء النادل",
+  "test_order_notification": "اختبار إشعار الطلب"
 }

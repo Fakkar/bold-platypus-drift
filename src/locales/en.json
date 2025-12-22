@@ -270,5 +270,7 @@
   "failed_to_open_print_window": "Failed to open print window.",
   "failed_to_delete_order": "Failed to delete order.",
   "order_deleted_successfully": "Order deleted successfully.",
-  "this_action_cannot_be_undone_order": "This action will permanently delete the order and cannot be undone."
+  "this_action_cannot_be_undone_order": "This action will permanently delete the order and cannot be undone.",
+  "test_waiter_call_notification": "Test Waiter Call Notification",
+  "test_order_notification": "Test Order Notification"
 }

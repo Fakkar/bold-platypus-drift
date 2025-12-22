@@ -172,7 +172,7 @@
   "failed_to_load_customers": "加载客户失败。",
   "no_customers_found": "未找到客户。",
   "failed_to_delete_customer": "删除客户失败。",
-  "customer_deleted_successfully": "客户删除成功。",
+  "customer_deleted_successfully": "客户删除成功！",
   "this_action_cannot_be_undone_customer": "此操作将永久删除俱乐部中的客户。",
   "your_divination": "您的占卜",
   "variations": "变体",
@@ -216,6 +216,8 @@
   "time": "时间",
   "new_waiter_call_notification": "来自桌子{{location}}的新订单！",
   "new_waiter_call_notification_generic": "新订单！",
+  "new_order_notification": "来自桌子{{location}}的新订单！",
+  "new_order_notification_generic": "新订单！",
   "failed_to_resolve_call": "解决呼叫失败：{{message}}",
   "call_resolved_successfully": "呼叫已成功解决。",
   "unknown_location": "未知地点",
@@ -268,5 +270,7 @@
   "failed_to_open_print_window": "无法打开打印窗口。",
   "failed_to_delete_order": "删除订单失败。",
   "order_deleted_successfully": "订单删除成功。",
-  "this_action_cannot_be_undone_order": "此操作将永久删除订单，无法撤消。"
+  "this_action_cannot_be_undone_order": "此操作将永久删除订单，无法撤消。",
+  "test_waiter_call_notification": "测试服务员呼叫通知",
+  "test_order_notification": "测试订单通知"
 }

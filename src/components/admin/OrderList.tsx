@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { toPersianNumber, formatPriceInToman } from '@/utils/format';
 import { useDynamicTranslation } from '@/context/DynamicTranslationContext';
 import { Separator } from '@/components/ui/separator';
-import CustomToast from '@/components/CustomToast'; // Import CustomToast
+import NotificationDialog from '@/components/NotificationDialog'; // Import NotificationDialog
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 
 interface OrderItem {
@@ -40,8 +40,8 @@ const OrderList: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
-  const waiterCallAudioRef = useRef<HTMLAudioElement | null>(null); // Existing for waiter calls
-  const orderNotificationAudioRef = useRef<HTMLAudioElement | null>(null); // New for order notifications
+  const [isNotificationDialogOpen, setIsNotificationDialogOpen] = useState(false);
+  const [notificationDialogData, setNotificationDialogData] = useState<{ type: 'order' | 'waiter'; locationName: string; message?: string } | null>(null);
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -69,7 +69,7 @@ const OrderList: React.FC = () => {
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'orders' },
         (payload) => {
-          console.log('Realtime: New order event received!', payload); // Added more specific log
+          console.log('Realtime: New order event received!', payload);
           const newOrder = payload.new as Order;
           // Fetch related data for the new order
           supabase
@@ -81,20 +81,12 @@ const OrderList: React.FC = () => {
               if (!fullOrderError && fullOrderData) {
                 setOrders((prevOrders) => [fullOrderData, ...prevOrders]);
                 const locationName = fullOrderData.restaurant_locations?.name || t('unknown_location');
-                toast.custom(() => (
-                  <CustomToast type="order" location={locationName} />
-                ));
-                if (orderNotificationAudioRef.current) {
-                  orderNotificationAudioRef.current.play().catch(e => console.error("Error playing order notification audio:", e));
-                }
+                setNotificationDialogData({ type: 'order', locationName: locationName });
+                setIsNotificationDialogOpen(true);
               } else {
                 console.error('Error fetching full order data for new order:', fullOrderError);
-                toast.custom(() => (
-                  <CustomToast type="order" location={t('unknown_location')} />
-                ));
-                if (orderNotificationAudioRef.current) {
-                  orderNotificationAudioRef.current.play().catch(e => console.error("Error playing order notification audio:", e));
-                }
+                setNotificationDialogData({ type: 'order', locationName: t('unknown_location') });
+                setIsNotificationDialogOpen(true);
               }
             });
         }
@@ -207,7 +199,7 @@ const OrderList: React.FC = () => {
     printWindow.document.write(orderDetailsHtml);
     printWindow.document.close();
     printWindow.focus();
-printWindow.print();
+    printWindow.print();
     printWindow.close();
   };
 
@@ -314,52 +306,15 @@ printWindow.print();
           </Table>
         </div>
       )}
-
-      <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
-        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto rtl:text-right">
-          <DialogHeader>
-            <DialogTitle>{t('order_details')} - {selectedOrder?.id.substring(0, 8)}...</DialogTitle>
-          </DialogHeader>
-          {selectedOrder && (
-            <div className="space-y-4 py-4">
-              <p><strong>{t('order_from_table')}:</strong> {selectedOrder.restaurant_locations?.name || t('order_from_unknown_location')}</p>
-              <p><strong>{t('total')}:</strong> <span dir="rtl">{formatPriceInToman(selectedOrder.total_amount)}</span></p>
-              <p><strong>{t('status')}:</strong> {t(`order_status_${selectedOrder.status}`)}</p>
-              <p><strong>{t('order_time')}:</strong> {formatDate(selectedOrder.created_at)}</p>
-
-              <Separator />
-
-              <h4 className="font-semibold text-lg">{t('items')}</h4>
-              <div className="space-y-3">
-                {selectedOrder.order_items.map((item) => (
-                  <div key={item.id} className="flex items-center gap-4 border-b pb-3 last:border-b-0 last:pb-0">
-                    {item.menu_items?.image_url && (
-                      <img src={item.menu_items.image_url} alt={tDynamic(item.menu_items.name || '')} className="h-12 w-12 object-cover rounded-md" />
-                    )}
-                    <div className="flex-1">
-                      <p className="font-medium">{tDynamic(item.menu_items?.name || t('order_from_unknown_item'))}</p>
-                      {item.variations && (
-                        <p className="text-sm text-muted-foreground">{tDynamic(item.variations.name)}</p>
-                      )}
-                      <p className="text-sm text-muted-foreground">
-                        {toPersianNumber(item.quantity)} x <span dir="rtl">{formatPriceInToman(item.price)}</span>
-                      </p>
-                      {item.notes && (
-                        <p className="text-xs text-muted-foreground italic">{t('notes')}: {item.notes}</p>
-                      )}
-                    </div>
-                    <span className="font-semibold text-primary" dir="rtl">
-                      {formatPriceInToman(item.quantity * item.price)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-      <audio ref={waiterCallAudioRef} src="/sounds/notification.mp3" preload="auto" />
-      <audio ref={orderNotificationAudioRef} src="/sounds/order-notification.mp3" preload="auto" />
+      {notificationDialogData && (
+        <NotificationDialog
+          isOpen={isNotificationDialogOpen}
+          onClose={() => setIsNotificationDialogOpen(false)}
+          type={notificationDialogData.type}
+          locationName={notificationDialogData.locationName}
+          message={notificationDialogData.message}
+        />
+      )}
     </div>
   );
 };
