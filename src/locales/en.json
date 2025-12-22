@@ -201,7 +201,7 @@
   "failed_to_add_location": "Failed to add location",
   "location_added_successfully": "Location added successfully",
   "failed_to_delete_location": "Failed to delete location",
-  "location_deleted_successfully": "Location deleted successfully",
+  "location_deleted_successfully": "Location deleted successfully.",
   "this_action_cannot_be_undone_location": "This action will permanently delete the location.",
   "qr_code_for_location": "QR Code for {{location}}",
   "scan_qr_for_location": "Scan this QR code for customer location tracking.",
@@ -261,5 +261,6 @@
   "order_status_delivered": "Delivered",
   "order_status_cancelled": "Cancelled",
   "variation_out_of_stock": "This variation is currently out of stock.",
-  "select_at_least_one_variation_quantity": "Please select at least one variation with a specified quantity."
+  "select_at_least_one_variation_quantity": "Please select at least one variation with a specified quantity.",
+  "confirming_order": "Confirming Order..."
 }

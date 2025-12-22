@@ -15,7 +15,9 @@ import { Search } from "lucide-react";
 import CustomerClubModal from "@/components/CustomerClubModal";
 import HafezDivination from "@/components/HafezDivination";
 import { useDynamicTranslation } from "@/context/DynamicTranslationContext";
-import CallWaiterButton from "@/components/CallWaiterButton"; // Import the new button
+import CallWaiterButton from "@/components/CallWaiterButton";
+import CartSidebar from "@/components/CartSidebar"; // Import CartSidebar
+import FloatingCartButton from "@/components/FloatingCartButton"; // Import FloatingCartButton
 
 interface Category {
   id: string;
@@ -52,6 +54,7 @@ const MenuPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string | undefined>(undefined);
   const [searchTerm, setSearchTerm] = useState('');
   const [isClubModalOpen, setIsClubModalOpen] = useState(false);
+  const [isCartSidebarOpen, setIsCartSidebarOpen] = useState(false); // State for cart sidebar
 
   useEffect(() => {
     const hasJoined = localStorage.getItem('customerClubJoined');
@@ -231,7 +234,9 @@ const MenuPage: React.FC = () => {
         )}
       </main>
 
-      <CallWaiterButton /> {/* Add the Call Waiter button */}
+      <CallWaiterButton />
+      <FloatingCartButton onClick={() => setIsCartSidebarOpen(true)} /> {/* Floating cart button */}
+      <CartSidebar isOpen={isCartSidebarOpen} onOpenChange={setIsCartSidebarOpen} /> {/* Cart sidebar */}
       <Footer />
     </div>
   );

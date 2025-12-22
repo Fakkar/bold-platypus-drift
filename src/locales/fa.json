@@ -201,7 +201,7 @@
   "failed_to_add_location": "افزودن مکان ناموفق بود",
   "location_added_successfully": "مکان با موفقیت اضافه شد",
   "failed_to_delete_location": "حذف مکان ناموفق بود",
-  "location_deleted_successfully": "مکان با موفقیت حذف شد",
+  "location_deleted_successfully": "مکان با موفقیت حذف شد.",
   "this_action_cannot_be_undone_location": "این عمل مکان را برای همیشه حذف می‌کند.",
   "qr_code_for_location": "QR Code برای {{location}}",
   "scan_qr_for_location": "این کد را برای مکان‌یابی مشتری اسکن کنید.",
@@ -261,5 +261,6 @@
   "order_status_delivered": "تحویل داده شد",
   "order_status_cancelled": "لغو شد",
   "variation_out_of_stock": "این تنوع در حال حاضر موجود نیست.",
-  "select_at_least_one_variation_quantity": "لطفاً حداقل یک تنوع را با تعداد مشخص انتخاب کنید."
+  "select_at_least_one_variation_quantity": "لطفاً حداقل یک تنوع را با تعداد مشخص انتخاب کنید.",
+  "confirming_order": "در حال تایید سفارش..."
 }
