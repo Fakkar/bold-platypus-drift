@@ -36,7 +36,7 @@ const CustomerClubReport: React.FC = () => {
 
     const { data, error } = await supabase
       .from('customer_club')
-      .select('created_at, visit_history');
+      .select('created_at, visit_history, phone_number');
 
     if (error) {
       toast.error(t('failed_to_generate_report'));

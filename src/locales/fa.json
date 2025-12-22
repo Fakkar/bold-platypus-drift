@@ -191,5 +191,18 @@
   "failed_to_generate_report": "تولید گزارش ناموفق بود",
   "new_customers": "مشتریان جدید",
   "repeat_customers": "مشتریان تکراری",
-  "total_customers": "کل مشتریان"
+  "total_customers": "کل مشتریان",
+  "manage_locations": "مدیریت مکان‌ها",
+  "location_name": "نام مکان",
+  "enter_location_name": "نام مکان را وارد کنید (مثلا: میز ۱)",
+  "add_location": "افزودن مکان",
+  "failed_to_load_locations": "بارگذاری مکان‌ها ناموفق بود",
+  "location_name_required": "نام مکان الزامی است",
+  "failed_to_add_location": "افزودن مکان ناموفق بود",
+  "location_added_successfully": "مکان با موفقیت اضافه شد",
+  "failed_to_delete_location": "حذف مکان ناموفق بود",
+  "location_deleted_successfully": "مکان با موفقیت حذف شد",
+  "this_action_cannot_be_undone_location": "این عمل مکان را برای همیشه حذف می‌کند.",
+  "qr_code_for_location": "QR Code برای {{location}}",
+  "scan_qr_for_location": "این کد را برای مکان‌یابی مشتری اسکن کنید."
 }
