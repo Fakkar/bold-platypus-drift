@@ -260,5 +260,6 @@
   "order_status_ready": "آماده",
   "order_status_delivered": "تحویل داده شد",
   "order_status_cancelled": "لغو شد",
-  "variation_out_of_stock": "این تنوع در حال حاضر موجود نیست."
+  "variation_out_of_stock": "این تنوع در حال حاضر موجود نیست.",
+  "select_at_least_one_variation_quantity": "لطفاً حداقل یک تنوع را با تعداد مشخص انتخاب کنید."
 }

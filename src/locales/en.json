@@ -260,5 +260,6 @@
   "order_status_ready": "Ready",
   "order_status_delivered": "Delivered",
   "order_status_cancelled": "Cancelled",
-  "variation_out_of_stock": "This variation is currently out of stock."
+  "variation_out_of_stock": "This variation is currently out of stock.",
+  "select_at_least_one_variation_quantity": "Please select at least one variation with a specified quantity."
 }

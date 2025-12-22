@@ -7,9 +7,9 @@ import { useDynamicTranslation } from "@/context/DynamicTranslationContext";
 import { Separator } from './ui/separator';
 import ImageModal from './ImageModal';
 import DescriptionDialog from './DescriptionDialog';
-import { Button } from "@/components/ui/button"; // Import Button
-import { ShoppingCart, Plus, Minus } from "lucide-react"; // Import icons
-import { useCart } from "@/context/CartContext"; // Import useCart hook
+import { Button } from "@/components/ui/button";
+import { ShoppingCart, Plus, Minus } from "lucide-react";
+import { useCart } from "@/context/CartContext";
 import {
   Dialog,
   DialogContent,
@@ -18,11 +18,11 @@ import {
   DialogFooter,
   DialogClose
 } from "@/components/ui/dialog";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox"; // Changed from RadioGroup to Checkbox
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from 'sonner';
-import { Input } from "@/components/ui/input"; // Import Input
+import { Input } from "@/components/ui/input";
 
 interface Variation {
   name: string;
@@ -50,8 +50,7 @@ const MenuItemWithVariationsCard: React.FC<MenuItemWithVariationsCardProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
   const [isAddToCartDialogOpen, setIsAddToCartDialogOpen] = useState(false);
-  const [selectedVariation, setSelectedVariation] = useState<Variation | undefined>(undefined);
-  const [quantity, setQuantity] = useState(1);
+  const [selectedVariationsQuantities, setSelectedVariationsQuantities] = useState<Record<string, number>>({});
   const [notes, setNotes] = useState('');
 
   const handleImageClick = (url: string) => {
@@ -65,30 +64,55 @@ const MenuItemWithVariationsCard: React.FC<MenuItemWithVariationsCardProps> = ({
       toast.error(t('out_of_stock'));
       return;
     }
-    setSelectedVariation(item.variations.find(v => v.is_available !== false)); // Pre-select first available variation
-    setQuantity(1);
+    // Reset quantities and notes when opening the dialog
+    const initialQuantities: Record<string, number> = {};
+    item.variations.forEach(v => {
+      if (v.is_available !== false) {
+        initialQuantities[v.name] = 0; // Initialize to 0, not 1, for checkboxes
+      }
+    });
+    setSelectedVariationsQuantities(initialQuantities);
     setNotes('');
     setIsAddToCartDialogOpen(true);
   };
 
+  const handleVariationQuantityChange = (variationName: string, newQuantity: number) => {
+    setSelectedVariationsQuantities(prev => ({
+      ...prev,
+      [variationName]: Math.max(0, newQuantity), // Ensure quantity is not negative
+    }));
+  };
+
   const handleAddToCart = () => {
-    if (!selectedVariation) {
-      toast.error(t('select_variation'));
+    const itemsToAdd = [];
+    let hasSelectedAny = false;
+
+    for (const variation of item.variations) {
+      const quantity = selectedVariationsQuantities[variation.name] || 0;
+      if (quantity > 0) {
+        if (variation.is_available === false) {
+          toast.error(t('variation_out_of_stock'));
+          return; // Prevent adding out-of-stock variations
+        }
+        itemsToAdd.push({
+          menuItemId: item.id,
+          name: item.name,
+          price: variation.price,
+          quantity,
+          imageUrl: item.image_url,
+          selectedVariation: { name: variation.name, price: variation.price },
+          notes: notes.trim() || undefined,
+        });
+        hasSelectedAny = true;
+      }
+    }
+
+    if (!hasSelectedAny) {
+      toast.error(t('select_at_least_one_variation_quantity'));
       return;
     }
-    if (selectedVariation.is_available === false) {
-      toast.error(t('variation_out_of_stock'));
-      return;
-    }
-    addToCart({
-      menuItemId: item.id,
-      name: item.name,
-      price: selectedVariation.price, // Use variation price
-      quantity,
-      imageUrl: item.image_url,
-      selectedVariation: { name: selectedVariation.name, price: selectedVariation.price },
-      notes: notes.trim() || undefined,
-    });
+
+    itemsToAdd.forEach(cartItem => addToCart(cartItem));
     setIsAddToCartDialogOpen(false);
   };
 
@@ -184,61 +208,57 @@ const MenuItemWithVariationsCard: React.FC<MenuItemWithVariationsCardProps> = ({
           </DialogHeader>
           <div className="grid gap-4 py-4">
             {item.variations.length > 0 && (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <Label>{t('select_variation')}</Label>
-                <RadioGroup 
-                  onValueChange={(value) => setSelectedVariation(item.variations.find(v => v.name === value))} 
-                  defaultValue={selectedVariation?.name}
-                  className="flex flex-col space-y-1"
-                  dir="rtl"
-                >
-                  {item.variations.map((variation) => (
-                    <div key={variation.name} className="flex items-center space-x-2 rtl:space-x-reverse">
-                      <RadioGroupItem 
-                        value={variation.name} 
-                        id={`variation-${variation.name}`} 
+                {item.variations.map((variation) => (
+                  <div key={variation.name} className={cn(
+                    "flex items-center gap-2",
+                    variation.is_available === false && "opacity-50"
+                  )}>
+                    <Checkbox
+                      id={`variation-${variation.name}`}
+                      checked={(selectedVariationsQuantities[variation.name] || 0) > 0}
+                      onCheckedChange={(checked) => {
+                        handleVariationQuantityChange(variation.name, checked ? 1 : 0);
+                      }}
+                      disabled={variation.is_available === false}
+                    />
+                    <Label
+                      htmlFor={`variation-${variation.name}`}
+                      className={cn("flex-grow cursor-pointer", variation.is_available === false && "line-through text-muted-foreground")}
+                    >
+                      {tDynamic(variation.name)} ({formatPriceInToman(variation.price)})
+                    </Label>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleVariationQuantityChange(variation.name, (selectedVariationsQuantities[variation.name] || 0) - 1)}
+                        disabled={variation.is_available === false || (selectedVariationsQuantities[variation.name] || 0) <= 0}
+                      >
+                        <Minus className="h-4 w-4" />
+                      </Button>
+                      <Input
+                        type="number"
+                        value={selectedVariationsQuantities[variation.name] || 0}
+                        onChange={(e) => handleVariationQuantityChange(variation.name, parseInt(e.target.value) || 0)}
+                        className="w-16 text-center"
+                        min="0"
                         disabled={variation.is_available === false}
                       />
-                      <Label 
-                        htmlFor={`variation-${variation.name}`}
-                        className={cn(variation.is_available === false && "line-through text-muted-foreground")}
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleVariationQuantityChange(variation.name, (selectedVariationsQuantities[variation.name] || 0) + 1)}
+                        disabled={variation.is_available === false}
                       >
-                        {tDynamic(variation.name)} ({formatPriceInToman(variation.price)})
-                      </Label>
+                        <Plus className="h-4 w-4" />
+                      </Button>
                     </div>
-                  ))}
-                </RadioGroup>
+                  </div>
+                ))}
               </div>
             )}
-
-            <div className="space-y-2">
-              <Label htmlFor="quantity">{t('quantity')}</Label>
-              <div className="flex items-center gap-2">
-                <Button 
-                  variant="outline" 
-                  size="icon" 
-                  onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
-                  disabled={quantity <= 1}
-                >
-                  <Minus className="h-4 w-4" />
-                </Button>
-                <Input 
-                  id="quantity" 
-                  type="number" 
-                  value={quantity} 
-                  onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))} 
-                  className="w-20 text-center"
-                  min="1"
-                />
-                <Button 
-                  variant="outline" 
-                  size="icon" 
-                  onClick={() => setQuantity(prev => prev + 1)}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
 
             <div className="space-y-2">
               <Label htmlFor="notes">{t('add_notes')}</Label>
@@ -254,7 +274,7 @@ const MenuItemWithVariationsCard: React.FC<MenuItemWithVariationsCardProps> = ({
             <DialogClose asChild>
               <Button variant="outline">{t('cancel')}</Button>
             </DialogClose>
-            <Button onClick={handleAddToCart} disabled={!selectedVariation || selectedVariation.is_available === false}>
+            <Button onClick={handleAddToCart} disabled={!item.is_available || Object.values(selectedVariationsQuantities).every(q => q === 0)}>
               {t('add_to_cart_button')}
             </Button>
           </DialogFooter>
