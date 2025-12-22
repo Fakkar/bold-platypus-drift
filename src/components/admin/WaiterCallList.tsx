@@ -41,13 +41,14 @@ const WaiterCallList: React.FC = () => {
   useEffect(() => {
     fetchCalls();
 
-    // Setup Supabase Realtime listener for new waiter calls
+    console.log('Subscribing to waiter_calls_channel');
     const channel = supabase
       .channel('waiter_calls_channel')
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'waiter_calls' },
         (payload) => {
+          console.log('Realtime: New waiter call received!', payload);
           const newCall = payload.new as WaiterCall;
           if (!newCall.is_resolved) {
             // Fetch the location name for the new call
@@ -64,7 +65,7 @@ const WaiterCallList: React.FC = () => {
                     <CustomToast type="waiter" location={locationData.name} />
                   ));
                   if (audioRef.current) {
-                    audioRef.current.play();
+                    audioRef.current.play().catch(e => console.error("Error playing waiter call audio:", e));
                   }
                 } else {
                   console.error('Error fetching location for new call:', error);
@@ -73,7 +74,7 @@ const WaiterCallList: React.FC = () => {
                     <CustomToast type="waiter" location={t('unknown_location')} />
                   ));
                   if (audioRef.current) {
-                    audioRef.current.play();
+                    audioRef.current.play().catch(e => console.error("Error playing waiter call audio:", e));
                   }
                 }
               });
@@ -83,6 +84,7 @@ const WaiterCallList: React.FC = () => {
       .subscribe();
 
     return () => {
+      console.log('Unsubscribing from waiter_calls_channel');
       supabase.removeChannel(channel);
     };
   }, [t]);

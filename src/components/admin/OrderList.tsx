@@ -61,13 +61,14 @@ const OrderList: React.FC = () => {
   useEffect(() => {
     fetchOrders();
 
-    // Setup Supabase Realtime listener for new orders
+    console.log('Subscribing to orders_channel');
     const channel = supabase
       .channel('orders_channel')
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'orders' },
         (payload) => {
+          console.log('Realtime: New order received!', payload);
           const newOrder = payload.new as Order;
           // Fetch related data for the new order
           supabase
@@ -79,19 +80,19 @@ const OrderList: React.FC = () => {
               if (!fullOrderError && fullOrderData) {
                 setOrders((prevOrders) => [fullOrderData, ...prevOrders]);
                 const locationName = fullOrderData.restaurant_locations?.name || t('unknown_location');
-                toast.custom(() => ( // Removed (t) here
+                toast.custom(() => (
                   <CustomToast type="order" location={locationName} />
                 ));
                 if (orderNotificationAudioRef.current) {
-                  orderNotificationAudioRef.current.play();
+                  orderNotificationAudioRef.current.play().catch(e => console.error("Error playing order notification audio:", e));
                 }
               } else {
                 console.error('Error fetching full order data for new order:', fullOrderError);
-                toast.custom(() => ( // Removed (t) here
+                toast.custom(() => (
                   <CustomToast type="order" location={t('unknown_location')} />
                 ));
                 if (orderNotificationAudioRef.current) {
-                  orderNotificationAudioRef.current.play();
+                  orderNotificationAudioRef.current.play().catch(e => console.error("Error playing order notification audio:", e));
                 }
               }
             });
@@ -100,6 +101,7 @@ const OrderList: React.FC = () => {
       .subscribe();
 
     return () => {
+      console.log('Unsubscribing from orders_channel');
       supabase.removeChannel(channel);
     };
   }, [t]);

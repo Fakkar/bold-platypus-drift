@@ -216,6 +216,8 @@
   "time": "Time",
   "new_waiter_call_notification": "New waiter call from {{location}}!",
   "new_waiter_call_notification_generic": "New waiter call!",
+  "new_order_notification": "New order from table {{location}}!",
+  "new_order_notification_generic": "New order!",
   "failed_to_resolve_call": "Failed to resolve call: {{message}}",
   "call_resolved_successfully": "Call resolved successfully.",
   "unknown_location": "Unknown Location",
