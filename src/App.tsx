@@ -16,7 +16,8 @@ import { toast } from "sonner";
 import { DynamicTranslationProvider, useDynamicTranslation } from "./context/DynamicTranslationContext";
 import { useEffect } from "react";
 import UpdatePassword from "./pages/UpdatePassword";
-import { TableLocationProvider } from "./context/TableLocationContext"; // Import the new context
+import { TableLocationProvider } from "./context/TableLocationContext";
+import { CartProvider } from "./context/CartContext"; // Import the new CartProvider
 
 const queryClient = new QueryClient();
 
@@ -83,23 +84,25 @@ const App = () => (
           <SessionContextProvider>
             <RestaurantSettingsProvider>
               <DynamicTranslationProvider>
-                <TableLocationProvider> {/* Wrap with TableLocationProvider */}
-                  <PageMetadataSetter />
-                  <Routes>
-                    <Route path="/" element={<MenuPage />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/update-password" element={<UpdatePassword />} />
-                    <Route 
-                      path="/admin" 
-                      element={
-                        <ProtectedRoute>
-                          <AdminDashboard />
-                        </ProtectedRoute>
-                      } 
-                    />
-                    <Route path="/home" element={<Index />} />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
+                <TableLocationProvider>
+                  <CartProvider> {/* Wrap with CartProvider */}
+                    <PageMetadataSetter />
+                    <Routes>
+                      <Route path="/" element={<MenuPage />} />
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/update-password" element={<UpdatePassword />} />
+                      <Route 
+                        path="/admin" 
+                        element={
+                          <ProtectedRoute>
+                            <AdminDashboard />
+                          </ProtectedRoute>
+                        } 
+                      />
+                      <Route path="/home" element={<Index />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </CartProvider>
                 </TableLocationProvider>
               </DynamicTranslationProvider>
             </RestaurantSettingsProvider>
