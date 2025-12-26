@@ -42,6 +42,7 @@ const AdminDashboard: React.FC = () => {
       setActiveView(viewFromUrl);
     }
     // Test sonner toast on dashboard load
+    console.log("Admin Dashboard loaded, attempting to show test toast.");
     toast.info(t("admin_dashboard_loaded_test_toast"));
   }, [location.search, t]); // Added location.search to dependencies
 
@@ -85,7 +86,7 @@ const AdminDashboard: React.FC = () => {
       />
     ), {
       duration: Infinity,
-      position: 'bottom-left',
+      position: 'bottom-right', // Changed to bottom-right as requested
     });
   };
 

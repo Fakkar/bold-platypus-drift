@@ -103,8 +103,10 @@ const OrderList: React.FC<OrderListProps> = ({ onShowNotification }) => {
   }, [t, onShowNotification]);
 
   const handleViewDetails = (order: Order) => {
+    console.log("handleViewDetails called for order:", order.id);
     setSelectedOrder(order);
     setIsDetailsDialogOpen(true);
+    console.log("Setting isDetailsDialogOpen to true");
   };
 
   const handleStatusChange = async (orderId: string, newStatus: Order['status']) => {
