@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { toPersianNumber, formatPriceInToman } from '@/utils/format';
 import { useDynamicTranslation } from '@/context/DynamicTranslationContext';
 import { Separator } from '@/components/ui/separator';
-// import NotificationDialog from '@/components/NotificationDialog'; // Removed
+// Removed NotificationDialog import
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 
 interface OrderItem {
@@ -44,8 +44,7 @@ const OrderList: React.FC<OrderListProps> = ({ onShowNotification }) => {
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
-  // const [isNotificationDialogOpen, setIsNotificationDialogOpen] = useState(false); // Removed
-  // const [notificationDialogData, setNotificationDialogData] = useState<{ type: 'order' | 'waiter'; locationName: string; message?: string } | null>(null); // Removed
+  // Removed local notification state
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -101,7 +100,7 @@ const OrderList: React.FC<OrderListProps> = ({ onShowNotification }) => {
       console.log('Unsubscribing from orders_channel');
       supabase.removeChannel(channel);
     };
-  }, [t, onShowNotification]); // Added onShowNotification to dependency array
+  }, [t, onShowNotification]);
 
   const handleViewDetails = (order: Order) => {
     setSelectedOrder(order);
@@ -306,7 +305,6 @@ const OrderList: React.FC<OrderListProps> = ({ onShowNotification }) => {
           </Table>
         </div>
       )}
-      {/* Removed NotificationDialog from here */}
     </div>
   );
 };

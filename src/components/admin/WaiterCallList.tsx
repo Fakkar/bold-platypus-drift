@@ -6,7 +6,7 @@ import { CheckCircle, BellOff } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { toPersianNumber } from '@/utils/format';
-// import NotificationDialog from '@/components/NotificationDialog'; // Removed
+// Removed NotificationDialog import
 
 interface WaiterCall {
   id: string;
@@ -24,8 +24,7 @@ const WaiterCallList: React.FC<WaiterCallListProps> = ({ onShowNotification }) =
   const { t } = useTranslation();
   const [calls, setCalls] = useState<WaiterCall[]>([]);
   const [loading, setLoading] = useState(true);
-  // const [isNotificationDialogOpen, setIsNotificationDialogOpen] = useState(false); // Removed
-  // const [notificationDialogData, setNotificationDialogData] = useState<{ type: 'order' | 'waiter'; locationName: string; message?: string } | null>(null); // Removed
+  // Removed local notification state
 
   const fetchCalls = async () => {
     setLoading(true);
@@ -85,7 +84,7 @@ const WaiterCallList: React.FC<WaiterCallListProps> = ({ onShowNotification }) =
       console.log('Unsubscribing from waiter_calls_channel');
       supabase.removeChannel(channel);
     };
-  }, [t, onShowNotification]); // Added onShowNotification to dependency array
+  }, [t, onShowNotification]);
 
   const handleResolveCall = async (callId: string) => {
     const { error } = await supabase
@@ -148,7 +147,6 @@ const WaiterCallList: React.FC<WaiterCallListProps> = ({ onShowNotification }) =
           </Table>
         </div>
       )}
-      {/* Removed NotificationDialog from here */}
     </div>
   );
 };

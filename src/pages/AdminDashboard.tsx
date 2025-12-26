@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,8 +20,9 @@ import { useDynamicTranslation } from "@/context/DynamicTranslationContext";
 import CustomerClubReport from "@/components/admin/CustomerClubReport";
 import LocationManager from "@/components/admin/LocationManager";
 import WaiterCallList from "@/components/admin/WaiterCallList";
-import OrderList from "@/components/admin/OrderList"; // Import the new OrderList component
-import NotificationDialog from "@/components/NotificationDialog"; // Import NotificationDialog
+import OrderList from "@/components/admin/OrderList";
+import { toast } from 'sonner'; // Import sonner toast
+import NotificationToastContent from "@/components/NotificationToastContent"; // Import the new toast content component
 
 type AdminView = 'settings' | 'categories' | 'menu-items' | 'customer-club' | 'customer-club-report' | 'locations' | 'waiter-calls' | 'orders';
 
@@ -30,10 +31,7 @@ const AdminDashboard: React.FC = () => {
   const { settings, loading: settingsLoading } = useRestaurantSettings();
   const { user, signOut, loading: sessionLoading } = useSession();
   const [activeView, setActiveView] = useState<AdminView>('settings');
-
-  // Global state for notifications
-  const [isNotificationDialogOpen, setIsNotificationDialogOpen] = useState(false);
-  const [notificationDialogData, setNotificationDialogData] = useState<{ type: 'order' | 'waiter'; locationName: string; message?: string } | null>(null);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   if (settingsLoading || sessionLoading) {
     return (
@@ -62,12 +60,21 @@ const AdminDashboard: React.FC = () => {
     'customer-club-report': t("customer_club_report"),
     'locations': t("manage_locations"),
     'waiter-calls': t("waiter_calls"),
-    'orders': t("manage_orders"), // New title
+    'orders': t("manage_orders"),
   };
 
   const handleShowNotification = (type: 'order' | 'waiter', locationName: string, message?: string) => {
-    setNotificationDialogData({ type, locationName, message });
-    setIsNotificationDialogOpen(true);
+    toast.custom((toastId) => (
+      <NotificationToastContent
+        type={type}
+        locationName={locationName}
+        message={message}
+        toastId={toastId}
+      />
+    ), {
+      duration: Infinity, // Make it persistent until dismissed
+      position: 'bottom-left', // Position the toast
+    });
   };
 
   const handleTestWaiterCall = () => {
@@ -105,15 +112,6 @@ const AdminDashboard: React.FC = () => {
           {activeView === 'orders' && <Card><CardContent className="p-6"><OrderList onShowNotification={handleShowNotification} /></CardContent></Card>}
         </div>
       </main>
-      {notificationDialogData && (
-        <NotificationDialog
-          isOpen={isNotificationDialogOpen}
-          onClose={() => setIsNotificationDialogOpen(false)}
-          type={notificationDialogData.type}
-          locationName={notificationDialogData.locationName}
-          message={notificationDialogData.message}
-        />
-      )}
     </div>
   );
 };
