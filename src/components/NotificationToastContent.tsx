@@ -11,7 +11,7 @@ interface NotificationToastContentProps {
   type: 'order' | 'waiter';
   locationName: string;
   message?: string;
-  toastId: string | number;
+  toastId: string | number; // This is passed from toast.custom
 }
 
 const NotificationToastContent: React.FC<NotificationToastContentProps> = ({ type, locationName, message, toastId }) => {

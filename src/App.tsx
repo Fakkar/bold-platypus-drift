@@ -1,4 +1,4 @@
-import { ToastContainer } from 'react-hot-toast'; // Import ToastContainer from react-hot-toast
+import { toast } from 'react-hot-toast'; // Import toast from react-hot-toast for global configurations if needed
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -75,15 +75,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      {/* Replace sonner Toaster with react-hot-toast ToastContainer */}
-      <ToastContainer 
-        position="bottom-right" 
-        toastOptions={{
-          style: {
-            fontSize: '16px', // Default font size for toasts
-          }
-        }}
-      /> 
+      {/* react-hot-toast does not require a Toaster component like sonner. It handles it internally. */}
       <I18nextProvider i18n={i18n}>
         <BrowserRouter>
           <SessionContextProvider>
