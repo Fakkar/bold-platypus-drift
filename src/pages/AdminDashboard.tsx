@@ -1,9 +1,11 @@
-// ... existing code ...
+import React from "react";
 
 const AdminDashboard: React.FC = () => {
-  // ... component logic ...
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+      <p>Admin Dashboard</p>
+    </div>
+  );
 };
 
-// ... other components ...
-
-export default AdminDashboard; // Ensure this line exists
+export default AdminDashboard;

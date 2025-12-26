@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Session, User } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { Session, User } from '@supabase/supabase-js';
 
 interface SessionContextType {
   session: Session | null;
@@ -28,10 +28,7 @@ export const SessionContextProvider: React.FC<{ children: ReactNode }> = ({ chil
         setSession(currentSession);
         setUser(currentSession?.user || null);
         setLoading(false);
-
         if (event === 'PASSWORD_RECOVERY') {
-          // This event is fired when the user clicks the password recovery link.
-          // We navigate them to the update password page.
           navigate('/update-password');
         } else if (event === 'SIGNED_OUT') {
           toast.info(t('logged_out_successfully'));
@@ -39,7 +36,6 @@ export const SessionContextProvider: React.FC<{ children: ReactNode }> = ({ chil
             navigate('/login');
           }
         } else if (event === 'SIGNED_IN') {
-          // This handles regular sign-ins.
           if (location.pathname === '/login') {
             navigate('/admin');
           }
@@ -47,7 +43,6 @@ export const SessionContextProvider: React.FC<{ children: ReactNode }> = ({ chil
       }
     );
 
-    // Initial session check
     const getSession = async () => {
       const { data: { session: initialSession }, error } = await supabase.auth.getSession();
       if (error) {
@@ -58,7 +53,6 @@ export const SessionContextProvider: React.FC<{ children: ReactNode }> = ({ chil
       setUser(initialSession?.user || null);
       setLoading(false);
     };
-
     getSession();
 
     return () => {
