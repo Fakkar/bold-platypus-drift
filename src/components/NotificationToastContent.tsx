@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
+import { toast } from 'react-hot-toast'; // Import toast from react-hot-toast
 import { Button } from '@/components/ui/button';
 import { BellRing, UtensilsCrossed, Eye, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -37,7 +37,8 @@ const NotificationToastContent: React.FC<NotificationToastContentProps> = ({ typ
             console.log(`${type} notification sound played successfully.`);
           }).catch(e => {
             console.error(`Error playing ${type} notification audio from ${audioSrc}:`, e);
-            toast.error(t('failed_to_play_sound', { type: t(type) }));
+            // Use react-hot-toast for error notification
+            toast.error(t('failed_to_play_sound', { type: t(type) }), { id: `sound-error-${toastId}` });
           });
         } else {
           console.log(`Audio not ready (readyState: ${audioRef.current.readyState}). Retrying...`);
@@ -53,10 +54,10 @@ const NotificationToastContent: React.FC<NotificationToastContentProps> = ({ typ
     const timeoutId = setTimeout(playSound, 50); 
 
     return () => clearTimeout(timeoutId); // Cleanup timeout on unmount
-  }, [type, audioSrc, t]);
+  }, [type, audioSrc, t, toastId]); // Add toastId to dependency array
 
   const handleViewClick = () => {
-    toast.dismiss(toastId);
+    toast.dismiss(toastId); // Dismiss using react-hot-toast
     if (type === 'order') {
       navigate('/admin?view=orders');
     } else {
@@ -85,7 +86,7 @@ const NotificationToastContent: React.FC<NotificationToastContentProps> = ({ typ
           <Button 
             variant="ghost" 
             size="sm" 
-            onClick={() => toast.dismiss(toastId)}
+            onClick={() => toast.dismiss(toastId)} // Dismiss using react-hot-toast
             className="text-white hover:bg-white/20"
           >
             <X className="h-4 w-4" />

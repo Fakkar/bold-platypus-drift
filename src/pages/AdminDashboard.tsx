@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate, useLocation } from "react-router-dom"; // Import useNavigate and useLocation
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useRestaurantSettings } from "@/context/RestaurantSettingsContext";
 import { useSession } from "@/context/SessionContext";
-import { LogOut, Settings, LayoutGrid, ClipboardList, Users, Home, BarChart, Map, BellRing, ReceiptText, Play } from "lucide-react"; // Import Play icon
+import { LogOut, Settings, LayoutGrid, ClipboardList, Users, Home, BarChart, Map, BellRing, ReceiptText, Play } from "lucide-react";
 import CategoryList from "@/components/admin/CategoryList";
 import MenuItemList from "@/components/admin/MenuItemList";
 import { useSupabaseStorage } from "@/hooks/useSupabaseStorage";
@@ -21,8 +21,8 @@ import CustomerClubReport from "@/components/admin/CustomerClubReport";
 import LocationManager from "@/components/admin/LocationManager";
 import WaiterCallList from "@/components/admin/WaiterCallList";
 import OrderList from "@/components/admin/OrderList";
-import { toast } from 'sonner';
 import NotificationToastContent from "@/components/NotificationToastContent";
+import { toast } from 'react-hot-toast'; // Import toast from react-hot-toast
 
 type AdminView = 'settings' | 'categories' | 'menu-items' | 'customer-club' | 'customer-club-report' | 'locations' | 'waiter-calls' | 'orders';
 
@@ -35,16 +35,12 @@ const AdminDashboard: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Check URL for initial view
     const params = new URLSearchParams(location.search);
     const viewFromUrl = params.get('view') as AdminView;
     if (viewFromUrl && viewTitles[viewFromUrl]) {
       setActiveView(viewFromUrl);
     }
-    // Test sonner toast on dashboard load
-    console.log("Admin Dashboard loaded, attempting to show test toast.");
-    toast.info(t("admin_dashboard_loaded_test_toast"));
-  }, [location.search, t]); // Added location.search to dependencies
+  }, [location.search]);
 
   if (settingsLoading || sessionLoading) {
     return (
@@ -77,16 +73,17 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleShowNotification = (type: 'order' | 'waiter', locationName: string, message?: string) => {
-    toast.custom((toastId) => (
-      <NotificationToastContent
-        type={type}
-        locationName={locationName}
-        message={message}
-        toastId={toastId}
+    // Use react-hot-toast's custom toast
+    toast.custom((t) => (
+      <NotificationToastContent 
+        type={type} 
+        locationName={locationName} 
+        message={message} 
+        toastId={t.id} // Pass the toast ID
       />
     ), {
-      duration: Infinity,
-      position: 'bottom-right', // Changed to bottom-right as requested
+      position: 'bottom-right',
+      duration: Infinity, // Keep it until manually dismissed
     });
   };
 
@@ -139,7 +136,7 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ activeView, setActiveView }) =>
   const { t } = useTranslation();
   const { settings } = useRestaurantSettings();
   const { tDynamic } = useDynamicTranslation();
-  const { signOut } = useSession(); // Get signOut from useSession
+  const { signOut } = useSession();
 
   const navItems = [
     { id: 'settings', label: t('restaurant_settings'), icon: Settings },
@@ -160,15 +157,10 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ activeView, setActiveView }) =>
       </div>
       <nav className="flex flex-col gap-2 flex-1">
         {navItems.map((item) => (
-          <Button
-            key={item.id}
-            variant="ghost"
-            onClick={() => setActiveView(item.id as AdminView)}
-            className={cn(
-              "justify-start gap-3 px-3 text-base",
-              activeView === item.id && "bg-primary text-primary-foreground"
-            )}
-          >
+          <Button key={item.id} variant="ghost" onClick={() => setActiveView(item.id as AdminView)} className={cn(
+            "justify-start gap-3 px-3 text-base",
+            activeView === item.id && "bg-primary text-primary-foreground"
+          )}>
             <item.icon className="h-5 w-5" />
             {item.label}
           </Button>
@@ -177,11 +169,13 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ activeView, setActiveView }) =>
       <div className="flex flex-col gap-2 pt-4 border-t border-border">
         <Link to="/">
           <Button variant="outline" className="w-full justify-start gap-3 px-3">
-            <Home className="h-5 w-5" /> {t("back_to_menu")}
+            <Home className="h-5 w-5" />
+            {t("back_to_menu")}
           </Button>
         </Link>
         <Button variant="destructive" onClick={signOut} className="w-full justify-start gap-3 px-3">
-          <LogOut className="h-5 w-5" /> {t("logout")}
+          <LogOut className="h-5 w-5" />
+          {t("logout")}
         </Button>
       </div>
     </aside>
@@ -194,12 +188,11 @@ const SettingsPanel: React.FC<{ settings: any }> = ({ settings: initialSettings 
   const { updateSettings } = useRestaurantSettings();
   const { uploadFile, deleteFile, loading: uploadLoading } = useSupabaseStorage();
   const { compressAndResizeImage, loading: imageProcessing } = useImageProcessor();
-
   const [settings, setSettings] = useState(initialSettings);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [heroBgFile, setHeroBgFile] = useState<File | null>(null);
-  const [waiterCallSoundFile, setWaiterCallSoundFile] = useState<File | null>(null); // New state for sound file
-  const [orderSoundFile, setOrderSoundFile] = useState<File | null>(null); // New state for sound file
+  const [waiterCallSoundFile, setWaiterCallSoundFile] = useState<File | null>(null);
+  const [orderSoundFile, setOrderSoundFile] = useState<File | null>(null);
 
   useEffect(() => {
     setSettings(initialSettings);
@@ -231,9 +224,12 @@ const SettingsPanel: React.FC<{ settings: any }> = ({ settings: initialSettings 
 
   const handlePlaySound = (url: string) => {
     if (url) {
-      new Audio(url).play().catch(e => console.error("Error playing sound:", e));
+      new Audio(url).play().catch(e => {
+        console.error("Error playing sound:", e);
+        toast.error(t('failed_to_play_sound', { type: 'sound' })); // Use react-hot-toast
+      });
     } else {
-      toast.error(t('no_sound_file_uploaded'));
+      toast.error(t('no_sound_file_uploaded')); // Use react-hot-toast
     }
   };
 
@@ -271,9 +267,9 @@ const SettingsPanel: React.FC<{ settings: any }> = ({ settings: initialSettings 
       if (uploadedUrl) finalOrderSoundUrl = uploadedUrl;
     }
 
-    await updateSettings({ 
-      ...settings, 
-      logo_url: finalLogoUrl, 
+    await updateSettings({
+      ...settings,
+      logo_url: finalLogoUrl,
       hero_background_image_url: finalHeroBgUrl,
       waiter_call_sound_url: finalWaiterCallSoundUrl,
       order_sound_url: finalOrderSoundUrl,
@@ -302,7 +298,6 @@ const SettingsPanel: React.FC<{ settings: any }> = ({ settings: initialSettings 
           </div>
         </CardContent>
       </Card>
-
       <Card>
         <CardHeader><CardTitle>{t("hero_section_settings")}</CardTitle></CardHeader>
         <CardContent className="space-y-4">
@@ -321,7 +316,6 @@ const SettingsPanel: React.FC<{ settings: any }> = ({ settings: initialSettings 
           </div>
         </CardContent>
       </Card>
-
       <Card>
         <CardHeader><CardTitle>{t("notification_sounds")}</CardTitle></CardHeader>
         <CardContent className="space-y-4">
@@ -347,7 +341,6 @@ const SettingsPanel: React.FC<{ settings: any }> = ({ settings: initialSettings 
           </div>
         </CardContent>
       </Card>
-
       <Card>
         <CardHeader><CardTitle>{t("footer_settings")}</CardTitle></CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -361,12 +354,10 @@ const SettingsPanel: React.FC<{ settings: any }> = ({ settings: initialSettings 
           <div><Label htmlFor="facebook_url">{t("facebook_url")}</Label><Input id="facebook_url" value={settings.facebook_url} onChange={handleChange} /></div>
         </CardContent>
       </Card>
-
       <Card>
         <CardHeader><CardTitle>{t('qr_code_for_menu')}</CardTitle></CardHeader>
         <CardContent><QRCodeGenerator /></CardContent>
       </Card>
-
       <Button type="submit" size="lg" className="w-full" disabled={isLoading}>
         {isLoading ? t('uploading') : t("save_settings")}
       </Button>

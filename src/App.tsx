@@ -1,4 +1,4 @@
-import { Toaster as Sonner } from "@/components/ui/sonner";
+import { ToastContainer } from 'react-hot-toast'; // Import ToastContainer from react-hot-toast
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -11,7 +11,6 @@ import AdminDashboard from "./pages/AdminDashboard";
 import { RestaurantSettingsProvider, useRestaurantSettings } from "./context/RestaurantSettingsContext";
 import Login from "./pages/Login";
 import { SessionContextProvider, useSession } from "./context/SessionContext";
-import { toast } from "sonner";
 import { DynamicTranslationProvider, useDynamicTranslation } from "./context/DynamicTranslationContext";
 import { useEffect } from "react";
 import UpdatePassword from "./pages/UpdatePassword";
@@ -43,15 +42,6 @@ const PageMetadataSetter = () => {
     }
   }, [settings, loading, settings.logo_url]);
 
-  // Temporary toast for debugging sonner
-  useEffect(() => {
-    const hasShownInitialToast = localStorage.getItem('hasShownInitialToast');
-    if (!hasShownInitialToast) {
-      toast.success("Sonner is working! (Temporary test toast)", { position: 'bottom-right' });
-      localStorage.setItem('hasShownInitialToast', 'true');
-    }
-  }, []); // Run only once on mount
-
   return null; // This component doesn't render anything
 };
 
@@ -75,7 +65,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
   if (user.email !== ADMIN_EMAIL) {
     // If logged in but not the admin email, show unauthorized message and redirect to home
-    toast.error(i18n.t("unauthorized_access"));
+    // toast.error(i18n.t("unauthorized_access")); // Will be handled by react-hot-toast
     return <Navigate to="/" replace />;
   }
 
@@ -85,7 +75,15 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Sonner /> {/* This is the sonner Toaster */}
+      {/* Replace sonner Toaster with react-hot-toast ToastContainer */}
+      <ToastContainer 
+        position="bottom-right" 
+        toastOptions={{
+          style: {
+            fontSize: '16px', // Default font size for toasts
+          }
+        }}
+      /> 
       <I18nextProvider i18n={i18n}>
         <BrowserRouter>
           <SessionContextProvider>
