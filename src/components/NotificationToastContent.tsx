@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-hot-toast'; // Import toast from react-hot-toast
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { BellRing, UtensilsCrossed, Eye, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -11,7 +11,7 @@ interface NotificationToastContentProps {
   type: 'order' | 'waiter';
   locationName: string;
   message?: string;
-  toastId: string | number; // This is passed from toast.custom
+  toastId: string | number;
 }
 
 const NotificationToastContent: React.FC<NotificationToastContentProps> = ({ type, locationName, message, toastId }) => {
@@ -37,8 +37,7 @@ const NotificationToastContent: React.FC<NotificationToastContentProps> = ({ typ
             console.log(`${type} notification sound played successfully.`);
           }).catch(e => {
             console.error(`Error playing ${type} notification audio from ${audioSrc}:`, e);
-            // Use react-hot-toast for error notification
-            toast.error(t('failed_to_play_sound', { type: t(type) }), { id: `sound-error-${toastId}` });
+            toast.error(t('failed_to_play_sound', { type: t(type) }));
           });
         } else {
           console.log(`Audio not ready (readyState: ${audioRef.current.readyState}). Retrying...`);
@@ -54,10 +53,10 @@ const NotificationToastContent: React.FC<NotificationToastContentProps> = ({ typ
     const timeoutId = setTimeout(playSound, 50); 
 
     return () => clearTimeout(timeoutId); // Cleanup timeout on unmount
-  }, [type, audioSrc, t, toastId]); // Add toastId to dependency array
+  }, [type, audioSrc, t]);
 
   const handleViewClick = () => {
-    toast.dismiss(toastId.toString()); // Convert to string for dismiss
+    toast.dismiss(toastId);
     if (type === 'order') {
       navigate('/admin?view=orders');
     } else {
@@ -86,7 +85,7 @@ const NotificationToastContent: React.FC<NotificationToastContentProps> = ({ typ
           <Button 
             variant="ghost" 
             size="sm" 
-            onClick={() => toast.dismiss(toastId.toString())} // Convert to string for dismiss
+            onClick={() => toast.dismiss(toastId)}
             className="text-white hover:bg-white/20"
           >
             <X className="h-4 w-4" />
