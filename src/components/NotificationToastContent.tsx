@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { BellRing, UtensilsCrossed, Eye, X, Play } from 'lucide-react'; // Import Play icon
+import { BellRing, UtensilsCrossed, Eye, X, Play } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useRestaurantSettings } from '@/context/RestaurantSettingsContext'; // Import settings
+import { useRestaurantSettings } from '@/context/RestaurantSettingsContext';
 
 interface NotificationToastContentProps {
   type: 'order' | 'waiter';
@@ -18,24 +18,31 @@ const NotificationToastContent: React.FC<NotificationToastContentProps> = ({ typ
   const { t } = useTranslation();
   const navigate = useNavigate();
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const { settings } = useRestaurantSettings(); // Get settings
+  const { settings } = useRestaurantSettings();
 
   const title = type === 'order' ? t('new_order_notification', { location: locationName }) : t('new_waiter_call_notification', { location: locationName });
   const description = message || (type === 'order' ? t('new_order_notification_generic') : t('new_waiter_call_notification_generic'));
-  const icon = type === 'order' ? <UtensilsCrossed className="h-6 w-6" /> : <BellRing className="h-6 w-6" />;
+  const icon = type === 'order' ? <UtensilsCrossed className="h-8 w-8" /> : <BellRing className="h-8 w-8" />; // Increased icon size
   
-  // Use dynamic sound URLs from settings
   const audioSrc = type === 'order' ? settings.order_sound_url : settings.waiter_call_sound_url;
   const bgColor = type === 'order' ? 'bg-green-600' : 'bg-blue-600';
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.play().catch(e => console.error(`Error playing ${type} notification audio:`, e));
+    if (audioRef.current && audioSrc) {
+      console.log(`Attempting to play ${type} notification sound from: ${audioSrc}`);
+      audioRef.current.play().then(() => {
+        console.log(`${type} notification sound played successfully.`);
+      }).catch(e => {
+        console.error(`Error playing ${type} notification audio from ${audioSrc}:`, e);
+        toast.error(t('failed_to_play_sound', { type: t(type) })); // Notify user if sound fails
+      });
+    } else {
+      console.log(`No audio source or audioRef for ${type} notification.`);
     }
-  }, [type, audioSrc]); // Add audioSrc to dependency array
+  }, [type, audioSrc, t]);
 
   const handleViewClick = () => {
-    toast.dismiss(toastId); // Dismiss the toast when "View" is clicked
+    toast.dismiss(toastId);
     if (type === 'order') {
       navigate('/admin?view=orders');
     } else {
@@ -44,13 +51,13 @@ const NotificationToastContent: React.FC<NotificationToastContentProps> = ({ typ
   };
 
   return (
-    <div className={cn("flex items-start p-4 rounded-md shadow-lg text-white w-full", bgColor)}>
-      <div className="mr-3 flex-shrink-0">
+    <div className={cn("flex items-start p-6 rounded-md shadow-lg text-white w-full max-w-sm md:max-w-md z-50", bgColor)}> {/* Increased padding, added max-width, z-index */}
+      <div className="ml-4 flex-shrink-0"> {/* Adjusted margin for RTL */}
         {icon}
       </div>
       <div className="flex-1">
-        <p className="font-semibold text-lg">{title}</p>
-        <p className="text-sm mt-1">{description}</p>
+        <p className="font-semibold text-xl md:text-2xl">{title}</p> {/* Increased title font size */}
+        <p className="text-base md:text-lg mt-1">{description}</p> {/* Increased description font size */}
         <div className="flex gap-2 mt-3">
           <Button 
             variant="secondary" 

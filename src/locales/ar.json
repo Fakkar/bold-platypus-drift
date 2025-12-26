@@ -215,7 +215,6 @@
   "location": "الموقع",
   "time": "الوقت",
   "new_waiter_call_notification": "طلب جديد من الطاولة {{location}}!",
-  "new_waiter_call_notification_generic": "طلب جديد!",
   "new_order_notification": "سفارش جدید از میز {{location}}!",
   "new_order_notification_generic": "سفارش جدید!",
   "failed_to_resolve_call": "فشل حل المكالمة: {{message}}",
@@ -283,5 +282,6 @@
   "failed_to_clear_all_calls": "فشل مسح جميع المكالمات: {{message}}",
   "all_calls_cleared_successfully": "تم مسح جميع المكالمات بنجاح!",
   "this_action_cannot_be_undone_all_calls": "سيؤدي هذا الإجراء إلى حذف جميع مكالمات النادل نهائيًا ولا يمكن التراجع عنه.",
-  "clear_all": "مسح الكل"
+  "clear_all": "مسح الكل",
+  "failed_to_play_sound": "فشل تشغيل صوت {{type}}."
 }

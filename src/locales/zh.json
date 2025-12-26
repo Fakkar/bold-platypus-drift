@@ -283,5 +283,6 @@
   "failed_to_clear_all_calls": "清除所有呼叫失败：{{message}}",
   "all_calls_cleared_successfully": "所有呼叫已成功清除！",
   "this_action_cannot_be_undone_all_calls": "此操作将永久删除所有服务员呼叫，无法撤消。",
-  "clear_all": "清除所有"
+  "clear_all": "清除所有",
+  "failed_to_play_sound": "无法播放{{type}}声音。"
 }

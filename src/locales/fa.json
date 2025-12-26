@@ -283,5 +283,6 @@
   "failed_to_clear_all_calls": "پاک کردن همه فراخوان‌ها ناموفق بود: {{message}}",
   "all_calls_cleared_successfully": "همه فراخوان‌ها با موفقیت پاک شدند!",
   "this_action_cannot_be_undone_all_calls": "این عمل تمام فراخوان‌های گارسون را به طور دائم حذف می‌کند و نمی‌توان آن را بازگرداند.",
-  "clear_all": "پاک کردن همه"
+  "clear_all": "پاک کردن همه",
+  "failed_to_play_sound": "پخش صدای {{type}} ناموفق بود."
 }
