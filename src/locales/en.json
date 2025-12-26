@@ -277,5 +277,10 @@
   "order_sound": "Order Sound",
   "no_sound_file_uploaded": "No sound file uploaded.",
   "current_sound": "Current Sound",
-  "admin_dashboard_loaded_test_toast": "Admin Dashboard Loaded! Testing notification."
+  "admin_dashboard_loaded_test_toast": "Admin Dashboard Loaded! Testing notification.",
+  "clear_all_calls": "Clear All Calls",
+  "failed_to_clear_all_calls": "Failed to clear all calls: {{message}}",
+  "all_calls_cleared_successfully": "All calls cleared successfully!",
+  "this_action_cannot_be_undone_all_calls": "This action will permanently delete all waiter calls and cannot be undone.",
+  "clear_all": "Clear All"
 }

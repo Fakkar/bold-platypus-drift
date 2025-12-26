@@ -278,5 +278,10 @@
   "order_sound": "صدای سفارش",
   "no_sound_file_uploaded": "فایل صوتی آپلود نشده است.",
   "current_sound": "صدای فعلی",
-  "admin_dashboard_loaded_test_toast": "داشبورد ادمین بارگذاری شد! تست نوتیفیکیشن."
+  "admin_dashboard_loaded_test_toast": "داشبورد ادمین بارگذاری شد! تست نوتیفیکیشن.",
+  "clear_all_calls": "پاک کردن همه فراخوان‌ها",
+  "failed_to_clear_all_calls": "پاک کردن همه فراخوان‌ها ناموفق بود: {{message}}",
+  "all_calls_cleared_successfully": "همه فراخوان‌ها با موفقیت پاک شدند!",
+  "this_action_cannot_be_undone_all_calls": "این عمل تمام فراخوان‌های گارسون را به طور دائم حذف می‌کند و نمی‌توان آن را بازگرداند.",
+  "clear_all": "پاک کردن همه"
 }

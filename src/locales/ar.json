@@ -278,5 +278,10 @@
   "order_sound": "صوت الطلب",
   "no_sound_file_uploaded": "لم يتم تحميل ملف صوتي.",
   "current_sound": "الصوت الحالي",
-  "admin_dashboard_loaded_test_toast": "تم تحميل لوحة تحكم المسؤول! اختبار الإشعار."
+  "admin_dashboard_loaded_test_toast": "تم تحميل لوحة تحكم المسؤول! اختبار الإشعار.",
+  "clear_all_calls": "مسح جميع المكالمات",
+  "failed_to_clear_all_calls": "فشل مسح جميع المكالمات: {{message}}",
+  "all_calls_cleared_successfully": "تم مسح جميع المكالمات بنجاح!",
+  "this_action_cannot_be_undone_all_calls": "سيؤدي هذا الإجراء إلى حذف جميع مكالمات النادل نهائيًا ولا يمكن التراجع عنه.",
+  "clear_all": "مسح الكل"
 }

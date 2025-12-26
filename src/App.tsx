@@ -43,6 +43,15 @@ const PageMetadataSetter = () => {
     }
   }, [settings, loading, settings.logo_url]);
 
+  // Temporary toast for debugging sonner
+  useEffect(() => {
+    const hasShownInitialToast = localStorage.getItem('hasShownInitialToast');
+    if (!hasShownInitialToast) {
+      toast.success("Sonner is working! (Temporary test toast)", { position: 'bottom-right' });
+      localStorage.setItem('hasShownInitialToast', 'true');
+    }
+  }, []); // Run only once on mount
+
   return null; // This component doesn't render anything
 };
 

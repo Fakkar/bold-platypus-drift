@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { CheckCircle, BellOff } from 'lucide-react';
+import { CheckCircle, BellOff, Trash2 } from 'lucide-react'; // Import Trash2 icon
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { toPersianNumber } from '@/utils/format';
-// Removed NotificationDialog import
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'; // Import AlertDialog components
 
 interface WaiterCall {
   id: string;
@@ -24,7 +24,6 @@ const WaiterCallList: React.FC<WaiterCallListProps> = ({ onShowNotification }) =
   const { t } = useTranslation();
   const [calls, setCalls] = useState<WaiterCall[]>([]);
   const [loading, setLoading] = useState(true);
-  // Removed local notification state
 
   const fetchCalls = async () => {
     setLoading(true);
@@ -100,6 +99,23 @@ const WaiterCallList: React.FC<WaiterCallListProps> = ({ onShowNotification }) =
     }
   };
 
+  const handleClearAllCalls = async () => {
+    setLoading(true);
+    const { error } = await supabase
+      .from('waiter_calls')
+      .delete()
+      .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all records
+
+    if (error) {
+      console.error('Error clearing all waiter calls:', error);
+      toast.error(t('failed_to_clear_all_calls', { message: error.message }));
+    } else {
+      toast.success(t('all_calls_cleared_successfully'));
+      setCalls([]);
+    }
+    setLoading(false);
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString('fa-IR', {
       year: 'numeric',
@@ -110,13 +126,32 @@ const WaiterCallList: React.FC<WaiterCallListProps> = ({ onShowNotification }) =
     });
   };
 
-  if (loading) {
-    return <p>{t('Loading waiter calls...')}</p>;
-  }
-
   return (
     <div className="space-y-4">
-      <h3 className="text-xl font-semibold">{t('waiter_calls')}</h3>
+      <div className="flex justify-between items-center">
+        <h3 className="text-xl font-semibold">{t('waiter_calls')}</h3>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" disabled={loading || calls.length === 0}>
+              <Trash2 className="ml-2 h-4 w-4" /> {t('clear_all_calls')}
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t('are_you_absolutely_sure')}</AlertDialogTitle>
+              <AlertDialogDescription>
+                {t('this_action_cannot_be_undone_all_calls')}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+              <AlertDialogAction onClick={handleClearAllCalls} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                {t('clear_all')}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
       {calls.length === 0 ? (
         <p>{t('no_pending_waiter_calls')}</p>
       ) : (
