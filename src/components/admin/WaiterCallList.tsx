@@ -6,7 +6,7 @@ import { CheckCircle, BellOff } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { toPersianNumber } from '@/utils/format';
-import NotificationDialog from '@/components/NotificationDialog'; // Import NotificationDialog
+// import NotificationDialog from '@/components/NotificationDialog'; // Removed
 
 interface WaiterCall {
   id: string;
@@ -16,12 +16,16 @@ interface WaiterCall {
   restaurant_locations: { name: string } | null;
 }
 
-const WaiterCallList: React.FC = () => {
+interface WaiterCallListProps {
+  onShowNotification: (type: 'order' | 'waiter', locationName: string, message?: string) => void;
+}
+
+const WaiterCallList: React.FC<WaiterCallListProps> = ({ onShowNotification }) => {
   const { t } = useTranslation();
   const [calls, setCalls] = useState<WaiterCall[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isNotificationDialogOpen, setIsNotificationDialogOpen] = useState(false);
-  const [notificationDialogData, setNotificationDialogData] = useState<{ type: 'order' | 'waiter'; locationName: string; message?: string } | null>(null);
+  // const [isNotificationDialogOpen, setIsNotificationDialogOpen] = useState(false); // Removed
+  // const [notificationDialogData, setNotificationDialogData] = useState<{ type: 'order' | 'waiter'; locationName: string; message?: string } | null>(null); // Removed
 
   const fetchCalls = async () => {
     setLoading(true);
@@ -63,15 +67,13 @@ const WaiterCallList: React.FC = () => {
                 if (!error && locationData) {
                   const callWithLocation = { ...newCall, restaurant_locations: locationData };
                   setCalls((prevCalls) => [callWithLocation, ...prevCalls]);
-                  console.log('Setting notification dialog data for waiter call:', { type: 'waiter', locationName: locationData.name });
-                  setNotificationDialogData({ type: 'waiter', locationName: locationData.name });
-                  setIsNotificationDialogOpen(true);
+                  console.log('Triggering global notification for waiter call:', { type: 'waiter', locationName: locationData.name });
+                  onShowNotification('waiter', locationData.name);
                 } else {
                   console.error('Error fetching location for new call:', error);
                   setCalls((prevCalls) => [{ ...newCall, restaurant_locations: null }, ...prevCalls]);
-                  console.log('Setting notification dialog data for waiter call (unknown location):', { type: 'waiter', locationName: t('unknown_location') });
-                  setNotificationDialogData({ type: 'waiter', locationName: t('unknown_location') });
-                  setIsNotificationDialogOpen(true);
+                  console.log('Triggering global notification for waiter call (unknown location):', { type: 'waiter', locationName: t('unknown_location') });
+                  onShowNotification('waiter', t('unknown_location'));
                 }
               });
           }
@@ -83,7 +85,7 @@ const WaiterCallList: React.FC = () => {
       console.log('Unsubscribing from waiter_calls_channel');
       supabase.removeChannel(channel);
     };
-  }, [t]);
+  }, [t, onShowNotification]); // Added onShowNotification to dependency array
 
   const handleResolveCall = async (callId: string) => {
     const { error } = await supabase
@@ -146,15 +148,7 @@ const WaiterCallList: React.FC = () => {
           </Table>
         </div>
       )}
-      {notificationDialogData && (
-        <NotificationDialog
-          isOpen={isNotificationDialogOpen}
-          onClose={() => setIsNotificationDialogOpen(false)}
-          type={notificationDialogData.type}
-          locationName={notificationDialogData.locationName}
-          message={notificationDialogData.message}
-        />
-      )}
+      {/* Removed NotificationDialog from here */}
     </div>
   );
 };

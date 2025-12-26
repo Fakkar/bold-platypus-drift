@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { toPersianNumber, formatPriceInToman } from '@/utils/format';
 import { useDynamicTranslation } from '@/context/DynamicTranslationContext';
 import { Separator } from '@/components/ui/separator';
-import NotificationDialog from '@/components/NotificationDialog'; // Import NotificationDialog
+// import NotificationDialog from '@/components/NotificationDialog'; // Removed
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 
 interface OrderItem {
@@ -33,15 +33,19 @@ interface Order {
   order_items: OrderItem[];
 }
 
-const OrderList: React.FC = () => {
+interface OrderListProps {
+  onShowNotification: (type: 'order' | 'waiter', locationName: string, message?: string) => void;
+}
+
+const OrderList: React.FC<OrderListProps> = ({ onShowNotification }) => {
   const { t } = useTranslation();
   const { tDynamic } = useDynamicTranslation();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
-  const [isNotificationDialogOpen, setIsNotificationDialogOpen] = useState(false);
-  const [notificationDialogData, setNotificationDialogData] = useState<{ type: 'order' | 'waiter'; locationName: string; message?: string } | null>(null);
+  // const [isNotificationDialogOpen, setIsNotificationDialogOpen] = useState(false); // Removed
+  // const [notificationDialogData, setNotificationDialogData] = useState<{ type: 'order' | 'waiter'; locationName: string; message?: string } | null>(null); // Removed
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -81,14 +85,12 @@ const OrderList: React.FC = () => {
               if (!fullOrderError && fullOrderData) {
                 setOrders((prevOrders) => [fullOrderData, ...prevOrders]);
                 const locationName = fullOrderData.restaurant_locations?.name || t('unknown_location');
-                console.log('Setting notification dialog data for new order:', { type: 'order', locationName: locationName });
-                setNotificationDialogData({ type: 'order', locationName: locationName });
-                setIsNotificationDialogOpen(true);
+                console.log('Triggering global notification for new order:', { type: 'order', locationName: locationName });
+                onShowNotification('order', locationName);
               } else {
                 console.error('Error fetching full order data for new order:', fullOrderError);
-                console.log('Setting notification dialog data for new order (unknown location):', { type: 'order', locationName: t('unknown_location') });
-                setNotificationDialogData({ type: 'order', locationName: t('unknown_location') });
-                setIsNotificationDialogOpen(true);
+                console.log('Triggering global notification for new order (unknown location):', { type: 'order', locationName: t('unknown_location') });
+                onShowNotification('order', t('unknown_location'));
               }
             });
         }
@@ -99,7 +101,7 @@ const OrderList: React.FC = () => {
       console.log('Unsubscribing from orders_channel');
       supabase.removeChannel(channel);
     };
-  }, [t]);
+  }, [t, onShowNotification]); // Added onShowNotification to dependency array
 
   const handleViewDetails = (order: Order) => {
     setSelectedOrder(order);
@@ -304,15 +306,7 @@ const OrderList: React.FC = () => {
           </Table>
         </div>
       )}
-      {notificationDialogData && (
-        <NotificationDialog
-          isOpen={isNotificationDialogOpen}
-          onClose={() => setIsNotificationDialogOpen(false)}
-          type={notificationDialogData.type}
-          locationName={notificationDialogData.locationName}
-          message={notificationDialogData.message}
-        />
-      )}
+      {/* Removed NotificationDialog from here */}
     </div>
   );
 };

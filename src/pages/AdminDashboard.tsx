@@ -31,9 +31,9 @@ const AdminDashboard: React.FC = () => {
   const { user, signOut, loading: sessionLoading } = useSession();
   const [activeView, setActiveView] = useState<AdminView>('settings');
 
-  // State for testing notifications
-  const [isTestNotificationOpen, setIsTestNotificationOpen] = useState(false);
-  const [testNotificationData, setTestNotificationData] = useState<{ type: 'order' | 'waiter'; locationName: string; message?: string } | null>(null);
+  // Global state for notifications
+  const [isNotificationDialogOpen, setIsNotificationDialogOpen] = useState(false);
+  const [notificationDialogData, setNotificationDialogData] = useState<{ type: 'order' | 'waiter'; locationName: string; message?: string } | null>(null);
 
   if (settingsLoading || sessionLoading) {
     return (
@@ -65,14 +65,17 @@ const AdminDashboard: React.FC = () => {
     'orders': t("manage_orders"), // New title
   };
 
+  const handleShowNotification = (type: 'order' | 'waiter', locationName: string, message?: string) => {
+    setNotificationDialogData({ type, locationName, message });
+    setIsNotificationDialogOpen(true);
+  };
+
   const handleTestWaiterCall = () => {
-    setTestNotificationData({ type: 'waiter', locationName: 'میز تست ۱' });
-    setIsTestNotificationOpen(true);
+    handleShowNotification('waiter', 'میز تست ۱');
   };
 
   const handleTestOrder = () => {
-    setTestNotificationData({ type: 'order', locationName: 'میز تست ۲' });
-    setIsTestNotificationOpen(true);
+    handleShowNotification('order', 'میز تست ۲');
   };
 
   return (
@@ -98,17 +101,17 @@ const AdminDashboard: React.FC = () => {
           {activeView === 'customer-club' && <Card><CardContent className="p-6"><CustomerClubList /></CardContent></Card>}
           {activeView === 'customer-club-report' && <Card><CardContent className="p-6"><CustomerClubReport /></CardContent></Card>}
           {activeView === 'locations' && <Card><CardContent className="p-6"><LocationManager /></CardContent></Card>}
-          {activeView === 'waiter-calls' && <Card><CardContent className="p-6"><WaiterCallList /></CardContent></Card>}
-          {activeView === 'orders' && <Card><CardContent className="p-6"><OrderList /></CardContent></Card>} {/* New OrderList component */}
+          {activeView === 'waiter-calls' && <Card><CardContent className="p-6"><WaiterCallList onShowNotification={handleShowNotification} /></CardContent></Card>}
+          {activeView === 'orders' && <Card><CardContent className="p-6"><OrderList onShowNotification={handleShowNotification} /></CardContent></Card>}
         </div>
       </main>
-      {testNotificationData && (
+      {notificationDialogData && (
         <NotificationDialog
-          isOpen={isTestNotificationOpen}
-          onClose={() => setIsTestNotificationOpen(false)}
-          type={testNotificationData.type}
-          locationName={testNotificationData.locationName}
-          message={testNotificationData.message}
+          isOpen={isNotificationDialogOpen}
+          onClose={() => setIsNotificationDialogOpen(false)}
+          type={notificationDialogData.type}
+          locationName={notificationDialogData.locationName}
+          message={notificationDialogData.message}
         />
       )}
     </div>
