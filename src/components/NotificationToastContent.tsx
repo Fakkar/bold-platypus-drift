@@ -57,7 +57,7 @@ const NotificationToastContent: React.FC<NotificationToastContentProps> = ({ typ
   }, [type, audioSrc, t, toastId]); // Add toastId to dependency array
 
   const handleViewClick = () => {
-    toast.dismiss(toastId); // Dismiss using react-hot-toast
+    toast.dismiss(toastId.toString()); // Convert to string for dismiss
     if (type === 'order') {
       navigate('/admin?view=orders');
     } else {
@@ -86,7 +86,7 @@ const NotificationToastContent: React.FC<NotificationToastContentProps> = ({ typ
           <Button 
             variant="ghost" 
             size="sm" 
-            onClick={() => toast.dismiss(toastId)} // Dismiss using react-hot-toast
+            onClick={() => toast.dismiss(toastId.toString())} // Convert to string for dismiss
             className="text-white hover:bg-white/20"
           >
             <X className="h-4 w-4" />
