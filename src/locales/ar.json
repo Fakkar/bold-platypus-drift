@@ -277,5 +277,6 @@
   "waiter_call_sound": "صوت استدعاء النادل",
   "order_sound": "صوت الطلب",
   "no_sound_file_uploaded": "لم يتم تحميل ملف صوتي.",
-  "current_sound": "الصوت الحالي"
+  "current_sound": "الصوت الحالي",
+  "admin_dashboard_loaded_test_toast": "تم تحميل لوحة تحكم المسؤول! اختبار الإشعار."
 }

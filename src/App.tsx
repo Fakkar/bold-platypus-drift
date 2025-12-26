@@ -1,4 +1,3 @@
-import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -17,7 +16,7 @@ import { DynamicTranslationProvider, useDynamicTranslation } from "./context/Dyn
 import { useEffect } from "react";
 import UpdatePassword from "./pages/UpdatePassword";
 import { TableLocationProvider } from "./context/TableLocationContext";
-import { CartProvider } from "./context/CartContext"; // Import the new CartProvider
+import { CartProvider } from "./context/CartContext";
 
 const queryClient = new QueryClient();
 
@@ -77,7 +76,6 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      {/* Removed shadcn/ui Toaster to avoid conflicts with sonner */}
       <Sonner /> {/* This is the sonner Toaster */}
       <I18nextProvider i18n={i18n}>
         <BrowserRouter>
@@ -85,7 +83,7 @@ const App = () => (
             <RestaurantSettingsProvider>
               <DynamicTranslationProvider>
                 <TableLocationProvider>
-                  <CartProvider> {/* Wrap with CartProvider */}
+                  <CartProvider>
                     <PageMetadataSetter />
                     <Routes>
                       <Route path="/" element={<MenuPage />} />

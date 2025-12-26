@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
+import { Link, useNavigate, useLocation } from "react-router-dom"; // Import useNavigate and useLocation
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,6 +32,18 @@ const AdminDashboard: React.FC = () => {
   const { user, signOut, loading: sessionLoading } = useSession();
   const [activeView, setActiveView] = useState<AdminView>('settings');
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Check URL for initial view
+    const params = new URLSearchParams(location.search);
+    const viewFromUrl = params.get('view') as AdminView;
+    if (viewFromUrl && viewTitles[viewFromUrl]) {
+      setActiveView(viewFromUrl);
+    }
+    // Test sonner toast on dashboard load
+    toast.info(t("admin_dashboard_loaded_test_toast"));
+  }, [location.search, t]); // Added location.search to dependencies
 
   if (settingsLoading || sessionLoading) {
     return (
@@ -87,7 +99,7 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen w-full flex bg-card" dir="rtl">
-      <SidebarNav activeView={activeView} setActiveView={setActiveView} signOut={signOut} />
+      <SidebarNav activeView={activeView} setActiveView={setActiveView} />
       <main className="flex-1 p-6 md:p-8 overflow-y-auto">
         <h1 className="text-3xl font-bold mb-6 text-foreground">{viewTitles[activeView]}</h1>
         <div className="w-full">
@@ -120,13 +132,13 @@ const AdminDashboard: React.FC = () => {
 interface SidebarNavProps {
   activeView: AdminView;
   setActiveView: (view: AdminView) => void;
-  signOut: () => void;
 }
 
-const SidebarNav: React.FC<SidebarNavProps> = ({ activeView, setActiveView, signOut }) => {
+const SidebarNav: React.FC<SidebarNavProps> = ({ activeView, setActiveView }) => {
   const { t } = useTranslation();
   const { settings } = useRestaurantSettings();
   const { tDynamic } = useDynamicTranslation();
+  const { signOut } = useSession(); // Get signOut from useSession
 
   const navItems = [
     { id: 'settings', label: t('restaurant_settings'), icon: Settings },

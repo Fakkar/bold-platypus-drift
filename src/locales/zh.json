@@ -277,5 +277,6 @@
   "waiter_call_sound": "服务员呼叫声音",
   "order_sound": "订单声音",
   "no_sound_file_uploaded": "未上传声音文件。",
-  "current_sound": "当前声音"
+  "current_sound": "当前声音",
+  "admin_dashboard_loaded_test_toast": "已加载管理员仪表板！正在测试通知。"
 }

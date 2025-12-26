@@ -276,5 +276,6 @@
   "waiter_call_sound": "Waiter Call Sound",
   "order_sound": "Order Sound",
   "no_sound_file_uploaded": "No sound file uploaded.",
-  "current_sound": "Current Sound"
+  "current_sound": "Current Sound",
+  "admin_dashboard_loaded_test_toast": "Admin Dashboard Loaded! Testing notification."
 }
