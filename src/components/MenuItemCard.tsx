@@ -6,10 +6,10 @@ import ImageModal from './ImageModal';
 import { cn } from "@/lib/utils";
 import { useDynamicTranslation } from "@/context/DynamicTranslationContext";
 import DescriptionDialog from './DescriptionDialog';
-import { Button } from "@/components/ui/button"; // Import Button
-import { ShoppingCart } from "lucide-react"; // Import ShoppingCart icon
-import { useCart } from "@/context/CartContext"; // Import useCart hook
-import { toast } from 'sonner'; // Import toast
+import { Button } from "@/components/ui/button";
+import { ShoppingCart } from "lucide-react";
+import { useCart } from "@/context/CartContext";
+import { toast } from 'sonner';
 
 interface MenuItemCardProps {
   item: {
@@ -25,7 +25,7 @@ interface MenuItemCardProps {
 const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
   const { t } = useTranslation();
   const { tDynamic } = useDynamicTranslation();
-  const { addToCart } = useCart(); // Use the addToCart function
+  const { addToCart } = useCart();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
 
@@ -56,7 +56,7 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
   return (
     <>
       <Card className={cn(
-        "w-full max-w-sm overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-purple-800/50 text-white relative",
+        "w-full max-w-sm overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-purple-800/50 text-white relative flex flex-col h-full",
         !item.is_available && "grayscale opacity-60"
       )}>
         {!item.is_available && (
@@ -79,7 +79,7 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
         <CardHeader className="text-right">
           <CardTitle className="text-xl font-semibold">{currentName}</CardTitle>
         </CardHeader>
-        <CardContent className="text-right">
+        <CardContent className="text-right flex flex-col flex-grow">
           <p className="text-gray-300 text-sm mb-2 line-clamp-2">
             {currentDescription}
           </p>
@@ -92,18 +92,18 @@ const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
               />
             </div>
           )}
-          <div className="flex items-center justify-between mt-4">
+          <div className="mt-auto flex flex-col items-center pt-4">
+            <span className="text-2xl font-bold text-primary mb-4" dir="rtl">
+              {formatPriceInToman(item.price)}
+            </span>
             <Button 
               onClick={handleAddToCart} 
               disabled={!item.is_available}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground w-full"
             >
               <ShoppingCart className="h-4 w-4 ml-2 rtl:ml-0 rtl:mr-2" />
               {t('order_button')}
             </Button>
-            <span className="text-2xl font-bold text-primary" dir="rtl">
-              {formatPriceInToman(item.price)}
-            </span>
           </div>
         </CardContent>
       </Card>
