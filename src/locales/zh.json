@@ -272,5 +272,10 @@
   "order_deleted_successfully": "订单删除成功。",
   "this_action_cannot_be_undone_order": "此操作将永久删除订单，无法撤消。",
   "test_waiter_call_notification": "测试服务员呼叫通知",
-  "test_order_notification": "测试订单通知"
+  "test_order_notification": "测试订单通知",
+  "notification_sounds": "通知声音",
+  "waiter_call_sound": "服务员呼叫声音",
+  "order_sound": "订单声音",
+  "no_sound_file_uploaded": "未上传声音文件。",
+  "current_sound": "当前声音"
 }

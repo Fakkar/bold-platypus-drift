@@ -272,5 +272,10 @@
   "order_deleted_successfully": "سفارش با موفقیت حذف شد.",
   "this_action_cannot_be_undone_order": "این عمل سفارش را به طور دائم حذف می‌کند و نمی‌توان آن را بازگرداند.",
   "test_waiter_call_notification": "تست نوتیفیکیشن فراخوانی گارسون",
-  "test_order_notification": "تست نوتیفیکیشن سفارش"
+  "test_order_notification": "تست نوتیفیکیشن سفارش",
+  "notification_sounds": "صداهای نوتیفیکیشن",
+  "waiter_call_sound": "صدای فراخوانی گارسون",
+  "order_sound": "صدای سفارش",
+  "no_sound_file_uploaded": "فایل صوتی آپلود نشده است.",
+  "current_sound": "صدای فعلی"
 }

@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useRestaurantSettings } from "@/context/RestaurantSettingsContext";
 import { useSession } from "@/context/SessionContext";
-import { LogOut, Settings, LayoutGrid, ClipboardList, Users, Home, BarChart, Map, BellRing, ReceiptText } from "lucide-react";
+import { LogOut, Settings, LayoutGrid, ClipboardList, Users, Home, BarChart, Map, BellRing, ReceiptText, Play } from "lucide-react"; // Import Play icon
 import CategoryList from "@/components/admin/CategoryList";
 import MenuItemList from "@/components/admin/MenuItemList";
 import { useSupabaseStorage } from "@/hooks/useSupabaseStorage";
@@ -21,8 +21,8 @@ import CustomerClubReport from "@/components/admin/CustomerClubReport";
 import LocationManager from "@/components/admin/LocationManager";
 import WaiterCallList from "@/components/admin/WaiterCallList";
 import OrderList from "@/components/admin/OrderList";
-import { toast } from 'sonner'; // Import sonner toast
-import NotificationToastContent from "@/components/NotificationToastContent"; // Import the new toast content component
+import { toast } from 'sonner';
+import NotificationToastContent from "@/components/NotificationToastContent";
 
 type AdminView = 'settings' | 'categories' | 'menu-items' | 'customer-club' | 'customer-club-report' | 'locations' | 'waiter-calls' | 'orders';
 
@@ -31,7 +31,7 @@ const AdminDashboard: React.FC = () => {
   const { settings, loading: settingsLoading } = useRestaurantSettings();
   const { user, signOut, loading: sessionLoading } = useSession();
   const [activeView, setActiveView] = useState<AdminView>('settings');
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   if (settingsLoading || sessionLoading) {
     return (
@@ -72,8 +72,8 @@ const AdminDashboard: React.FC = () => {
         toastId={toastId}
       />
     ), {
-      duration: Infinity, // Make it persistent until dismissed
-      position: 'bottom-left', // Position the toast
+      duration: Infinity,
+      position: 'bottom-left',
     });
   };
 
@@ -136,7 +136,7 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ activeView, setActiveView, sign
     { id: 'customer-club-report', label: t('customer_club_report'), icon: BarChart },
     { id: 'locations', label: t('manage_locations'), icon: Map },
     { id: 'waiter-calls', label: t('waiter_calls'), icon: BellRing },
-    { id: 'orders', label: t('orders'), icon: ReceiptText }, // New nav item for Orders
+    { id: 'orders', label: t('orders'), icon: ReceiptText },
   ];
 
   return (
@@ -185,6 +185,8 @@ const SettingsPanel: React.FC<{ settings: any }> = ({ settings: initialSettings 
   const [settings, setSettings] = useState(initialSettings);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [heroBgFile, setHeroBgFile] = useState<File | null>(null);
+  const [waiterCallSoundFile, setWaiterCallSoundFile] = useState<File | null>(null); // New state for sound file
+  const [orderSoundFile, setOrderSoundFile] = useState<File | null>(null); // New state for sound file
 
   useEffect(() => {
     setSettings(initialSettings);
@@ -195,16 +197,30 @@ const SettingsPanel: React.FC<{ settings: any }> = ({ settings: initialSettings 
     setSettings((prev: any) => ({ ...prev, [id]: value }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'logo' | 'hero') => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'logo' | 'hero' | 'waiter_sound' | 'order_sound') => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       if (type === 'logo') {
         setLogoFile(file);
         setSettings((prev: any) => ({ ...prev, logo_url: URL.createObjectURL(file) }));
-      } else {
+      } else if (type === 'hero') {
         setHeroBgFile(file);
         setSettings((prev: any) => ({ ...prev, hero_background_image_url: URL.createObjectURL(file) }));
+      } else if (type === 'waiter_sound') {
+        setWaiterCallSoundFile(file);
+        setSettings((prev: any) => ({ ...prev, waiter_call_sound_url: URL.createObjectURL(file) }));
+      } else if (type === 'order_sound') {
+        setOrderSoundFile(file);
+        setSettings((prev: any) => ({ ...prev, order_sound_url: URL.createObjectURL(file) }));
       }
+    }
+  };
+
+  const handlePlaySound = (url: string) => {
+    if (url) {
+      new Audio(url).play().catch(e => console.error("Error playing sound:", e));
+    } else {
+      toast.error(t('no_sound_file_uploaded'));
     }
   };
 
@@ -212,6 +228,8 @@ const SettingsPanel: React.FC<{ settings: any }> = ({ settings: initialSettings 
     e.preventDefault();
     let finalLogoUrl = settings.logo_url;
     let finalHeroBgUrl = settings.hero_background_image_url;
+    let finalWaiterCallSoundUrl = settings.waiter_call_sound_url;
+    let finalOrderSoundUrl = settings.order_sound_url;
 
     if (logoFile) {
       const processed = await compressAndResizeImage(logoFile);
@@ -231,8 +249,22 @@ const SettingsPanel: React.FC<{ settings: any }> = ({ settings: initialSettings 
         finalHeroBgUrl = await uploadFile(processed, 'hero-backgrounds') || finalHeroBgUrl;
       }
     }
+    if (waiterCallSoundFile) {
+      const uploadedUrl = await uploadFile(waiterCallSoundFile, 'notification-sounds');
+      if (uploadedUrl) finalWaiterCallSoundUrl = uploadedUrl;
+    }
+    if (orderSoundFile) {
+      const uploadedUrl = await uploadFile(orderSoundFile, 'notification-sounds');
+      if (uploadedUrl) finalOrderSoundUrl = uploadedUrl;
+    }
 
-    await updateSettings({ ...settings, logo_url: finalLogoUrl, hero_background_image_url: finalHeroBgUrl });
+    await updateSettings({ 
+      ...settings, 
+      logo_url: finalLogoUrl, 
+      hero_background_image_url: finalHeroBgUrl,
+      waiter_call_sound_url: finalWaiterCallSoundUrl,
+      order_sound_url: finalOrderSoundUrl,
+    });
   };
 
   const isLoading = uploadLoading || imageProcessing;
@@ -273,6 +305,32 @@ const SettingsPanel: React.FC<{ settings: any }> = ({ settings: initialSettings 
             <Label htmlFor="hero_background_image_url">{t("hero_background_image_admin_label")}</Label>
             <Input id="hero_background_image_url" type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'hero')} disabled={isLoading} />
             {settings.hero_background_image_url && <img src={settings.hero_background_image_url} alt="Hero BG Preview" className="h-20 w-32 mt-2 rounded-md object-cover" />}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader><CardTitle>{t("notification_sounds")}</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label htmlFor="waiter_call_sound_url">{t("waiter_call_sound")}</Label>
+            <div className="flex items-center gap-2">
+              <Input id="waiter_call_sound_url" type="file" accept="audio/*" onChange={(e) => handleFileChange(e, 'waiter_sound')} disabled={isLoading} />
+              <Button type="button" variant="outline" size="icon" onClick={() => handlePlaySound(settings.waiter_call_sound_url)} disabled={!settings.waiter_call_sound_url}>
+                <Play className="h-4 w-4" />
+              </Button>
+            </div>
+            {settings.waiter_call_sound_url && <p className="text-sm text-muted-foreground mt-1">{t('current_sound')}: {settings.waiter_call_sound_url.split('/').pop()}</p>}
+          </div>
+          <div>
+            <Label htmlFor="order_sound_url">{t("order_sound")}</Label>
+            <div className="flex items-center gap-2">
+              <Input id="order_sound_url" type="file" accept="audio/*" onChange={(e) => handleFileChange(e, 'order_sound')} disabled={isLoading} />
+              <Button type="button" variant="outline" size="icon" onClick={() => handlePlaySound(settings.order_sound_url)} disabled={!settings.order_sound_url}>
+                <Play className="h-4 w-4" />
+              </Button>
+            </div>
+            {settings.order_sound_url && <p className="text-sm text-muted-foreground mt-1">{t('current_sound')}: {settings.order_sound_url.split('/').pop()}</p>}
           </div>
         </CardContent>
       </Card>

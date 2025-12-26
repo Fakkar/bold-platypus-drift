@@ -77,8 +77,8 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
+      {/* Removed shadcn/ui Toaster to avoid conflicts with sonner */}
+      <Sonner /> {/* This is the sonner Toaster */}
       <I18nextProvider i18n={i18n}>
         <BrowserRouter>
           <SessionContextProvider>

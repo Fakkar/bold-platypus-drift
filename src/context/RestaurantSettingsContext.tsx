@@ -18,6 +18,8 @@ interface RestaurantSettings {
   instagram_url: string;
   facebook_url: string;
   copyright_text: string;
+  waiter_call_sound_url: string; // New field
+  order_sound_url: string; // New field
 }
 
 interface RestaurantSettingsContextType {
@@ -44,6 +46,8 @@ export const RestaurantSettingsProvider: React.FC<{ children: ReactNode }> = ({ 
     instagram_url: 'https://instagram.com',
     facebook_url: 'https://facebook.com',
     copyright_text: '© ۲۰۲۴ رستوران. تمامی حقوق محفوظ است.',
+    waiter_call_sound_url: '/public/sounds/notification.mp3', // Default sound
+    order_sound_url: '/public/sounds/order-notification.mp3', // Default sound
   });
   const [loading, setLoading] = useState(true);
 

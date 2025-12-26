@@ -3,8 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { BellRing, UtensilsCrossed, Eye, X } from 'lucide-react';
+import { BellRing, UtensilsCrossed, Eye, X, Play } from 'lucide-react'; // Import Play icon
 import { cn } from '@/lib/utils';
+import { useRestaurantSettings } from '@/context/RestaurantSettingsContext'; // Import settings
 
 interface NotificationToastContentProps {
   type: 'order' | 'waiter';
@@ -17,18 +18,21 @@ const NotificationToastContent: React.FC<NotificationToastContentProps> = ({ typ
   const { t } = useTranslation();
   const navigate = useNavigate();
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const { settings } = useRestaurantSettings(); // Get settings
 
   const title = type === 'order' ? t('new_order_notification', { location: locationName }) : t('new_waiter_call_notification', { location: locationName });
   const description = message || (type === 'order' ? t('new_order_notification_generic') : t('new_waiter_call_notification_generic'));
   const icon = type === 'order' ? <UtensilsCrossed className="h-6 w-6" /> : <BellRing className="h-6 w-6" />;
-  const audioSrc = type === 'order' ? '/sounds/order-notification.mp3' : '/sounds/notification.mp3';
+  
+  // Use dynamic sound URLs from settings
+  const audioSrc = type === 'order' ? settings.order_sound_url : settings.waiter_call_sound_url;
   const bgColor = type === 'order' ? 'bg-green-600' : 'bg-blue-600';
 
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.play().catch(e => console.error(`Error playing ${type} notification audio:`, e));
     }
-  }, [type]);
+  }, [type, audioSrc]); // Add audioSrc to dependency array
 
   const handleViewClick = () => {
     toast.dismiss(toastId); // Dismiss the toast when "View" is clicked

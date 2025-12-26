@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog'; // Added DialogDescription
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Eye, CheckCircle, XCircle, Printer, Trash2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -305,6 +305,52 @@ const OrderList: React.FC<OrderListProps> = ({ onShowNotification }) => {
           </Table>
         </div>
       )}
+
+      {/* Order Details Dialog */}
+      <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto rtl:text-right">
+          <DialogHeader>
+            <DialogTitle>{t('order_details')}</DialogTitle>
+            <DialogDescription>
+              {t('order_from_table')}: {selectedOrder?.restaurant_locations?.name || t('unknown_location')}
+            </DialogDescription>
+          </DialogHeader>
+          {selectedOrder && (
+            <div className="space-y-4 py-4">
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <p><strong>{t('order_id')}:</strong> {selectedOrder.id.substring(0, 8)}</p>
+                <p><strong>{t('order_time')}:</strong> {formatDate(selectedOrder.created_at)}</p>
+                <p><strong>{t('status')}:</strong> <span className={`font-medium ${getStatusColor(selectedOrder.status)}`}>{t(`order_status_${selectedOrder.status}`)}</span></p>
+                <p><strong>{t('total')}:</strong> <span dir="rtl">{formatPriceInToman(selectedOrder.total_amount)}</span></p>
+              </div>
+              <Separator />
+              <h4 className="text-lg font-semibold">{t('items')}</h4>
+              <div className="space-y-3">
+                {selectedOrder.order_items.map((item) => (
+                  <div key={item.id} className="flex items-center gap-3 border-b pb-3 last:border-b-0 last:pb-0">
+                    {item.menu_items?.image_url && (
+                      <img src={item.menu_items.image_url} alt={tDynamic(item.menu_items.name)} className="h-12 w-12 object-cover rounded-md" />
+                    )}
+                    <div className="flex-1">
+                      <p className="font-medium">{tDynamic(item.menu_items?.name || t('order_from_unknown_item'))}</p>
+                      {item.variations && (
+                        <p className="text-sm text-muted-foreground">{tDynamic(item.variations.name)}</p>
+                      )}
+                      {item.notes && (
+                        <p className="text-xs text-muted-foreground italic">{t('notes')}: {item.notes}</p>
+                      )}
+                    </div>
+                    <div className="text-sm text-right">
+                      <p>{toPersianNumber(item.quantity)} x <span dir="rtl">{formatPriceInToman(item.price)}</span></p>
+                      <p className="font-semibold" dir="rtl">{formatPriceInToman(item.quantity * item.price)}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
