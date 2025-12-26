@@ -81,10 +81,12 @@ const OrderList: React.FC = () => {
               if (!fullOrderError && fullOrderData) {
                 setOrders((prevOrders) => [fullOrderData, ...prevOrders]);
                 const locationName = fullOrderData.restaurant_locations?.name || t('unknown_location');
+                console.log('Setting notification dialog data for new order:', { type: 'order', locationName: locationName });
                 setNotificationDialogData({ type: 'order', locationName: locationName });
                 setIsNotificationDialogOpen(true);
               } else {
                 console.error('Error fetching full order data for new order:', fullOrderError);
+                console.log('Setting notification dialog data for new order (unknown location):', { type: 'order', locationName: t('unknown_location') });
                 setNotificationDialogData({ type: 'order', locationName: t('unknown_location') });
                 setIsNotificationDialogOpen(true);
               }
@@ -223,10 +225,6 @@ const OrderList: React.FC = () => {
       minute: '2-digit',
     });
   };
-
-  if (loading) {
-    return <p>{t('Loading orders...')}</p>;
-  }
 
   return (
     <div className="space-y-4">

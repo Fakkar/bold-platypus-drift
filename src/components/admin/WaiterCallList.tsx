@@ -63,11 +63,13 @@ const WaiterCallList: React.FC = () => {
                 if (!error && locationData) {
                   const callWithLocation = { ...newCall, restaurant_locations: locationData };
                   setCalls((prevCalls) => [callWithLocation, ...prevCalls]);
+                  console.log('Setting notification dialog data for waiter call:', { type: 'waiter', locationName: locationData.name });
                   setNotificationDialogData({ type: 'waiter', locationName: locationData.name });
                   setIsNotificationDialogOpen(true);
                 } else {
                   console.error('Error fetching location for new call:', error);
                   setCalls((prevCalls) => [{ ...newCall, restaurant_locations: null }, ...prevCalls]);
+                  console.log('Setting notification dialog data for waiter call (unknown location):', { type: 'waiter', locationName: t('unknown_location') });
                   setNotificationDialogData({ type: 'waiter', locationName: t('unknown_location') });
                   setIsNotificationDialogOpen(true);
                 }
