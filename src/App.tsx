@@ -49,7 +49,7 @@ const PageMetadataSetter = () => {
 // ProtectedRoute component to guard routes
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading } = useSession();
-  const ADMIN_EMAIL = "rahasahamrah@gmail.com"; // Define the admin email
+  // const ADMIN_EMAIL = "rahasahamrah@gmail.com"; // Removed hardcoded admin email
 
   if (loading) {
     return (
@@ -64,8 +64,9 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
     return <Navigate to="/login" replace />;
   }
 
-  if (user.email !== ADMIN_EMAIL) {
-    // If logged in but not the admin email, show unauthorized message and redirect to home
+  // Check if the user has an 'admin' role in their profile
+  if (user.profile?.role !== 'admin') {
+    // If logged in but not an admin, show unauthorized message and redirect to home
     toast.error(i18n.t("unauthorized_access"));
     return <Navigate to="/" replace />;
   }
