@@ -5,9 +5,17 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 
+interface UserProfile {
+  id: string;
+  first_name: string | null;
+  last_name: string | null;
+  avatar_url: string | null;
+  role: 'admin' | 'editor' | 'viewer'; // Define possible roles
+}
+
 interface SessionContextType {
   session: Session | null;
-  user: User | null;
+  user: (User & { profile?: UserProfile }) | null; // Extend User type with profile
   loading: boolean;
   signOut: () => Promise<void>;
 }
@@ -16,22 +24,39 @@ const SessionContext = createContext<SessionContextType | undefined>(undefined);
 
 export const SessionContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<(User & { profile?: UserProfile }) | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
 
+  const fetchUserProfile = async (userId: string) => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    if (error) {
+      console.error('Error fetching user profile:', error);
+      return null;
+    }
+    return data as UserProfile;
+  };
+
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
         setSession(currentSession);
-        setUser(currentSession?.user || null);
+        if (currentSession?.user) {
+          const profile = await fetchUserProfile(currentSession.user.id);
+          setUser({ ...currentSession.user, profile });
+        } else {
+          setUser(null);
+        }
         setLoading(false);
 
         if (event === 'PASSWORD_RECOVERY') {
-          // This event is fired when the user clicks the password recovery link.
-          // We navigate them to the update password page.
           navigate('/update-password');
         } else if (event === 'SIGNED_OUT') {
           toast.info(t('logged_out_successfully'));
@@ -39,7 +64,6 @@ export const SessionContextProvider: React.FC<{ children: ReactNode }> = ({ chil
             navigate('/login');
           }
         } else if (event === 'SIGNED_IN') {
-          // This handles regular sign-ins.
           if (location.pathname === '/login') {
             navigate('/admin');
           }
@@ -55,7 +79,12 @@ export const SessionContextProvider: React.FC<{ children: ReactNode }> = ({ chil
         toast.error(t('session_error', { message: error.message }));
       }
       setSession(initialSession);
-      setUser(initialSession?.user || null);
+      if (initialSession?.user) {
+        const profile = await fetchUserProfile(initialSession.user.id);
+        setUser({ ...initialSession.user, profile });
+      } else {
+        setUser(null);
+      }
       setLoading(false);
     };
 
