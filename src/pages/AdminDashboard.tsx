@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom"; // Import useNavigate and useLocation
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useRestaurantSettings } from "@/context/RestaurantSettingsContext";
 import { useSession } from "@/context/SessionContext";
-import { LogOut, Settings, LayoutGrid, ClipboardList, Users, Home, BarChart, Map, BellRing, ReceiptText, Play, UserCog } from "lucide-react"; // Import UserCog icon
+import { LogOut, Settings, LayoutGrid, ClipboardList, Users, Home, BarChart, Map, BellRing, ReceiptText, Play } from "lucide-react"; // Import Play icon
 import CategoryList from "@/components/admin/CategoryList";
 import MenuItemList from "@/components/admin/MenuItemList";
 import { useSupabaseStorage } from "@/hooks/useSupabaseStorage";
@@ -23,9 +23,8 @@ import WaiterCallList from "@/components/admin/WaiterCallList";
 import OrderList from "@/components/admin/OrderList";
 import { toast } from 'sonner';
 import NotificationToastContent from "@/components/NotificationToastContent";
-import UserManagementList from "@/components/admin/UserManagementList"; // Import UserManagementList
 
-type AdminView = 'settings' | 'categories' | 'menu-items' | 'customer-club' | 'customer-club-report' | 'locations' | 'waiter-calls' | 'orders' | 'users'; // Added 'users'
+type AdminView = 'settings' | 'categories' | 'menu-items' | 'customer-club' | 'customer-club-report' | 'locations' | 'waiter-calls' | 'orders';
 
 const AdminDashboard: React.FC = () => {
   const { t } = useTranslation();
@@ -41,14 +40,11 @@ const AdminDashboard: React.FC = () => {
     const viewFromUrl = params.get('view') as AdminView;
     if (viewFromUrl && viewTitles[viewFromUrl]) {
       setActiveView(viewFromUrl);
-    } else if (user?.profile?.role === 'editor') {
-      setActiveView('categories'); // Default for editor
-    } else if (user?.profile?.role === 'viewer') {
-      setActiveView('orders'); // Default for viewer
-    } else {
-      setActiveView('settings'); // Default for admin
     }
-  }, [location.search, t, user?.profile?.role]);
+    // Test sonner toast on dashboard load
+    console.log("Admin Dashboard loaded, attempting to show test toast.");
+    toast.info(t("admin_dashboard_loaded_test_toast"));
+  }, [location.search, t]); // Added location.search to dependencies
 
   if (settingsLoading || sessionLoading) {
     return (
@@ -78,7 +74,6 @@ const AdminDashboard: React.FC = () => {
     'locations': t("manage_locations"),
     'waiter-calls': t("waiter_calls"),
     'orders': t("manage_orders"),
-    'users': t("manage_users"), // Added title for users
   };
 
   const handleShowNotification = (type: 'order' | 'waiter', locationName: string, message?: string) => {
@@ -91,7 +86,7 @@ const AdminDashboard: React.FC = () => {
       />
     ), {
       duration: Infinity,
-      position: 'bottom-right',
+      position: 'bottom-right', // Changed to bottom-right as requested
     });
   };
 
@@ -103,49 +98,31 @@ const AdminDashboard: React.FC = () => {
     handleShowNotification('order', 'میز تست ۲');
   };
 
-  const userRole = user.profile?.role;
-
-  const renderContent = () => {
-    switch (activeView) {
-      case 'settings':
-        return userRole === 'admin' ? <SettingsPanel settings={settings} /> : <p>{t('access_denied')}</p>;
-      case 'categories':
-        return (userRole === 'admin' || userRole === 'editor') ? <Card><CardContent className="p-6"><CategoryList /></CardContent></Card> : <p>{t('access_denied')}</p>;
-      case 'menu-items':
-        return (userRole === 'admin' || userRole === 'editor') ? <Card><CardContent className="p-6"><MenuItemList /></CardContent></Card> : <p>{t('access_denied')}</p>;
-      case 'customer-club':
-        return userRole === 'admin' ? <Card><CardContent className="p-6"><CustomerClubList /></CardContent></Card> : <p>{t('access_denied')}</p>;
-      case 'customer-club-report':
-        return (userRole === 'admin' || userRole === 'viewer') ? <Card><CardContent className="p-6"><CustomerClubReport /></CardContent></Card> : <p>{t('access_denied')}</p>;
-      case 'locations':
-        return userRole === 'admin' ? <Card><CardContent className="p-6"><LocationManager /></CardContent></Card> : <p>{t('access_denied')}</p>;
-      case 'waiter-calls':
-        return (userRole === 'admin' || userRole === 'editor' || userRole === 'viewer') ? <Card><CardContent className="p-6"><WaiterCallList onShowNotification={handleShowNotification} /></CardContent></Card> : <p>{t('access_denied')}</p>;
-      case 'orders':
-        return (userRole === 'admin' || userRole === 'editor' || userRole === 'viewer') ? <Card><CardContent className="p-6"><OrderList onShowNotification={handleShowNotification} /></CardContent></Card> : <p>{t('access_denied')}</p>;
-      case 'users':
-        return userRole === 'admin' ? <Card><CardContent className="p-6"><UserManagementList /></CardContent></Card> : <p>{t('access_denied')}</p>;
-      default:
-        return <p>{t('select_a_section')}</p>;
-    }
-  };
-
   return (
     <div className="min-h-screen w-full flex bg-card" dir="rtl">
-      <SidebarNav activeView={activeView} setActiveView={setActiveView} userRole={userRole} />
+      <SidebarNav activeView={activeView} setActiveView={setActiveView} />
       <main className="flex-1 p-6 md:p-8 overflow-y-auto">
         <h1 className="text-3xl font-bold mb-6 text-foreground">{viewTitles[activeView]}</h1>
         <div className="w-full">
-          {renderContent()}
-          {activeView === 'settings' && userRole === 'admin' && (
-            <Card className="mt-8">
-              <CardHeader><CardTitle>{t('test_notifications')}</CardTitle></CardHeader>
-              <CardContent className="flex gap-4">
-                <Button onClick={handleTestWaiterCall}>{t('test_waiter_call_notification')}</Button>
-                <Button onClick={handleTestOrder}>{t('test_order_notification')}</Button>
-              </CardContent>
-            </Card>
+          {activeView === 'settings' && (
+            <>
+              <SettingsPanel settings={settings} />
+              <Card className="mt-8">
+                <CardHeader><CardTitle>{t('test_notifications')}</CardTitle></CardHeader>
+                <CardContent className="flex gap-4">
+                  <Button onClick={handleTestWaiterCall}>{t('test_waiter_call_notification')}</Button>
+                  <Button onClick={handleTestOrder}>{t('test_order_notification')}</Button>
+                </CardContent>
+              </Card>
+            </>
           )}
+          {activeView === 'categories' && <Card><CardContent className="p-6"><CategoryList /></CardContent></Card>}
+          {activeView === 'menu-items' && <Card><CardContent className="p-6"><MenuItemList /></CardContent></Card>}
+          {activeView === 'customer-club' && <Card><CardContent className="p-6"><CustomerClubList /></CardContent></Card>}
+          {activeView === 'customer-club-report' && <Card><CardContent className="p-6"><CustomerClubReport /></CardContent></Card>}
+          {activeView === 'locations' && <Card><CardContent className="p-6"><LocationManager /></CardContent></Card>}
+          {activeView === 'waiter-calls' && <Card><CardContent className="p-6"><WaiterCallList onShowNotification={handleShowNotification} /></CardContent></Card>}
+          {activeView === 'orders' && <Card><CardContent className="p-6"><OrderList onShowNotification={handleShowNotification} /></CardContent></Card>}
         </div>
       </main>
     </div>
@@ -156,25 +133,23 @@ const AdminDashboard: React.FC = () => {
 interface SidebarNavProps {
   activeView: AdminView;
   setActiveView: (view: AdminView) => void;
-  userRole: 'admin' | 'editor' | 'viewer' | undefined;
 }
 
-const SidebarNav: React.FC<SidebarNavProps> = ({ activeView, setActiveView, userRole }) => {
+const SidebarNav: React.FC<SidebarNavProps> = ({ activeView, setActiveView }) => {
   const { t } = useTranslation();
   const { settings } = useRestaurantSettings();
   const { tDynamic } = useDynamicTranslation();
-  const { signOut } = useSession();
+  const { signOut } = useSession(); // Get signOut from useSession
 
   const navItems = [
-    { id: 'settings', label: t('restaurant_settings'), icon: Settings, roles: ['admin'] },
-    { id: 'categories', label: t('manage_categories'), icon: LayoutGrid, roles: ['admin', 'editor'] },
-    { id: 'menu-items', label: t('manage_menu_items'), icon: ClipboardList, roles: ['admin', 'editor'] },
-    { id: 'customer-club', label: t('customer_club'), icon: Users, roles: ['admin'] },
-    { id: 'customer-club-report', label: t('customer_club_report'), icon: BarChart, roles: ['admin', 'viewer'] },
-    { id: 'locations', label: t('manage_locations'), icon: Map, roles: ['admin'] },
-    { id: 'waiter-calls', label: t('waiter_calls'), icon: BellRing, roles: ['admin', 'editor', 'viewer'] },
-    { id: 'orders', label: t('manage_orders'), icon: ReceiptText, roles: ['admin', 'editor', 'viewer'] },
-    { id: 'users', label: t('manage_users'), icon: UserCog, roles: ['admin'] },
+    { id: 'settings', label: t('restaurant_settings'), icon: Settings },
+    { id: 'categories', label: t('manage_categories'), icon: LayoutGrid },
+    { id: 'menu-items', label: t('manage_menu_items'), icon: ClipboardList },
+    { id: 'customer-club', label: t('customer_club'), icon: Users },
+    { id: 'customer-club-report', label: t('customer_club_report'), icon: BarChart },
+    { id: 'locations', label: t('manage_locations'), icon: Map },
+    { id: 'waiter-calls', label: t('waiter_calls'), icon: BellRing },
+    { id: 'orders', label: t('orders'), icon: ReceiptText },
   ];
 
   return (
@@ -185,20 +160,18 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ activeView, setActiveView, user
       </div>
       <nav className="flex flex-col gap-2 flex-1">
         {navItems.map((item) => (
-          userRole && item.roles.includes(userRole) && (
-            <Button
-              key={item.id}
-              variant="ghost"
-              onClick={() => setActiveView(item.id as AdminView)}
-              className={cn(
-                "justify-start gap-3 px-3 text-base",
-                activeView === item.id && "bg-primary text-primary-foreground"
-              )}
-            >
-              <item.icon className="h-5 w-5" />
-              {item.label}
-            </Button>
-          )
+          <Button
+            key={item.id}
+            variant="ghost"
+            onClick={() => setActiveView(item.id as AdminView)}
+            className={cn(
+              "justify-start gap-3 px-3 text-base",
+              activeView === item.id && "bg-primary text-primary-foreground"
+            )}
+          >
+            <item.icon className="h-5 w-5" />
+            {item.label}
+          </Button>
         ))}
       </nav>
       <div className="flex flex-col gap-2 pt-4 border-t border-border">
@@ -225,8 +198,8 @@ const SettingsPanel: React.FC<{ settings: any }> = ({ settings: initialSettings 
   const [settings, setSettings] = useState(initialSettings);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [heroBgFile, setHeroBgFile] = useState<File | null>(null);
-  const [waiterCallSoundFile, setWaiterCallSoundFile] = useState<File | null>(null);
-  const [orderSoundFile, setOrderSoundFile] = useState<File | null>(null);
+  const [waiterCallSoundFile, setWaiterCallSoundFile] = useState<File | null>(null); // New state for sound file
+  const [orderSoundFile, setOrderSoundFile] = useState<File | null>(null); // New state for sound file
 
   useEffect(() => {
     setSettings(initialSettings);

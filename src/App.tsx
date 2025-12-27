@@ -43,12 +43,22 @@ const PageMetadataSetter = () => {
     }
   }, [settings, loading, settings.logo_url]);
 
+  // Temporary toast for debugging sonner
+  useEffect(() => {
+    const hasShownInitialToast = localStorage.getItem('hasShownInitialToast');
+    if (!hasShownInitialToast) {
+      toast.success("Sonner is working! (Temporary test toast)", { position: 'bottom-right' });
+      localStorage.setItem('hasShownInitialToast', 'true');
+    }
+  }, []); // Run only once on mount
+
   return null; // This component doesn't render anything
 };
 
 // ProtectedRoute component to guard routes
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading } = useSession();
+  const ADMIN_EMAIL = "rahasahamrah@gmail.com"; // Define the admin email
 
   if (loading) {
     return (
@@ -63,9 +73,8 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
     return <Navigate to="/login" replace />;
   }
 
-  // Allow access to /admin for 'admin', 'editor', and 'viewer' roles
-  // Specific feature access will be handled within AdminDashboard based on role
-  if (!user.profile?.role || !['admin', 'editor', 'viewer'].includes(user.profile.role)) {
+  if (user.email !== ADMIN_EMAIL) {
+    // If logged in but not the admin email, show unauthorized message and redirect to home
     toast.error(i18n.t("unauthorized_access"));
     return <Navigate to="/" replace />;
   }
@@ -76,7 +85,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Sonner dir="rtl" richColors />
+      <Sonner /> {/* This is the sonner Toaster */}
       <I18nextProvider i18n={i18n}>
         <BrowserRouter>
           <SessionContextProvider>
