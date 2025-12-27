@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate, useLocation } from "react-router-dom"; // Import useNavigate and useLocation
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useRestaurantSettings } from "@/context/RestaurantSettingsContext";
 import { useSession } from "@/context/SessionContext";
-import { LogOut, Settings, LayoutGrid, ClipboardList, Users, Home, BarChart, Map, BellRing, ReceiptText, Play } from "lucide-react"; // Import Play icon
+import { LogOut, Settings, LayoutGrid, ClipboardList, Users, Home, BarChart, Map, BellRing, ReceiptText, Play, UserCog } from "lucide-react"; // Import UserCog icon
 import CategoryList from "@/components/admin/CategoryList";
 import MenuItemList from "@/components/admin/MenuItemList";
 import { useSupabaseStorage } from "@/hooks/useSupabaseStorage";
@@ -23,8 +23,9 @@ import WaiterCallList from "@/components/admin/WaiterCallList";
 import OrderList from "@/components/admin/OrderList";
 import { toast } from 'sonner';
 import NotificationToastContent from "@/components/NotificationToastContent";
+import UserManagementList from "@/components/admin/UserManagementList"; // Import UserManagementList
 
-type AdminView = 'settings' | 'categories' | 'menu-items' | 'customer-club' | 'customer-club-report' | 'locations' | 'waiter-calls' | 'orders';
+type AdminView = 'settings' | 'categories' | 'menu-items' | 'customer-club' | 'customer-club-report' | 'locations' | 'waiter-calls' | 'orders' | 'users'; // Added 'users'
 
 const AdminDashboard: React.FC = () => {
   const { t } = useTranslation();
@@ -43,8 +44,8 @@ const AdminDashboard: React.FC = () => {
     }
     // Test sonner toast on dashboard load
     console.log("Admin Dashboard loaded, attempting to show test toast.");
-    toast.info(t("admin_dashboard_loaded_test_toast"));
-  }, [location.search, t]); // Added location.search to dependencies
+    // toast.info(t("admin_dashboard_loaded_test_toast")); // Removed temporary test toast
+  }, [location.search, t]);
 
   if (settingsLoading || sessionLoading) {
     return (
@@ -74,6 +75,7 @@ const AdminDashboard: React.FC = () => {
     'locations': t("manage_locations"),
     'waiter-calls': t("waiter_calls"),
     'orders': t("manage_orders"),
+    'users': t("manage_users"), // Added title for users
   };
 
   const handleShowNotification = (type: 'order' | 'waiter', locationName: string, message?: string) => {
@@ -86,7 +88,7 @@ const AdminDashboard: React.FC = () => {
       />
     ), {
       duration: Infinity,
-      position: 'bottom-right', // Changed to bottom-right as requested
+      position: 'bottom-right',
     });
   };
 
@@ -123,6 +125,7 @@ const AdminDashboard: React.FC = () => {
           {activeView === 'locations' && <Card><CardContent className="p-6"><LocationManager /></CardContent></Card>}
           {activeView === 'waiter-calls' && <Card><CardContent className="p-6"><WaiterCallList onShowNotification={handleShowNotification} /></CardContent></Card>}
           {activeView === 'orders' && <Card><CardContent className="p-6"><OrderList onShowNotification={handleShowNotification} /></CardContent></Card>}
+          {activeView === 'users' && <Card><CardContent className="p-6"><UserManagementList /></CardContent></Card>} {/* Render UserManagementList */}
         </div>
       </main>
     </div>
@@ -139,7 +142,7 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ activeView, setActiveView }) =>
   const { t } = useTranslation();
   const { settings } = useRestaurantSettings();
   const { tDynamic } = useDynamicTranslation();
-  const { signOut } = useSession(); // Get signOut from useSession
+  const { signOut, user } = useSession(); // Get user from useSession
 
   const navItems = [
     { id: 'settings', label: t('restaurant_settings'), icon: Settings },
@@ -151,6 +154,11 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ activeView, setActiveView }) =>
     { id: 'waiter-calls', label: t('waiter_calls'), icon: BellRing },
     { id: 'orders', label: t('orders'), icon: ReceiptText },
   ];
+
+  // Only show user management if the current user is an admin
+  if (user?.profile?.role === 'admin') {
+    navItems.push({ id: 'users', label: t('manage_users'), icon: UserCog });
+  }
 
   return (
     <aside className="w-64 bg-background border-l border-border flex flex-col p-4">
@@ -198,8 +206,8 @@ const SettingsPanel: React.FC<{ settings: any }> = ({ settings: initialSettings 
   const [settings, setSettings] = useState(initialSettings);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [heroBgFile, setHeroBgFile] = useState<File | null>(null);
-  const [waiterCallSoundFile, setWaiterCallSoundFile] = useState<File | null>(null); // New state for sound file
-  const [orderSoundFile, setOrderSoundFile] = useState<File | null>(null); // New state for sound file
+  const [waiterCallSoundFile, setWaiterCallSoundFile] = useState<File | null>(null);
+  const [orderSoundFile, setOrderSoundFile] = useState<File | null>(null);
 
   useEffect(() => {
     setSettings(initialSettings);
