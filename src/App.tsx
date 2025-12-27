@@ -43,13 +43,9 @@ const PageMetadataSetter = () => {
     }
   }, [settings, loading, settings.logo_url]);
 
-  // Temporary toast for debugging sonner
+  // Temporary toast for debugging sonner - always shows now
   useEffect(() => {
-    const hasShownInitialToast = localStorage.getItem('hasShownInitialToast');
-    if (!hasShownInitialToast) {
-      toast.success("Sonner is working! (Temporary test toast)", { position: 'bottom-right' });
-      localStorage.setItem('hasShownInitialToast', 'true');
-    }
+    toast.success("Sonner is working! (Test toast)", { position: 'bottom-right', duration: 5000 }); // Added duration
   }, []); // Run only once on mount
 
   return null; // This component doesn't render anything
@@ -85,7 +81,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Sonner /> {/* This is the sonner Toaster */}
+      <Sonner dir="rtl" richColors /> {/* Added dir="rtl" and richColors for better debugging */}
       <I18nextProvider i18n={i18n}>
         <BrowserRouter>
           <SessionContextProvider>
