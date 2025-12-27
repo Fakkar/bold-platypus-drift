@@ -43,11 +43,6 @@ const PageMetadataSetter = () => {
     }
   }, [settings, loading, settings.logo_url]);
 
-  // Temporary toast for debugging sonner - always shows now
-  useEffect(() => {
-    toast.success("Sonner is working! (Test toast)", { position: 'bottom-right', duration: 5000 }); // Added duration
-  }, []); // Run only once on mount
-
   return null; // This component doesn't render anything
 };
 
@@ -81,7 +76,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Sonner dir="rtl" richColors /> {/* Added dir="rtl" and richColors for better debugging */}
+      <Sonner dir="rtl" richColors />
       <I18nextProvider i18n={i18n}>
         <BrowserRouter>
           <SessionContextProvider>
