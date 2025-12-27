@@ -298,5 +298,6 @@
   "user_role_updated_successfully": "تم تحديث دور المستخدم بنجاح!",
   "failed_to_delete_user": "فشل حذف المستخدم: {{message}}",
   "user_deleted_successfully": "تم حذف المستخدم بنجاح!",
-  "this_action_cannot_be_undone_user": "سيؤدي هذا الإجراء إلى حذف المستخدم نهائيًا ولا يمكن التراجع عنه."
+  "this_action_cannot_be_undone_user": "سيؤدي هذا الإجراء إلى حذف المستخدم نهائيًا ولا يمكن التراجع عنه.",
+  "unauthorized_action": "إجراء غير مصرح به. يرجى تسجيل الدخول مرة أخرى."
 }

@@ -298,5 +298,6 @@
   "user_role_updated_successfully": "User role updated successfully!",
   "failed_to_delete_user": "Failed to delete user: {{message}}",
   "user_deleted_successfully": "User deleted successfully!",
-  "this_action_cannot_be_undone_user": "This action will permanently delete the user and cannot be undone."
+  "this_action_cannot_be_undone_user": "This action will permanently delete the user and cannot be undone.",
+  "unauthorized_action": "Unauthorized action. Please log in again."
 }

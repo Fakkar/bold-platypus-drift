@@ -298,5 +298,6 @@
   "user_role_updated_successfully": "نقش کاربر با موفقیت به‌روزرسانی شد!",
   "failed_to_delete_user": "حذف کاربر ناموفق بود: {{message}}",
   "user_deleted_successfully": "کاربر با موفقیت حذف شد!",
-  "this_action_cannot_be_undone_user": "این عمل کاربر را به طور دائم حذف می‌کند و نمی‌توان آن را بازگرداند."
+  "this_action_cannot_be_undone_user": "این عمل کاربر را به طور دائم حذف می‌کند و نمی‌توان آن را بازگرداند.",
+  "unauthorized_action": "عملیات غیرمجاز. لطفاً دوباره وارد شوید."
 }

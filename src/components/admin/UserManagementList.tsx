@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { toPersianNumber } from '@/utils/format';
+import { useSession } from '@/context/SessionContext'; // Import useSession to get the current user's session
 
 interface UserProfile {
   id: string;
@@ -28,6 +29,7 @@ interface AppUser {
 
 const UserManagementList: React.FC = () => {
   const { t } = useTranslation();
+  const { session } = useSession(); // Get the current session
   const [users, setUsers] = useState<AppUser[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -77,14 +79,28 @@ const UserManagementList: React.FC = () => {
   };
 
   const handleDeleteUser = async (userId: string) => {
-    // Note: Deleting from auth.users will cascade delete from profiles table
-    const { error } = await supabase.auth.admin.deleteUser(userId);
+    if (!session) {
+      toast.error(t('unauthorized_action'));
+      return;
+    }
 
-    if (error) {
-      toast.error(t('failed_to_delete_user', { message: error.message }));
-    } else {
+    try {
+      const { data, error } = await supabase.functions.invoke('delete-user', {
+        body: { userIdToDelete: userId },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) {
+        throw error;
+      }
+
       toast.success(t('user_deleted_successfully'));
       fetchUsers(); // Re-fetch to update the list
+    } catch (error: any) {
+      console.error('Error deleting user via Edge Function:', error);
+      toast.error(t('failed_to_delete_user', { message: error.message }));
     }
   };
 
