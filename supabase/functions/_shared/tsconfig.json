@@ -1,17 +1,16 @@
 {
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "lib": ["deno.ns", "dom", "esnext"],
     "module": "esnext",
     "target": "esnext",
     "moduleResolution": "bundler",
-    "types": [],
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "isolatedModules": true,
     "noEmit": true,
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "noResolve": true // Added to prevent TypeScript from trying to resolve URL imports
   },
   "include": ["../**/*.ts"],
   "exclude": ["node_modules", "../../../node_modules"]

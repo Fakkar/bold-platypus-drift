@@ -299,5 +299,10 @@
   "failed_to_delete_user": "فشل حذف المستخدم: {{message}}",
   "user_deleted_successfully": "تم حذف المستخدم بنجاح!",
   "this_action_cannot_be_undone_user": "سيؤدي هذا الإجراء إلى حذف المستخدم نهائيًا ولا يمكن التراجع عنه.",
-  "unauthorized_action": "إجراء غير مصرح به. يرجى تسجيل الدخول مرة أخرى."
+  "unauthorized_action": "إجراء غير مصرح به. يرجى تسجيل الدخول مرة أخرى.",
+  "reset_password": "إعادة تعيين كلمة المرور",
+  "password_reset_link_sent": "تم إرسال رابط إعادة تعيين كلمة المرور إلى {{email}}.",
+  "failed_to_reset_password": "فشل إعادة تعيين كلمة المرور: {{message}}",
+  "access_denied": "وصول ممنوع",
+  "select_a_section": "اختر قسمًا"
 }

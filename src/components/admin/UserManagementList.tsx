@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Edit, Trash2, User } from 'lucide-react';
+import { Edit, Trash2, User, KeyRound } from 'lucide-react'; // Import KeyRound icon for reset password
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
@@ -75,6 +75,31 @@ const UserManagementList: React.FC = () => {
     } else {
       toast.success(t('user_role_updated_successfully'));
       fetchUsers(); // Re-fetch to update the list
+    }
+  };
+
+  const handleResetPassword = async (userId: string, userEmail: string) => {
+    if (!session) {
+      toast.error(t('unauthorized_action'));
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.functions.invoke('reset-user-password', {
+        body: { userIdToReset: userId },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      toast.success(t('password_reset_link_sent', { email: userEmail }));
+    } catch (error: any) {
+      console.error('Error resetting user password via Edge Function:', error);
+      toast.error(t('failed_to_reset_password', { message: error.message }));
     }
   };
 
@@ -153,6 +178,9 @@ const UserManagementList: React.FC = () => {
                   </TableCell>
                   <TableCell>{formatDate(appUser.created_at)}</TableCell>
                   <TableCell className="text-right">
+                    <Button variant="ghost" size="icon" onClick={() => handleResetPassword(appUser.id, appUser.email)}>
+                      <KeyRound className="h-4 w-4" />
+                    </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button variant="ghost" size="icon" className="text-destructive">

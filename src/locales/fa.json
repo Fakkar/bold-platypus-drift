@@ -299,5 +299,10 @@
   "failed_to_delete_user": "حذف کاربر ناموفق بود: {{message}}",
   "user_deleted_successfully": "کاربر با موفقیت حذف شد!",
   "this_action_cannot_be_undone_user": "این عمل کاربر را به طور دائم حذف می‌کند و نمی‌توان آن را بازگرداند.",
-  "unauthorized_action": "عملیات غیرمجاز. لطفاً دوباره وارد شوید."
+  "unauthorized_action": "عملیات غیرمجاز. لطفاً دوباره وارد شوید.",
+  "reset_password": "بازنشانی رمز عبور",
+  "password_reset_link_sent": "لینک بازنشانی رمز عبور به {{email}} ارسال شد.",
+  "failed_to_reset_password": "بازنشانی رمز عبور ناموفق بود: {{message}}",
+  "access_denied": "دسترسی ممنوع",
+  "select_a_section": "یک بخش را انتخاب کنید"
 }

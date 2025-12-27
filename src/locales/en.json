@@ -299,5 +299,10 @@
   "failed_to_delete_user": "Failed to delete user: {{message}}",
   "user_deleted_successfully": "User deleted successfully!",
   "this_action_cannot_be_undone_user": "This action will permanently delete the user and cannot be undone.",
-  "unauthorized_action": "Unauthorized action. Please log in again."
+  "unauthorized_action": "Unauthorized action. Please log in again.",
+  "reset_password": "Reset Password",
+  "password_reset_link_sent": "Password reset link sent to {{email}}.",
+  "failed_to_reset_password": "Failed to reset password: {{message}}",
+  "access_denied": "Access Denied",
+  "select_a_section": "Select a section"
 }

@@ -300,5 +300,10 @@
   "failed_to_delete_user": "删除用户失败：{{message}}",
   "user_deleted_successfully": "用户删除成功！",
   "this_action_cannot_be_undone_user": "此操作将永久删除用户，无法撤消。",
-  "unauthorized_action": "未经授权的操作。请重新登录。"
+  "unauthorized_action": "未经授权的操作。请重新登录。",
+  "reset_password": "重置密码",
+  "password_reset_link_sent": "密码重置链接已发送至 {{email}}。",
+  "failed_to_reset_password": "重置密码失败：{{message}}",
+  "access_denied": "访问被拒绝",
+  "select_a_section": "选择一个部分"
 }
