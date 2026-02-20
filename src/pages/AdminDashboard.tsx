@@ -23,6 +23,7 @@ import WaiterCallList from "@/components/admin/WaiterCallList";
 import OrderList from "@/components/admin/OrderList";
 import { toast } from 'sonner';
 import NotificationToastContent from "@/components/NotificationToastContent";
+import AdminRealtimeNotifications from "@/components/admin/AdminRealtimeNotifications";
 
 type AdminView = 'settings' | 'categories' | 'menu-items' | 'customer-club' | 'customer-club-report' | 'locations' | 'waiter-calls' | 'orders';
 
@@ -46,6 +47,17 @@ const AdminDashboard: React.FC = () => {
     toast.info(t("admin_dashboard_loaded_test_toast"));
   }, [location.search, t]); // Added location.search to dependencies
 
+
+  useEffect(() => {
+    if (!('Notification' in window) || Notification.permission !== 'default') {
+      return;
+    }
+
+    Notification.requestPermission().catch((error) => {
+      console.error('Failed to request notification permission:', error);
+    });
+  }, []);
+
   if (settingsLoading || sessionLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
@@ -65,6 +77,7 @@ const AdminDashboard: React.FC = () => {
     );
   }
 
+
   const viewTitles: Record<AdminView, string> = {
     settings: t("restaurant_settings"),
     categories: t("manage_categories"),
@@ -77,6 +90,25 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleShowNotification = (type: 'order' | 'waiter', locationName: string, message?: string) => {
+    const audioSrc = type === 'order' ? settings.order_sound_url : settings.waiter_call_sound_url;
+
+    if (audioSrc) {
+      new Audio(audioSrc).play().catch((error) => {
+        console.error(`Error playing ${type} notification sound:`, error);
+      });
+    }
+
+    if ('Notification' in window) {
+      const title = type === 'order'
+        ? t('new_order_notification', { location: locationName })
+        : t('new_waiter_call_notification', { location: locationName });
+      const body = message || (type === 'order' ? t('new_order_notification_generic') : t('new_waiter_call_notification_generic'));
+
+      if (Notification.permission === 'granted') {
+        new Notification(title, { body });
+      }
+    }
+
     toast.custom((toastId) => (
       <NotificationToastContent
         type={type}
@@ -86,7 +118,7 @@ const AdminDashboard: React.FC = () => {
       />
     ), {
       duration: Infinity,
-      position: 'bottom-right', // Changed to bottom-right as requested
+      position: 'bottom-right',
     });
   };
 
@@ -102,6 +134,7 @@ const AdminDashboard: React.FC = () => {
     <div className="min-h-screen w-full flex bg-card" dir="rtl">
       <SidebarNav activeView={activeView} setActiveView={setActiveView} />
       <main className="flex-1 p-6 md:p-8 overflow-y-auto">
+        <AdminRealtimeNotifications onShowNotification={handleShowNotification} />
         <h1 className="text-3xl font-bold mb-6 text-foreground">{viewTitles[activeView]}</h1>
         <div className="w-full">
           {activeView === 'settings' && (
@@ -121,8 +154,8 @@ const AdminDashboard: React.FC = () => {
           {activeView === 'customer-club' && <Card><CardContent className="p-6"><CustomerClubList /></CardContent></Card>}
           {activeView === 'customer-club-report' && <Card><CardContent className="p-6"><CustomerClubReport /></CardContent></Card>}
           {activeView === 'locations' && <Card><CardContent className="p-6"><LocationManager /></CardContent></Card>}
-          {activeView === 'waiter-calls' && <Card><CardContent className="p-6"><WaiterCallList onShowNotification={handleShowNotification} /></CardContent></Card>}
-          {activeView === 'orders' && <Card><CardContent className="p-6"><OrderList onShowNotification={handleShowNotification} /></CardContent></Card>}
+          {activeView === 'waiter-calls' && <Card><CardContent className="p-6"><WaiterCallList /></CardContent></Card>}
+          {activeView === 'orders' && <Card><CardContent className="p-6"><OrderList /></CardContent></Card>}
         </div>
       </main>
     </div>

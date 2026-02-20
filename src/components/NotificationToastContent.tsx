@@ -1,11 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { BellRing, UtensilsCrossed, Eye, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useRestaurantSettings } from '@/context/RestaurantSettingsContext';
 
 interface NotificationToastContentProps {
   type: 'order' | 'waiter';
@@ -17,43 +16,12 @@ interface NotificationToastContentProps {
 const NotificationToastContent: React.FC<NotificationToastContentProps> = ({ type, locationName, message, toastId }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const { settings } = useRestaurantSettings();
 
   const title = type === 'order' ? t('new_order_notification', { location: locationName }) : t('new_waiter_call_notification', { location: locationName });
   const description = message || (type === 'order' ? t('new_order_notification_generic') : t('new_waiter_call_notification_generic'));
   const icon = type === 'order' ? <UtensilsCrossed className="h-8 w-8" /> : <BellRing className="h-8 w-8" />;
   
-  const audioSrc = type === 'order' ? settings.order_sound_url : settings.waiter_call_sound_url;
   const bgColor = type === 'order' ? 'bg-green-600' : 'bg-blue-600';
-
-  useEffect(() => {
-    const playSound = () => {
-      if (audioRef.current && audioSrc) {
-        console.log(`Attempting to play ${type} notification sound from: ${audioSrc}`);
-        // Check if audio is ready to play (HAVE_ENOUGH_DATA or more)
-        if (audioRef.current.readyState >= 3) { 
-          audioRef.current.play().then(() => {
-            console.log(`${type} notification sound played successfully.`);
-          }).catch(e => {
-            console.error(`Error playing ${type} notification audio from ${audioSrc}:`, e);
-            toast.error(t('failed_to_play_sound', { type: t(type) }));
-          });
-        } else {
-          console.log(`Audio not ready (readyState: ${audioRef.current.readyState}). Retrying...`);
-          // If not ready, try again after a short delay
-          setTimeout(playSound, 100);
-        }
-      } else {
-        console.log(`No audio source or audioRef for ${type} notification.`);
-      }
-    };
-
-    // Delay initial playback slightly to ensure component is fully mounted and audio element is ready
-    const timeoutId = setTimeout(playSound, 50); 
-
-    return () => clearTimeout(timeoutId); // Cleanup timeout on unmount
-  }, [type, audioSrc, t]);
 
   const handleViewClick = () => {
     toast.dismiss(toastId);
@@ -92,7 +60,6 @@ const NotificationToastContent: React.FC<NotificationToastContentProps> = ({ typ
           </Button>
         </div>
       </div>
-      <audio ref={audioRef} src={audioSrc} preload="auto" />
     </div>
   );
 };
