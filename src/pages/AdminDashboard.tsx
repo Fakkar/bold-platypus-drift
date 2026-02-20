@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate, useLocation } from "react-router-dom"; // Import useNavigate and useLocation
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,17 +22,25 @@ import LocationManager from "@/components/admin/LocationManager";
 import WaiterCallList from "@/components/admin/WaiterCallList";
 import OrderList from "@/components/admin/OrderList";
 import { toast } from 'sonner';
-import NotificationToastContent from "@/components/NotificationToastContent";
+import AdminRealtimeNotifications from "@/components/admin/AdminRealtimeNotifications";
 
 type AdminView = 'settings' | 'categories' | 'menu-items' | 'customer-club' | 'customer-club-report' | 'locations' | 'waiter-calls' | 'orders';
+
+interface AdminNotificationItem {
+  id: string;
+  type: 'order' | 'waiter';
+  locationName: string;
+  message?: string;
+}
 
 const AdminDashboard: React.FC = () => {
   const { t } = useTranslation();
   const { settings, loading: settingsLoading } = useRestaurantSettings();
   const { user, signOut, loading: sessionLoading } = useSession();
   const [activeView, setActiveView] = useState<AdminView>('settings');
-  const navigate = useNavigate();
   const location = useLocation();
+  const [notificationQueue, setNotificationQueue] = useState<AdminNotificationItem[]>([]);
+  const [activeNotification, setActiveNotification] = useState<AdminNotificationItem | null>(null);
 
   useEffect(() => {
     // Check URL for initial view
@@ -45,6 +53,27 @@ const AdminDashboard: React.FC = () => {
     console.log("Admin Dashboard loaded, attempting to show test toast.");
     toast.info(t("admin_dashboard_loaded_test_toast"));
   }, [location.search, t]); // Added location.search to dependencies
+
+
+  useEffect(() => {
+    if (!('Notification' in window) || Notification.permission !== 'default') {
+      return;
+    }
+
+    Notification.requestPermission().catch((error) => {
+      console.error('Failed to request notification permission:', error);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (activeNotification || notificationQueue.length === 0) {
+      return;
+    }
+
+    const [nextNotification, ...restQueue] = notificationQueue;
+    setActiveNotification(nextNotification);
+    setNotificationQueue(restQueue);
+  }, [activeNotification, notificationQueue]);
 
   if (settingsLoading || sessionLoading) {
     return (
@@ -65,6 +94,7 @@ const AdminDashboard: React.FC = () => {
     );
   }
 
+
   const viewTitles: Record<AdminView, string> = {
     settings: t("restaurant_settings"),
     categories: t("manage_categories"),
@@ -77,17 +107,40 @@ const AdminDashboard: React.FC = () => {
   };
 
   const handleShowNotification = (type: 'order' | 'waiter', locationName: string, message?: string) => {
-    toast.custom((toastId) => (
-      <NotificationToastContent
-        type={type}
-        locationName={locationName}
-        message={message}
-        toastId={toastId}
-      />
-    ), {
-      duration: Infinity,
-      position: 'bottom-right', // Changed to bottom-right as requested
-    });
+    const audioSrc = type === 'order' ? settings.order_sound_url : settings.waiter_call_sound_url;
+
+    if (audioSrc) {
+      const dingAudio = new Audio(audioSrc);
+      dingAudio.play().catch((error) => {
+        console.error(`Error playing ${type} notification sound:`, error);
+      });
+    }
+
+    if ('Notification' in window && Notification.permission === 'granted') {
+      const title = type === 'order'
+        ? t('new_order_notification', { location: locationName })
+        : t('new_waiter_call_notification', { location: locationName });
+      const body = message || (type === 'order' ? t('new_order_notification_generic') : t('new_waiter_call_notification_generic'));
+      new Notification(title, { body, requireInteraction: true });
+    }
+
+    const newNotification: AdminNotificationItem = {
+      id: `${type}-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
+      type,
+      locationName,
+      message,
+    };
+
+    setNotificationQueue((prevQueue) => [...prevQueue, newNotification]);
+  };
+
+  const handleAcknowledgeNotification = () => {
+    if (!activeNotification) {
+      return;
+    }
+
+    setActiveView(activeNotification.type === 'order' ? 'orders' : 'waiter-calls');
+    setActiveNotification(null);
   };
 
   const handleTestWaiterCall = () => {
@@ -102,6 +155,29 @@ const AdminDashboard: React.FC = () => {
     <div className="min-h-screen w-full flex bg-card" dir="rtl">
       <SidebarNav activeView={activeView} setActiveView={setActiveView} />
       <main className="flex-1 p-6 md:p-8 overflow-y-auto">
+        <AdminRealtimeNotifications onShowNotification={handleShowNotification} />
+        {activeNotification && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4">
+            <div className="w-full max-w-md rounded-xl bg-background p-6 shadow-2xl border border-border">
+              <div className="flex items-center gap-3 mb-4">
+                <BellRing className="h-6 w-6 text-primary" />
+                <h2 className="text-xl font-bold text-foreground">
+                  {activeNotification.type === 'order'
+                    ? t('new_order_notification', { location: activeNotification.locationName })
+                    : t('new_waiter_call_notification', { location: activeNotification.locationName })}
+                </h2>
+              </div>
+              <p className="text-muted-foreground mb-6">
+                {activeNotification.message || (activeNotification.type === 'order'
+                  ? t('new_order_notification_generic')
+                  : t('new_waiter_call_notification_generic'))}
+              </p>
+              <Button className="w-full" onClick={handleAcknowledgeNotification}>
+                {t('view_details')}
+              </Button>
+            </div>
+          </div>
+        )}
         <h1 className="text-3xl font-bold mb-6 text-foreground">{viewTitles[activeView]}</h1>
         <div className="w-full">
           {activeView === 'settings' && (
@@ -121,8 +197,8 @@ const AdminDashboard: React.FC = () => {
           {activeView === 'customer-club' && <Card><CardContent className="p-6"><CustomerClubList /></CardContent></Card>}
           {activeView === 'customer-club-report' && <Card><CardContent className="p-6"><CustomerClubReport /></CardContent></Card>}
           {activeView === 'locations' && <Card><CardContent className="p-6"><LocationManager /></CardContent></Card>}
-          {activeView === 'waiter-calls' && <Card><CardContent className="p-6"><WaiterCallList onShowNotification={handleShowNotification} /></CardContent></Card>}
-          {activeView === 'orders' && <Card><CardContent className="p-6"><OrderList onShowNotification={handleShowNotification} /></CardContent></Card>}
+          {activeView === 'waiter-calls' && <Card><CardContent className="p-6"><WaiterCallList /></CardContent></Card>}
+          {activeView === 'orders' && <Card><CardContent className="p-6"><OrderList /></CardContent></Card>}
         </div>
       </main>
     </div>

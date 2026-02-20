@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -33,11 +33,7 @@ interface Order {
   order_items: OrderItem[];
 }
 
-interface OrderListProps {
-  onShowNotification: (type: 'order' | 'waiter', locationName: string, message?: string) => void;
-}
-
-const OrderList: React.FC<OrderListProps> = ({ onShowNotification }) => {
+const OrderList: React.FC = () => {
   const { t } = useTranslation();
   const { tDynamic } = useDynamicTranslation();
   const [orders, setOrders] = useState<Order[]>([]);
@@ -65,31 +61,21 @@ const OrderList: React.FC<OrderListProps> = ({ onShowNotification }) => {
   useEffect(() => {
     fetchOrders();
 
-    console.log('Subscribing to orders_channel');
     const channel = supabase
       .channel('orders_channel')
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'orders' },
         (payload) => {
-          console.log('Realtime: New order event received!', payload);
           const newOrder = payload.new as Order;
-          // Fetch related data for the new order
           supabase
             .from('orders')
             .select('*, restaurant_locations(name), order_items(*, menu_items(name, image_url))')
             .eq('id', newOrder.id)
             .single()
-            .then(({ data: fullOrderData, error: fullOrderError }) => {
-              if (!fullOrderError && fullOrderData) {
+            .then(({ data: fullOrderData }) => {
+              if (fullOrderData) {
                 setOrders((prevOrders) => [fullOrderData, ...prevOrders]);
-                const locationName = fullOrderData.restaurant_locations?.name || t('unknown_location');
-                console.log('Triggering global notification for new order:', { type: 'order', locationName: locationName });
-                onShowNotification('order', locationName);
-              } else {
-                console.error('Error fetching full order data for new order:', fullOrderError);
-                console.log('Triggering global notification for new order (unknown location):', { type: 'order', locationName: t('unknown_location') });
-                onShowNotification('order', t('unknown_location'));
               }
             });
         }
@@ -97,10 +83,9 @@ const OrderList: React.FC<OrderListProps> = ({ onShowNotification }) => {
       .subscribe();
 
     return () => {
-      console.log('Unsubscribing from orders_channel');
       supabase.removeChannel(channel);
     };
-  }, [t, onShowNotification]);
+  }, []);
 
   const handleViewDetails = (order: Order) => {
     console.log("handleViewDetails called for order:", order.id);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -16,11 +16,7 @@ interface WaiterCall {
   restaurant_locations: { name: string } | null;
 }
 
-interface WaiterCallListProps {
-  onShowNotification: (type: 'order' | 'waiter', locationName: string, message?: string) => void;
-}
-
-const WaiterCallList: React.FC<WaiterCallListProps> = ({ onShowNotification }) => {
+const WaiterCallList: React.FC = () => {
   const { t } = useTranslation();
   const [calls, setCalls] = useState<WaiterCall[]>([]);
   const [loading, setLoading] = useState(true);
@@ -65,13 +61,9 @@ const WaiterCallList: React.FC<WaiterCallListProps> = ({ onShowNotification }) =
                 if (!error && locationData) {
                   const callWithLocation = { ...newCall, restaurant_locations: locationData };
                   setCalls((prevCalls) => [callWithLocation, ...prevCalls]);
-                  console.log('Triggering global notification for waiter call:', { type: 'waiter', locationName: locationData.name });
-                  onShowNotification('waiter', locationData.name);
                 } else {
                   console.error('Error fetching location for new call:', error);
                   setCalls((prevCalls) => [{ ...newCall, restaurant_locations: null }, ...prevCalls]);
-                  console.log('Triggering global notification for waiter call (unknown location):', { type: 'waiter', locationName: t('unknown_location') });
-                  onShowNotification('waiter', t('unknown_location'));
                 }
               });
           }
@@ -83,7 +75,7 @@ const WaiterCallList: React.FC<WaiterCallListProps> = ({ onShowNotification }) =
       console.log('Unsubscribing from waiter_calls_channel');
       supabase.removeChannel(channel);
     };
-  }, [t, onShowNotification]);
+  }, [t]);
 
   const handleResolveCall = async (callId: string) => {
     const { error } = await supabase
