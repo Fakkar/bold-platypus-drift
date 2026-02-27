@@ -42,6 +42,18 @@ const AdminDashboard: React.FC = () => {
   const [notificationQueue, setNotificationQueue] = useState<AdminNotificationItem[]>([]);
   const [activeNotification, setActiveNotification] = useState<AdminNotificationItem | null>(null);
 
+
+  const viewTitles: Record<AdminView, string> = {
+    settings: t("restaurant_settings"),
+    categories: t("manage_categories"),
+    'menu-items': t("manage_menu_items"),
+    'customer-club': t("customer_club"),
+    'customer-club-report': t("customer_club_report"),
+    'locations': t("manage_locations"),
+    'waiter-calls': t("waiter_calls"),
+    'orders': t("manage_orders"),
+  };
+
   useEffect(() => {
     // Check URL for initial view
     const params = new URLSearchParams(location.search);
@@ -97,18 +109,6 @@ const AdminDashboard: React.FC = () => {
       </div>
     );
   }
-
-
-  const viewTitles: Record<AdminView, string> = {
-    settings: t("restaurant_settings"),
-    categories: t("manage_categories"),
-    'menu-items': t("manage_menu_items"),
-    'customer-club': t("customer_club"),
-    'customer-club-report': t("customer_club_report"),
-    'locations': t("manage_locations"),
-    'waiter-calls': t("waiter_calls"),
-    'orders': t("manage_orders"),
-  };
 
   const handleShowNotification = (type: 'order' | 'waiter', locationName: string, message?: string) => {
     const audioSrc = type === 'order' ? settings.order_sound_url : settings.waiter_call_sound_url;
