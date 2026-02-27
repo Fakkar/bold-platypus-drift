@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -79,6 +79,26 @@ const AdminDashboard: React.FC = () => {
     setNotificationQueue(restQueue);
   }, [activeNotification, notificationQueue]);
 
+  if (settingsLoading || sessionLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+        <p>{t("Loading settings...")}</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>{t("unauthorized_access")}</p>
+        <Link to="/login">
+          <Button className="ml-4">{t("go_to_login")}</Button>
+        </Link>
+      </div>
+    );
+  }
+
+
   const viewTitles: Record<AdminView, string> = {
     settings: t("restaurant_settings"),
     categories: t("manage_categories"),
@@ -90,7 +110,7 @@ const AdminDashboard: React.FC = () => {
     'orders': t("manage_orders"),
   };
 
-  const handleShowNotification = useCallback((type: 'order' | 'waiter', locationName: string, message?: string) => {
+  const handleShowNotification = (type: 'order' | 'waiter', locationName: string, message?: string) => {
     const audioSrc = type === 'order' ? settings.order_sound_url : settings.waiter_call_sound_url;
 
     if (audioSrc) {
@@ -116,26 +136,7 @@ const AdminDashboard: React.FC = () => {
     };
 
     setNotificationQueue((prevQueue) => [...prevQueue, newNotification]);
-  }, [settings.order_sound_url, settings.waiter_call_sound_url, t]);
-
-  if (settingsLoading || sessionLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
-        <p>{t("Loading settings...")}</p>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>{t("unauthorized_access")}</p>
-        <Link to="/login">
-          <Button className="ml-4">{t("go_to_login")}</Button>
-        </Link>
-      </div>
-    );
-  }
+  };
 
   const handleAcknowledgeNotification = () => {
     if (!activeNotification) {
