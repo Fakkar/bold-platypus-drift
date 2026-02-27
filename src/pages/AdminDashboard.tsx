@@ -56,6 +56,10 @@ const AdminDashboard: React.FC = () => {
 
 
   useEffect(() => {
+    if (sessionLoading || !user) {
+      return;
+    }
+
     if (!('Notification' in window) || Notification.permission !== 'default') {
       return;
     }
@@ -63,7 +67,7 @@ const AdminDashboard: React.FC = () => {
     Notification.requestPermission().catch((error) => {
       console.error('Failed to request notification permission:', error);
     });
-  }, []);
+  }, [sessionLoading, user]);
 
   useEffect(() => {
     if (activeNotification || notificationQueue.length === 0) {
